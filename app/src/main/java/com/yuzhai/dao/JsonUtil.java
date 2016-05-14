@@ -1,7 +1,7 @@
-package com.yuzhai.config;
+package com.yuzhai.dao;
 
 /**
  * Created by Administrator on 2016/5/14.
  */
-public class test {
+public class JsonUtil {
 }
