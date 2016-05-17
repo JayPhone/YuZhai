@@ -2,7 +2,6 @@ package com.yuzhai.dao;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import java.util.Map;
  * 作者 HJF
  * 主要功能：JSON数据的解析
  */
+
 public class JsonUtil {
 
     public static <T> T getPerson(String jsonString, Class<T> cls) {
