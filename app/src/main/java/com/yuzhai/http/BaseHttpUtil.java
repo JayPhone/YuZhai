@@ -9,7 +9,7 @@ import java.net.URL;
 /**
  * 创建时间：2016/05/14
  * 作者：HJF
- * 主要功能：实现Http连接的工具类
+ * 主要功能：实现Http连接的初始化
  */
 public class BaseHttpUtil {
     /*
@@ -18,8 +18,8 @@ public class BaseHttpUtil {
     * @param method 超时时间
     * @return 配置成功返回HttpURLConnection，否则返回Null
     */
-    public HttpURLConnection ConnectInit(String path) {
-        return this.ConnectInit(path, 3000, "post", false, false);
+    public static HttpURLConnection ConnectInit(String path) {
+        return BaseHttpUtil.ConnectInit(path, 3000, "post", false, false);
     }
 
     /*
@@ -28,8 +28,8 @@ public class BaseHttpUtil {
      * @param method 超时时间
      * @return 配置成功返回HttpURLConnection，否则返回Null
      */
-    public HttpURLConnection ConnectInit(String path, String method) {
-        return this.ConnectInit(path, 3000, method, false, false);
+    public static HttpURLConnection ConnectInit(String path, String method) {
+        return BaseHttpUtil.ConnectInit(path, 3000, method, false, false);
     }
 
     /*
@@ -38,8 +38,8 @@ public class BaseHttpUtil {
     * @param timeout 超时时间
     * @return 配置成功返回HttpURLConnection，否则返回Null
     */
-    public HttpURLConnection ConnectInit(String path, int timeout) {
-        return this.ConnectInit(path, timeout, "post", false, false);
+    public static HttpURLConnection ConnectInit(String path, int timeout) {
+        return BaseHttpUtil.ConnectInit(path, timeout, "post", false, false);
     }
 
     /*
@@ -49,8 +49,8 @@ public class BaseHttpUtil {
      * @param method  提交方式
      * @return 配置成功返回HttpURLConnection，否则返回Null
      */
-    public HttpURLConnection ConnectInit(String path, int timeout, String method) {
-        return this.ConnectInit(path, timeout, method, false, false);
+    public static HttpURLConnection ConnectInit(String path, int timeout, String method) {
+        return BaseHttpUtil.ConnectInit(path, timeout, method, false, false);
     }
 
     /*
@@ -62,7 +62,7 @@ public class BaseHttpUtil {
      * @param openOutput 是否打开输出流
      * @return 配置成功返回HttpURLConnection，否则返回Null
      */
-    public HttpURLConnection ConnectInit(String path, int timeout, String method, boolean openInput, boolean openOutput) {
+    public static HttpURLConnection ConnectInit(String path, int timeout, String method, boolean openInput, boolean openOutput) {
         try {
             URL url = new URL(path);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
