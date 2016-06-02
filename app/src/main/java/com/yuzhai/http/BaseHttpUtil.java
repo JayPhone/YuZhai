@@ -1,6 +1,9 @@
 package com.yuzhai.http;
 
+import android.util.Log;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -13,47 +16,6 @@ import java.net.URL;
  */
 public class BaseHttpUtil {
     /*
-    *主要功能：完成HttpURLConnection的初始化,此方法为重载方法，默认输入流和输出流关闭,超时时间为3000毫秒,请求方式为"post"
-    * @param path Url路径
-    * @param method 超时时间
-    * @return 配置成功返回HttpURLConnection，否则返回Null
-    */
-    public static HttpURLConnection ConnectInit(String path) {
-        return BaseHttpUtil.ConnectInit(path, 3000, "post", false, false);
-    }
-
-    /*
-     *主要功能：完成HttpURLConnection的初始化,此方法为重载方法，默认输入流和输出流关闭,超时时间为3000毫秒
-     * @param path Url路径
-     * @param method 超时时间
-     * @return 配置成功返回HttpURLConnection，否则返回Null
-     */
-    public static HttpURLConnection ConnectInit(String path, String method) {
-        return BaseHttpUtil.ConnectInit(path, 3000, method, false, false);
-    }
-
-    /*
-    * 主要功能：完成HttpURLConnection的初始化,此方法为重载方法，默认输入流和输出流关闭,请求方法为"post"
-    * @param path Url路径
-    * @param timeout 超时时间
-    * @return 配置成功返回HttpURLConnection，否则返回Null
-    */
-    public static HttpURLConnection ConnectInit(String path, int timeout) {
-        return BaseHttpUtil.ConnectInit(path, timeout, "post", false, false);
-    }
-
-    /*
-     * 主要功能：完成HttpURLConnection的初始化,此方法为重载方法，默认输入流和输出流关闭
-     * @param path    Url路径
-     * @param timeout 超时时间
-     * @param method  提交方式
-     * @return 配置成功返回HttpURLConnection，否则返回Null
-     */
-    public static HttpURLConnection ConnectInit(String path, int timeout, String method) {
-        return BaseHttpUtil.ConnectInit(path, timeout, method, false, false);
-    }
-
-    /*
      *主要功能：完成HttpURLConnection的初始化
      * @param path Url路径
      * @param timeout 超时时间
@@ -62,15 +24,25 @@ public class BaseHttpUtil {
      * @param openOutput 是否打开输出流
      * @return 配置成功返回HttpURLConnection，否则返回Null
      */
-    public static HttpURLConnection ConnectInit(String path, int timeout, String method, boolean openInput, boolean openOutput) {
+    public static InputStream ConnectInit(String path, int timeout, String method, boolean openInput, boolean openOutput) {
+        //连接状态码
+        int responseCode;
+        //Url连接
+        HttpURLConnection httpURLConnection;
         try {
             URL url = new URL(path);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(timeout);
             httpURLConnection.setRequestMethod(method);
             httpURLConnection.setDoInput(openInput);
             httpURLConnection.setDoOutput(openOutput);
-            return httpURLConnection;
+            responseCode = httpURLConnection.getResponseCode();
+            if (responseCode == 200) {
+                Log.i("responseCode", responseCode + "");
+                return httpURLConnection.getInputStream();
+            } else {
+                Log.i("responseCode", responseCode + "");
+            }
         } catch (ProtocolException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
