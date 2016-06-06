@@ -1,9 +1,6 @@
 package com.yuzhai.http;
 
-import android.util.Log;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -16,33 +13,22 @@ import java.net.URL;
  */
 public class BaseHttpUtil {
     /*
-     *主要功能：完成HttpURLConnection的初始化
-     * @param path Url路径
-     * @param timeout 超时时间
-     * @param method 提交方式
-     * @param openInput 是否打开输入流
-     * @param openOutput 是否打开输出流
-     * @return 配置成功返回HttpURLConnection，否则返回Null
+     * 对HttpUrlConnection进行初始化
+     * @param 请求的路径
+     * @return 返回初始化的HttpUrlConnection
      */
-    public static InputStream ConnectInit(String path, int timeout, String method, boolean openInput, boolean openOutput) {
-        //连接状态码
-        int responseCode;
+    public static HttpURLConnection ConnectInit(String path) {
         //Url连接
         HttpURLConnection httpURLConnection;
         try {
             URL url = new URL(path);
             httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setConnectTimeout(timeout);
-            httpURLConnection.setRequestMethod(method);
-            httpURLConnection.setDoInput(openInput);
-            httpURLConnection.setDoOutput(openOutput);
-            responseCode = httpURLConnection.getResponseCode();
-            if (responseCode == 200) {
-                Log.i("responseCode", responseCode + "");
-                return httpURLConnection.getInputStream();
-            } else {
-                Log.i("responseCode", responseCode + "");
-            }
+            //设置请求头字段
+            httpURLConnection.setRequestProperty("accept", "*/*");
+            httpURLConnection.setRequestProperty("accept-charset", "UTF-8");
+            httpURLConnection.setRequestProperty("charset", "UTF-8");
+            httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            return httpURLConnection;
         } catch (ProtocolException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {

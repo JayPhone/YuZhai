@@ -1,10 +1,9 @@
 package com.yuzhai.dao;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * 创建时间2016/5/14.
@@ -14,34 +13,27 @@ import java.util.Map;
 
 public class JsonUtil {
 
-    public static <T> T getPerson(String jsonString, Class<T> cls) {
-        T t = null;
-        Gson gson = new Gson();
-        t = gson.fromJson(jsonString, cls);
-        return t;
+    public static String decodeJson(String jsonString, String key) {
+        String data;
+        try {
+            if (jsonString != null) {
+                JSONObject jsonObject = new JSONObject(jsonString);
+                data = jsonObject.getString(key);
+                return data;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static <T> List<T> getPersons(String jsonString) {
-        List<T> list = new ArrayList<T>();
-        Gson gson = new Gson();
-        list = gson.fromJson(jsonString, new TypeToken<List<T>>() {
-        }.getType());
-        return list;
-    }
-
-    public static <T> List<T> getCitys(String jsonString) {
-        List<T> list = new ArrayList<T>();
-        Gson gson = new Gson();
-        list = gson.fromJson(jsonString, new TypeToken<List<T>>() {
-        }.getType());
-        return list;
-    }
-
-    public static <T> List<Map<String, T>> getListMap(String jsonString) {
-        List<Map<String, T>> list = new ArrayList<Map<String, T>>();
-        Gson gson = new Gson();
-        list = gson.fromJson(jsonString, new TypeToken<List<Map<String, T>>>() {
-        }.getType());
-        return list;
+    public static String gsonToString(Object toString) {
+        if (toString != null) {
+            String jsonString;
+            Gson gson = new Gson();
+            jsonString = gson.toJson(toString);
+            return jsonString;
+        }
+        return null;
     }
 }

@@ -26,7 +26,8 @@
             android:layout_marginTop="@dimen/login_editable_first_marginT"
             android:background="@color/colorgary"
             android:hint="@string/username"
-            android:maxLength="20"
+            android:inputType="number"
+            android:maxLength="11"
             android:padding="@dimen/login_editable_middle_padding"
             android:singleLine="true" />
 

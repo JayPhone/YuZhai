@@ -24,7 +24,7 @@
             android:layout_marginTop="@dimen/register_editable_first_marginT"
             android:background="@color/colorgary"
             android:hint="@string/register_phone_num_hint"
-            android:inputType="phone"
+            android:inputType="number"
             android:maxLength="11"
             android:padding="@dimen/register_editable_middle_padding"
             android:singleLine="true" />
@@ -44,12 +44,12 @@
                 android:layout_weight="5"
                 android:background="@color/colorgary"
                 android:hint="@string/register_code_hint"
-                android:inputType="number"
                 android:maxLength="6"
                 android:padding="@dimen/register_editable_middle_padding"
                 android:singleLine="true" />
 
             <Button
+                android:id="@+id/code_button"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/register_button_code_marginL"
@@ -84,17 +84,20 @@
             android:padding="@dimen/register_editable_middle_padding"
             android:singleLine="true" />
 
-        <Button
-            android:id="@+id/register_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/affirmPsw"
-            android:layout_marginTop="@dimen/register_button_register_paddingT"
-            android:background="@drawable/register_button_registerlogin_style"
-            android:text="@string/register_register_button"
-            android:textColor="#FFFFFF"
-            android:textSize="@dimen/register_button_register_textsize" />
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relayout1"
+        android:layout_marginLeft="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/register_button_registerlogin_style"
+        android:text="@string/register_register_button"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/register_button_register_textsize" />
 
     <TextView
         android:id="@+id/register_login"
