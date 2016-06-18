@@ -18,6 +18,7 @@ import com.yuzhai.entry.UserReg;
 import com.yuzhai.http.HttpUtil;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.util.InputStreamToString;
+import com.yuzhai.util.JsonToParams;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.io.InputStream;
@@ -51,9 +52,13 @@ public class RegisterActivity extends AppCompatActivity {
             } else if (msg.what == 0) {
                 Toast.makeText(RegisterActivity.this, "网络出现异常", Toast.LENGTH_SHORT).show();
             } else if (msg.what == -21) {
-                Toast.makeText(RegisterActivity.this, "注册失败，请稍后再试", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "用户已存在", Toast.LENGTH_SHORT).show();
             } else if (msg.what == 21) {
                 Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+            } else if (msg.what == 20) {
+                Toast.makeText(RegisterActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
+            } else if (msg.what == 22) {
+                Toast.makeText(RegisterActivity.this, "验证码已过期，请重新获取", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -134,10 +139,14 @@ public class RegisterActivity extends AppCompatActivity {
                             if (returnStream != null) {
                                 jsonString = InputStreamToString.praseToString(returnStream);
                                 String code = JsonUtil.decodeJson(jsonString, "code");
-                                if (code.equals(-1)) {
+                                if (code.equals("-1")) {
                                     handler.sendEmptyMessage(-21);
-                                } else if (code.equals(1)) {
+                                } else if (code.equals("1")) {
                                     handler.sendEmptyMessage(21);
+                                } else if (code.equals("2")) {
+                                    handler.sendEmptyMessage(22);
+                                } else if (code.equals("0")) {
+                                    handler.sendEmptyMessage(20);
                                 }
                             } else {
                                 handler.sendEmptyMessage(0);
@@ -166,6 +175,7 @@ public class RegisterActivity extends AppCompatActivity {
         //获取手机验证码的手机号，生成Json数据
         UserPhone userPhone = new UserPhone(userName_str);
         String jsonString = JsonUtil.gsonToString(userPhone);
+        jsonString = JsonToParams.replaceToParams(jsonString);
         return jsonString;
     }
 
@@ -214,8 +224,9 @@ public class RegisterActivity extends AppCompatActivity {
             return null;
         }
 
-        UserReg userReg = new UserReg(userName_str, identCode_str, pswd_str);
+        UserReg userReg = new UserReg(userName_str, pswd_str, identCode_str);
         String jsonString = JsonUtil.gsonToString(userReg);
+        jsonString = JsonToParams.replaceToParams(jsonString);
         return jsonString;
     }
 

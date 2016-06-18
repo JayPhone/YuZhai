@@ -61,6 +61,7 @@ public class HttpUtil {
             httpURLConnection.setConnectTimeout(timeOut);
             try {
                 httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setUseCaches(false);
                 httpURLConnection.setDoInput(true);
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.connect();

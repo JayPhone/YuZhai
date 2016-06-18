@@ -15,16 +15,23 @@
         <activity
             android:name="com.yuzhai.ui.LoginActivity"
             android:launchMode="singleTask">
+            <!-- <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>-->
+        </activity>
+        <!--注册界面-->
+        <activity
+            android:name="com.yuzhai.ui.RegisterActivity"
+            android:launchMode="singleTask" />
+        <activity android:name="com.yuzhai.ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--注册界面-->
-        <activity
-            android:name="com.yuzhai.ui.RegisterActivity"
-            android:launchMode="singleTask" />
     </application>
 
 </manifest>

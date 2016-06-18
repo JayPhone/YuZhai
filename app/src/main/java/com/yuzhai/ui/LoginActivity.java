@@ -18,6 +18,7 @@ import com.yuzhai.entry.UserLogin;
 import com.yuzhai.http.HttpUtil;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.util.InputStreamToString;
+import com.yuzhai.util.JsonToParams;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.io.InputStream;
@@ -121,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
 
         UserLogin userLogin = new UserLogin(userName_str, pswd_str);
         String jsonString = JsonUtil.gsonToString(userLogin);
+        jsonString = JsonToParams.replaceToParams(jsonString);
         return jsonString;
     }
 
