@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yuzhai.slidingmenu.SlidingMenu;
 import com.yuzhai.fragment.HomeFragment;
 import com.yuzhai.fragment.OrderFragment;
 import com.yuzhai.fragment.PublishFragment;
+import com.yuzhai.fragment.MenuFragment;
 import com.yuzhai.yuzhaiwork.R;
 
 /**
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //导航的文字
     private TextView home_text = null, order_text = null, publish_text = null;
 
+    //侧滑菜单
+    private SlidingMenu menu;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
 
@@ -41,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void init() {
+        //初始化滑动菜单
+        initSlidingMenu();
+
         buttomPanel = (LinearLayout) findViewById(R.id.buttomPanel);
         //初始化三个导航
         home_icon = (LinearLayout) buttomPanel.findViewById(R.id.home_icon);
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_content, new HomeFragment());
         fragmentTransaction.commit();
-        //添加时间监听
+        //添加事件监听
         home_icon.setOnClickListener(this);
         order_icon.setOnClickListener(this);
         publish_icon.setOnClickListener(this);
@@ -105,5 +112,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
         fragmentTransaction.commit();
+    }
+
+    /**
+     * 初始化滑动菜单
+     */
+    private void initSlidingMenu() {
+        // 设置主界面视图
+        getFragmentManager().beginTransaction().replace(R.id.main_content, new HomeFragment()).commit();
+        // 设置滑动菜单的属性值
+        menu = new SlidingMenu(this);
+        //设置触摸模式
+        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        //设置阴影效果的宽度
+        menu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
+        //设置阴影效果
+        menu.setShadowDrawable(R.drawable.shadow);
+        //设置主界面显示的宽度
+        menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+        //设置滑动时渐入渐出的效果
+        menu.setFadeDegree(0.35f);
+        menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+        // 设置滑动菜单的视图界面
+        menu.setMenu(R.layout.fragment_menu);
+        getFragmentManager().beginTransaction().replace(R.id.main_content, new MenuFragment()).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //点击返回键关闭滑动菜单
+        if (menu.isMenuShowing()) {
+            menu.showContent();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

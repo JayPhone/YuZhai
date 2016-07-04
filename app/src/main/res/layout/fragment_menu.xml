@@ -14,7 +14,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBlue"
         android:text="我是个人信息界面"
         android:textSize="50sp" />
 

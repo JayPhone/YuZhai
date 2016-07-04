@@ -6,8 +6,7 @@ package com.yuzhai.config;
  * 主要功能：IP地址相关的信息
  */
 public interface IPConfig {
-    final static String address1 = "http://172.16.178.130:7001/test_HTTP/servlet/LoginServlet";
-    final static String verifyAddress = "http://172.16.178.83:8088/login/verify?";
-    final static String loginAddress = "http://172.16.178.83:8088/login/login?";
-    final static String registerAddress= "http://172.16.178.83:8088/login/register?";
+    final static String verifyAddress = "http://172.16.178.84:8088/login/verify";
+    final static String loginAddress = "http://172.16.178.84:8088/login/login";
+    final static String registerAddress= "http://172.16.178.84:8088/login/register";
 }
