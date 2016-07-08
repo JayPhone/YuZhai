@@ -16,9 +16,7 @@ public class PointViewFlipper extends ViewFlipper {
     private Context context;
 
     public PointViewFlipper(Context context) {
-        super(context);
-        this.context = context;
-        detectorBanner = new GestureDetector(context, new OnGestureBanner(this));
+        this(context, null);
     }
 
     public PointViewFlipper(Context context, AttributeSet attrs) {
@@ -29,6 +27,7 @@ public class PointViewFlipper extends ViewFlipper {
 
     private OnFlipListener onFlipListener;
 
+    //图片切换监听接口
     public interface OnFlipListener {
         void onShowPrevious(PointViewFlipper flipper);
 

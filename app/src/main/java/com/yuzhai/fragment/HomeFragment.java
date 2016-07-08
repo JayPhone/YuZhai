@@ -1,23 +1,22 @@
 package com.yuzhai.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.yuzhai.slidingmenu.SlidingMenu;
 import com.yuzhai.ui.AdvertiseActivity;
 import com.yuzhai.ui.CategoryActivity;
+import com.yuzhai.ui.MainActivity;
 import com.yuzhai.view.CategoryGridView;
 import com.yuzhai.view.PointViewFlipper;
 import com.yuzhai.yuzhaiwork.R;
@@ -31,8 +30,6 @@ import java.util.Map;
  * Created by Administrator on 2016/6/10.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener {
-    //侧滑菜单
-    private SlidingMenu slidingMenu;
     //滚动面板下方的圆点面板
     private LinearLayout pointPanel;
     //滚动面板下方的圆点
@@ -45,8 +42,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private PointViewFlipper picturePanel;
     //类别面板
     private CategoryGridView category;
-    //窗口管理器
-    private WindowManager window;
     //类别面板设配器
     private SimpleAdapter categoryAdapter;
     //类别面板数据容器
@@ -61,22 +56,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        //初始化数据
-        initValues(view);
-        return view;
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    private void initValues(View view) {
-        window = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-        initBanner(view);
-        initCategory(view);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //初始化数据
+        initValues();
+        MainActivity.menu.addIgnoredView(picturePanel);
+    }
+
+    private void initValues() {
+        Activity mainActivity = getActivity();
+        //初始化焦点图
+        initBanner(mainActivity);
+        //初始化分类面板
+        initCategory(mainActivity);
     }
 
     //初始化焦点图
-    public void initBanner(View view) {
+    public void initBanner(Activity mainActivity) {
+
         //初始化下面的圆点面板
-        pointPanel = (LinearLayout) view.findViewById(R.id.point_panel);
+        pointPanel = (LinearLayout) mainActivity.findViewById(R.id.point_panel);
         point_1 = (TextView) pointPanel.findViewById(R.id.point_1);
         point_2 = (TextView) pointPanel.findViewById(R.id.point_2);
         point_3 = (TextView) pointPanel.findViewById(R.id.point_3);
@@ -84,16 +87,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         points = new TextView[]{point_1, point_2, point_3, point_4};
 
         //初始化焦点图面板
-        picturePanel = (PointViewFlipper) view.findViewById(R.id.fli);
+        picturePanel = (PointViewFlipper) mainActivity.findViewById(R.id.fli);
         picturePanel.setInAnimation(getActivity(), android.R.anim.fade_in);
         picturePanel.setOutAnimation(getActivity(), android.R.anim.fade_out);
         picturePanel.setOnFlipListener(flipListener);
 
         //初始化图片内容
-        image_1 = (ImageView) view.findViewById(R.id.image_1);
-        image_2 = (ImageView) view.findViewById(R.id.image_2);
-        image_3 = (ImageView) view.findViewById(R.id.image_3);
-        image_4 = (ImageView) view.findViewById(R.id.image_4);
+        image_1 = (ImageView) mainActivity.findViewById(R.id.image_1);
+        image_2 = (ImageView) mainActivity.findViewById(R.id.image_2);
+        image_3 = (ImageView) mainActivity.findViewById(R.id.image_3);
+        image_4 = (ImageView) mainActivity.findViewById(R.id.image_4);
 
         image_1.setImageResource(R.drawable.test1);
         image_2.setImageResource(R.drawable.test2);
@@ -105,12 +108,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         image_3.setOnClickListener(this);
         image_4.setOnClickListener(this);
 
-        point_1.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style));
+        point_1.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
     }
 
     //初始化分类面板
-    public void initCategory(View view) {
-        category = (CategoryGridView) view.findViewById(R.id.category);
+    public void initCategory(Activity mainActivity) {
+        category = (CategoryGridView) mainActivity.findViewById(R.id.category);
         categoryData = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             Map<String, Object> map = new HashMap<>();
@@ -152,28 +155,31 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    //图片切换监听器
     private PointViewFlipper.OnFlipListener flipListener = new PointViewFlipper.OnFlipListener() {
+        //图片切换到下一张
         @Override
         public void onShowPrevious(PointViewFlipper flipper) {
             int id = flipper.getDisplayedChild();
-            points[id].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style));
+            points[id].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
             for (int i = 0; i < points.length; i++) {
                 if (id == i)
                     continue;
                 else
-                    points[i].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
+                    points[i].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style));
             }
         }
 
+        //图片切换到上一张
         @Override
         public void onShowNext(PointViewFlipper flipper) {
             int id = flipper.getDisplayedChild();
-            points[id].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style));
+            points[id].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
             for (int i = 0; i < points.length; i++) {
                 if (id == i)
                     continue;
                 else
-                    points[i].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
+                    points[i].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style));
             }
         }
     };

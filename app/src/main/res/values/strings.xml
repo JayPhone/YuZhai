@@ -18,7 +18,6 @@
     <string name="forget_psw">/忘记密码</string>
     <string name="login_register">注册</string>
 
-
     <!--fragment_order-->
     <string name="ordername">订单界面</string>
 
@@ -26,6 +25,5 @@
     <string name="publishname">发布界面</string>
     <string name="projectprice">项目金额</string>
     <string name="publish_submit">提交</string>
-
 
 </resources>

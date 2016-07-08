@@ -36,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEdit = null;
     private Button loginButton = null;
     private TextView registerTextView = null;
-    private TextView homeTextView = null;
     private TextView forgetPswdTextView = null;
 
     //其他引用
@@ -163,17 +162,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent_forget_pswd = new Intent();
                 intent_forget_pswd.setClass(LoginActivity.this, ForgetPswdActivity.class);
                 startActivity(intent_forget_pswd);
-            }
-        });
-
-        homeTextView = (TextView) findViewById(R.id.home_page_nav);
-        homeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent_home = new Intent();
-                intent_home.setClass(LoginActivity.this, MainActivity.class);
-                startActivity(intent_home);
-                LoginActivity.this.finish();
             }
         });
     }
