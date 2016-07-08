@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:background="@color/mainColor"
         toolbar:logo="@drawable/person"
-        toolbar:titleTextColor="#FFFFFF"
-        toolbar:title="发布界面" />
+        toolbar:title="发布界面"
+        toolbar:titleTextColor="#FFFFFF" />
 
     <TextView
         android:layout_width="match_parent"

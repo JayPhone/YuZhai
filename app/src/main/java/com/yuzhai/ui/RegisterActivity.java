@@ -40,7 +40,6 @@ public class RegisterActivity extends AppCompatActivity {
     private Button codeButton = null;
     private Button registerButton = null;
     private TextView loginTextView = null;
-    private TextView homeTextView = null;
 
     //其他引用
     private UserPhone userPhone = null;
@@ -240,18 +239,9 @@ public class RegisterActivity extends AppCompatActivity {
         loginTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-            }
-        });
-
-        homeTextView = (TextView) findViewById(R.id.home_page_nav);
-        homeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent_home = new Intent();
-                intent_home.setClass(RegisterActivity.this, MainActivity.class);
-                startActivity(intent_home);
-                RegisterActivity.this.finish();
+                Intent intent_login = new Intent();
+                intent_login.setClass(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent_login);
             }
         });
     }

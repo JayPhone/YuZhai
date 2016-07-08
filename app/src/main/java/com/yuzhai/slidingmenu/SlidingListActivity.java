@@ -126,7 +126,7 @@ public class SlidingListActivity extends ListActivity implements SlidingActivity
 	public void showMenu() {
 		mHelper.showMenu();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivityBase#showSecondaryMenu()

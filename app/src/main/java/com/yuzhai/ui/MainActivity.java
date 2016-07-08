@@ -6,15 +6,17 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.yuzhai.slidingmenu.SlidingMenu;
 import com.yuzhai.fragment.HomeFragment;
+import com.yuzhai.fragment.MenuFragment;
 import com.yuzhai.fragment.OrderFragment;
 import com.yuzhai.fragment.PublishFragment;
-import com.yuzhai.fragment.MenuFragment;
+import com.yuzhai.slidingmenu.SlidingMenu;
 import com.yuzhai.yuzhaiwork.R;
 
 /**
@@ -22,7 +24,7 @@ import com.yuzhai.yuzhaiwork.R;
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     //导航
-    private LinearLayout buttomPanel = null;
+    private FrameLayout buttomPanel = null;
     private LinearLayout home_icon = null, order_icon = null, publish_icon = null;
 
     //导航的图标
@@ -32,38 +34,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView home_text = null, order_text = null, publish_text = null;
 
     //侧滑菜单
-    private SlidingMenu menu;
+    static public SlidingMenu menu;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
+
+    //HomeFragment,OrderFragment,PublishFragment
+    private HomeFragment homeFragment = null;
+    private OrderFragment orderFragment = null;
+    private PublishFragment publishFragment = null;
+    private MenuFragment menuFragment = null;
+
+    //退出按钮按的次数
+    int click_time = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //初始化组件
-        init();
+        initComponent();
     }
 
-    public void init() {
-        //初始化滑动菜单
-        initSlidingMenu();
+    public void initComponent() {
 
-        buttomPanel = (LinearLayout) findViewById(R.id.buttomPanel);
+        fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        //初始化滑动菜单
+        initSlidingMenu(fragmentTransaction);
+
+        buttomPanel = (FrameLayout) findViewById(R.id.buttomPanel);
         //初始化三个导航
         home_icon = (LinearLayout) buttomPanel.findViewById(R.id.home_icon);
         order_icon = (LinearLayout) buttomPanel.findViewById(R.id.order_icon);
         publish_icon = (LinearLayout) buttomPanel.findViewById(R.id.publish_icon);
         //主页被选中
         changeStatus(home_icon, home_image, home_text, R.id.home_image, R.id.home_text, R.drawable.home_click, R.color.mainColor);
-        //加载主页布局
-        fragmentManager = getFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_content, new HomeFragment());
-        fragmentTransaction.commit();
+
         //添加事件监听
         home_icon.setOnClickListener(this);
         order_icon.setOnClickListener(this);
         publish_icon.setOnClickListener(this);
+    }
+
+    /**
+     * 初始化滑动菜单
+     */
+    private void initSlidingMenu(FragmentTransaction fragmentTransaction) {
+        //主界面Fragment，个人信息Fragment
+        menuFragment = new MenuFragment();
+        homeFragment = new HomeFragment();
+        // 设置主界面视图
+        fragmentTransaction.replace(R.id.main_content, homeFragment);
+        // 设置滑动菜单的属性值
+        menu = new SlidingMenu(this);
+        //设置触摸模式
+        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        //设置滑动菜单的位置，左边，右边，左右都有
+        menu.setMode(SlidingMenu.LEFT);
+        //设置阴影效果的宽度
+        menu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
+        //设置阴影效果
+        menu.setShadowDrawable(R.drawable.shadow);
+        //设置主界面显示的宽度
+        menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+        //设置滑动时渐入渐出的效果
+        menu.setFadeDegree(0.35f);
+        // 设置滑动菜单的视图界面
+        menu.setMenu(R.layout.activity_main_menu);
+        fragmentTransaction.replace(R.id.menu_content, menuFragment);
+        menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+        fragmentTransaction.commit();
     }
 
     /*
@@ -90,52 +130,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        //获取fragment事务处理对象
         fragmentTransaction = fragmentManager.beginTransaction();
+        //隐藏所有已有的fragment
+        this.hideFragment(fragmentTransaction);
+        //重置所有的导航颜色
+        this.resetNavigator();
         switch (v.getId()) {
             case R.id.home_icon:
+                //设置点击的导航的图片和文字颜色为高亮
                 changeStatus(home_icon, home_image, home_text, R.id.home_image, R.id.home_text, R.drawable.home_click, R.color.mainColor);
-                changeStatus(order_icon, order_image, order_text, R.id.order_image, R.id.order_text, R.drawable.order, R.color.color_8c8c8c);
-                changeStatus(publish_icon, publish_image, publish_text, R.id.publish_image, R.id.publish_text, R.drawable.publish, R.color.color_8c8c8c);
-                fragmentTransaction.replace(R.id.main_content, new HomeFragment());
+                if (homeFragment == null) {
+                    homeFragment = new HomeFragment();
+                    fragmentTransaction.add(R.id.main_content, homeFragment);
+                } else {
+                    fragmentTransaction.show(homeFragment);
+                }
                 break;
             case R.id.order_icon:
-                changeStatus(home_icon, home_image, home_text, R.id.home_image, R.id.home_text, R.drawable.home, R.color.color_8c8c8c);
                 changeStatus(order_icon, order_image, order_text, R.id.order_image, R.id.order_text, R.drawable.order_click, R.color.mainColor);
-                changeStatus(publish_icon, publish_image, publish_text, R.id.publish_image, R.id.publish_text, R.drawable.publish, R.color.color_8c8c8c);
-                fragmentTransaction.replace(R.id.main_content, new OrderFragment());
+                if (orderFragment == null) {
+                    orderFragment = new OrderFragment();
+                    fragmentTransaction.add(R.id.main_content, orderFragment);
+                } else {
+                    fragmentTransaction.show(orderFragment);
+                }
                 break;
             case R.id.publish_icon:
-                changeStatus(home_icon, home_image, home_text, R.id.home_image, R.id.home_text, R.drawable.home, R.color.color_8c8c8c);
-                changeStatus(order_icon, order_image, order_text, R.id.order_image, R.id.order_text, R.drawable.order, R.color.color_8c8c8c);
                 changeStatus(publish_icon, publish_image, publish_text, R.id.publish_image, R.id.publish_text, R.drawable.publish_click, R.color.mainColor);
-                fragmentTransaction.replace(R.id.main_content, new PublishFragment());
+                if (publishFragment == null) {
+                    publishFragment = new PublishFragment();
+                    fragmentTransaction.add(R.id.main_content, publishFragment);
+                } else {
+                    fragmentTransaction.show(publishFragment);
+                }
                 break;
         }
         fragmentTransaction.commit();
     }
 
-    /**
-     * 初始化滑动菜单
-     */
-    private void initSlidingMenu() {
-        // 设置主界面视图
-        getFragmentManager().beginTransaction().replace(R.id.main_content, new HomeFragment()).commit();
-        // 设置滑动菜单的属性值
-        menu = new SlidingMenu(this);
-        //设置触摸模式
-        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        //设置阴影效果的宽度
-        menu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
-        //设置阴影效果
-        menu.setShadowDrawable(R.drawable.shadow);
-        //设置主界面显示的宽度
-        menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-        //设置滑动时渐入渐出的效果
-        menu.setFadeDegree(0.35f);
-        menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-        // 设置滑动菜单的视图界面
-        menu.setMenu(R.layout.fragment_menu);
-        getFragmentManager().beginTransaction().replace(R.id.main_content, new MenuFragment()).commit();
+    //将所有的Fragment都置为隐藏状态
+    private void hideFragment(FragmentTransaction fragmentTransaction) {
+        if (homeFragment != null) {
+            fragmentTransaction.hide(homeFragment);
+        }
+        if (orderFragment != null) {
+            fragmentTransaction.hide(orderFragment);
+        }
+        if (publishFragment != null) {
+            fragmentTransaction.hide(publishFragment);
+        }
+    }
+
+    //重置下方导航颜色
+    public void resetNavigator() {
+        changeStatus(home_icon, home_image, home_text, R.id.home_image, R.id.home_text, R.drawable.home, R.color.color_8c8c8c);
+        changeStatus(order_icon, order_image, order_text, R.id.order_image, R.id.order_text, R.drawable.order, R.color.color_8c8c8c);
+        changeStatus(publish_icon, publish_image, publish_text, R.id.publish_image, R.id.publish_text, R.drawable.publish, R.color.color_8c8c8c);
     }
 
     @Override
@@ -143,8 +194,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //点击返回键关闭滑动菜单
         if (menu.isMenuShowing()) {
             menu.showContent();
+            click_time = 0;
         } else {
-            super.onBackPressed();
+            if (click_time == 1) {
+                this.finish();
+            } else {
+                click_time++;
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

@@ -15,8 +15,7 @@
     <string name="username">手机号码</string>
     <string name="password">密码</string>
     <string name="login">登  录</string>
-    <string name="forget_psw">/忘记密码</string>
+    <string name="forget_psw">忘记密码</string>
     <string name="login_register">注册</string>
-
 
 </resources>
