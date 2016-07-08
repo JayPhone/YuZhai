@@ -36,16 +36,16 @@
                 android:paddingLeft="5dp"
                 android:text="请选择您想要做的"
                 android:textColor="#808080"
-                android:textSize="18sp"></TextView>
+                android:textSize="18sp" />
 
 
             <ImageView
                 android:id="@+id/bt_dropdown"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/down"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="15dp" />
+                android:layout_marginRight="15dp"
+                android:src="@drawable/down" />
 
         </RelativeLayout>
     </FrameLayout>
@@ -115,9 +115,9 @@
                 android:id="@+id/bt_dropdown1"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/down"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="15dp" />
+                android:layout_marginRight="15dp"
+                android:src="@drawable/down" />
         </RelativeLayout>
     </FrameLayout>
 
