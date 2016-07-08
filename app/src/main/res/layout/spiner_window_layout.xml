@@ -6,13 +6,11 @@
     android:background="@drawable/spinner_publish_style"
     android:orientation="vertical">
 
-
     <ListView
         android:id="@+id/listview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:cacheColorHint="@color/colorgary"
-        android:scrollbars="none"></ListView>
-
+        android:scrollbars="none" />
 
 </LinearLayout>

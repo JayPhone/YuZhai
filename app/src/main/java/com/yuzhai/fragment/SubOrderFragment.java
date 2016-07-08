@@ -4,29 +4,24 @@ package com.yuzhai.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yuzhai.ui.MainActivity;
 import com.yuzhai.view.AbstractSpinerAdapter;
 import com.yuzhai.view.SpinerPopWindow;
 import com.yuzhai.yuzhaiwork.R;
@@ -166,7 +161,7 @@ public class SubOrderFragment extends Fragment implements
         map.put("pathImage", "add_pic");
         imageItem.add(map);
         simpleAdapter = new SimpleAdapter(activity,
-                imageItem, R.layout.griditem_addpic,
+                imageItem, R.layout.publish_add_picture,
                 new String[]{"itemImage"}, new int[]{R.id.imageView1});
 
         simpleAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
