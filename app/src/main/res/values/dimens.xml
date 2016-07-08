@@ -35,4 +35,13 @@
     <dimen name="slidingmenu_shadow_width">15dp</dimen>
     <integer name="num_cols">1</integer>
 
+
+    <!-- fragment_order -->
+
+
+
+
+    <!--sub_fragment_order-->
+
+
 </resources>

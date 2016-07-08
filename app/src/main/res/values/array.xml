@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="wanttodo">
+        <item>111111</item>
+        <item>222222</item>
+        <item>111111</item>
+        <item>222222</item>
+        <item>111111</item>
+        <item>222222</item>
+        <item>222222</item>
+        <item>222222</item>
+        <item>222222</item>
+        <item>222222</item>
+        <item>222222</item>
+        <item>222222</item>
+
+
+    </string-array>
+    <string-array name="linktime">
+        <item>2016.7.7</item>
+        <item>2016.7.8</item>
+        <item>2016.7.9</item>
+        <item>2016.7.10</item>
+        <item>2016.7.11</item>
+        <item>2016.7.12</item>
+
+
+    </string-array>
+
+
+</resources>

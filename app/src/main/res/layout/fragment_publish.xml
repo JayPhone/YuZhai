@@ -1,21 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:toolbar="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
+        android:id="@+id/publish_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/mainColor"
         toolbar:logo="@drawable/person"
-        toolbar:titleTextColor="#FFFFFF"
-        toolbar:title="发布界面" />
+        toolbar:title="发布界面"
+        toolbar:titleTextColor="#FFFFFF" />
 
-    <TextView
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="我是发布界面"
-        android:textSize="50sp" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_below="@id/publish_toolbar"
+        android:fillViewport="true">
+
+        <fragment
+            android:name="com.yuzhai.fragment.SubOrderFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_sub_publish" />
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/view1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorBlack"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="5"
+            android:background="@drawable/publish_edittext_price_style"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:layout_marginLeft="5dp"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:src="@drawable/money" />
+
+            <EditText
+                android:layout_marginLeft="10dp"
+                android:background="@null"
+                android:layout_width="0dp"
+                android:inputType="number"
+                android:layout_height="fill_parent"
+                android:layout_weight="5"
+                android:hint="@string/projectprice" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/bn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/publish_submit" />
+
+    </LinearLayout>
+</RelativeLayout>
