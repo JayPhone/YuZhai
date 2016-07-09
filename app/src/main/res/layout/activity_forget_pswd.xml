@@ -6,29 +6,42 @@
     android:layout_height="match_parent"
     tools:context="com.yuzhai.ui.ForgetPswdActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/changepsw"
+    <RelativeLayout
+        android:id="@+id/relaout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/mainColor"
-        toolbar:logo="@drawable/out"
-        toolbar:titleTextColor="#FFFFFF">
+        android:layout_height="60dp"
+        android:background="@color/mainColor">
+
+        <ImageView
+            android:id="@+id/down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:src="@drawable/out" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal|center_vertical"
             android:text="忘记密码"
             android:textColor="@color/colorwhite"
-            android:textSize="20sp" />
+            android:textSize="20dp" />
 
-    </android.support.v7.widget.Toolbar>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/relayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/changepsw"
+        android:layout_below="@+id/relaout"
         android:layout_marginLeft="@dimen/register_relativeLayout_marginLeftR"
         android:layout_marginRight="@dimen/register_relativeLayout_marginLeftR"
         android:layout_marginTop="15dp">
