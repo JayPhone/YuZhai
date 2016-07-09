@@ -15,11 +15,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.dao.JsonUtil;
 import com.yuzhai.entry.UserLogin;
-import com.yuzhai.global.Login;
+import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequset;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.yuzhaiwork.R;
@@ -39,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView forgetPswdTextView = null;
 
     //其他引用
+    private CustomApplication customApplication;
     private RequestQueue requestQueue = null;
     private CommonRequset loginRequest = null;
     private UserLogin userLogin = null;
@@ -48,7 +48,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestQueue = Volley.newRequestQueue(this);
+        //获取全局请求队列
+        customApplication = (CustomApplication) getApplication();
+        requestQueue = customApplication.getRequestQueue();
         setContentView(R.layout.activity_login);
         //加载用户名
         inflate_phoneNum_EditText();
@@ -88,10 +90,10 @@ public class LoginActivity extends AppCompatActivity {
                             Log.i("Code", response);
                             if (response.equals("1")) {
                                 Log.i("cookie", loginRequest.getCookie());
-                                Login.setLOGIN(true);
-                                Intent replacrFragment = new Intent();
-                                replacrFragment.setAction("yzgz.broadcast.replace.fragment");
-                                sendBroadcast(replacrFragment);
+                                customApplication.setLOGIN(true);
+                                Intent replaceFragment = new Intent();
+                                replaceFragment.setAction("yzgz.broadcast.replace.fragment");
+                                sendBroadcast(replaceFragment);
                                 finish();
                             } else if (response.equals("-1")) {
                                 Toast.makeText(LoginActivity.this, "账号或密码错误", Toast.LENGTH_SHORT).show();
