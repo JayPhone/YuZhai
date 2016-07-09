@@ -11,16 +11,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.dao.JsonUtil;
 import com.yuzhai.entry.UserLogin;
+import com.yuzhai.global.Login;
+import com.yuzhai.http.CommonRequset;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -40,9 +40,10 @@ public class LoginActivity extends AppCompatActivity {
 
     //其他引用
     private RequestQueue requestQueue = null;
-    private StringRequest loginRequest = null;
+    private CommonRequset loginRequest = null;
     private UserLogin userLogin = null;
     private boolean paramsCheck = false;
+    private Map<String, String> params = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,16 +80,19 @@ public class LoginActivity extends AppCompatActivity {
                 //当返回true时表示所有填写的参数均符合格式
                 paramsCheck = checkData(LoginActivity.this);
                 if (paramsCheck == true) {
-                    loginRequest = new StringRequest(Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
+                    loginRequest = new CommonRequset(Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Response", s);
                             String response = JsonUtil.decodeJson(s, "code");
                             Log.i("Code", response);
                             if (response.equals("1")) {
-                                Intent intent_home = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent_home);
-                                LoginActivity.this.finish();
+                                Log.i("cookie", loginRequest.getCookie());
+                                Login.setLOGIN(true);
+                                Intent replacrFragment = new Intent();
+                                replacrFragment.setAction("yzgz.broadcast.replace.fragment");
+                                sendBroadcast(replacrFragment);
+                                finish();
                             } else if (response.equals("-1")) {
                                 Toast.makeText(LoginActivity.this, "账号或密码错误", Toast.LENGTH_SHORT).show();
                             }
@@ -98,15 +102,11 @@ public class LoginActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError volleyError) {
                             Toast.makeText(LoginActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
                         }
-                    }) {
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<>();
-                            params.put("userPhone", userLogin.getUserPhone());
-                            params.put("userPsw", userLogin.getUserPsw());
-                            return params;
-                        }
-                    };
+                    });
+                    params = new HashMap<String, String>();
+                    params.put("userPhone", userLogin.getUserPhone());
+                    params.put("userPsw", userLogin.getUserPsw());
+                    loginRequest.setParams(params);
                     requestQueue.add(loginRequest);
                 }
             }

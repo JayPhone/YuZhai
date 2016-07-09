@@ -11,7 +11,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
+import com.yuzhai.global.Login;
 import com.yuzhai.ui.LoginActivity;
 import com.yuzhai.ui.UserInfoActivity;
 import com.yuzhai.yuzhaiwork.R;
@@ -26,15 +28,15 @@ import java.util.Map;
  */
 public class MenuFragment extends Fragment {
     //组件引用
-    private Activity mainActivity;
-    private ListView menuItems;
+    private Activity mainActivity = null;
+    private ListView menuItems = null;
     private View mainView = null;
-    private Button login_register;
-    private ImageView userHeader;
+    private Button login_register = null;
+    private ImageView userHeader = null;
+    private TextView verifyRealName = null;
 
     //其他引用
-    private List<Map<String, Object>> items;
-    private boolean LOGIN = false;
+    private List<Map<String, Object>> items = null;
 
     //数据
     int[] imageID = new int[]{
@@ -58,7 +60,7 @@ public class MenuFragment extends Fragment {
     //按登录与否加载布局
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (isLogin())
+        if (Login.getLOGIN())
             mainView = inflater.inflate(R.layout.fragment_menu_login, container, false);
         else
             mainView = inflater.inflate(R.layout.fragment_menu_login_no, container, false);
@@ -71,7 +73,7 @@ public class MenuFragment extends Fragment {
         //获取fragment的宿主Activity
         mainActivity = getActivity();
         //如果已经登录
-        if (isLogin()) {
+        if (Login.getLOGIN()) {
             //添加数据
             items = addItems(imageID, itemName, null);
             //获取头像组件
@@ -82,6 +84,12 @@ public class MenuFragment extends Fragment {
                     Intent intent = new Intent();
                     intent.setClass(mainActivity, UserInfoActivity.class);
                     mainActivity.startActivity(intent);
+                }
+            });
+            verifyRealName = (TextView) mainActivity.findViewById(R.id.verify_real_name);
+            verifyRealName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                 }
             });
         } else {
@@ -110,11 +118,6 @@ public class MenuFragment extends Fragment {
         menuItems.setAdapter(adapter);
     }
 
-    //判断是否登录
-    public boolean isLogin() {
-        return LOGIN;
-    }
-
     //往ListView添加数据
     public List<Map<String, Object>> addItems(int[] images, String[] texts, int[] ignoreItem) {
         List<Map<String, Object>> datas = items = new ArrayList<>();
@@ -123,7 +126,7 @@ public class MenuFragment extends Fragment {
             if (ignoreItem != null) {
                 //查找忽略数组中的项，如果找到，把flag置为true
                 for (int j = 0; j < ignoreItem.length; j++) {
-                    if (i == j) {
+                    if (i == ignoreItem[j]) {
                         flag = true;
                         break;
                     }

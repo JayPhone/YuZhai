@@ -2,6 +2,10 @@ package com.yuzhai.ui;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //退出按钮按的次数
     int click_time = 0;
+    private IntentFilter filter = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         home_icon.setOnClickListener(this);
         order_icon.setOnClickListener(this);
         publish_icon.setOnClickListener(this);
+
+        //注册broadcast
+        filter = new IntentFilter("yzgz.broadcast.replace.fragment");
+        registerReceiver(replaceFragment, filter);
     }
 
     /**
@@ -203,5 +212,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void replaceMenu() {
+        fragmentTransaction.replace(R.id.menu_content, new MenuFragment()).commit();
+    }
+
+    //登录成功后替换界面
+    BroadcastReceiver replaceFragment = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            menuFragment = new MenuFragment();
+            getFragmentManager().beginTransaction().replace(R.id.menu_content, menuFragment).commitAllowingStateLoss();
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(replaceFragment);
     }
 }
