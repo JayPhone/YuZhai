@@ -60,7 +60,6 @@
         <activity
             android:name="com.yuzhai.ui.UserInfoActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.yuzhai.ui.ForgetPswActivity" />
     </application>
 
 </manifest>
