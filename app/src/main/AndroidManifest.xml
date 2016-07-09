@@ -33,7 +33,6 @@
             android:name="com.yuzhai.ui.LoginActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
 
@@ -62,7 +61,6 @@
             android:name="com.yuzhai.ui.UserInfoActivity"
             android:screenOrientation="portrait" />
         <activity android:name="com.yuzhai.ui.ForgetPswActivity" />
-        <activity android:name="com.yuzhai.ui.AccountManagementActivity"></activity>
     </application>
 
 </manifest>
