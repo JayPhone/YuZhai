@@ -11,17 +11,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.dao.JsonUtil;
 import com.yuzhai.entry.UserPhone;
 import com.yuzhai.entry.UserReg;
+import com.yuzhai.global.CustomApplication;
+import com.yuzhai.http.CommonRequset;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -42,18 +41,22 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView loginTextView = null;
 
     //其他引用
+    private CustomApplication customApplication;
+    private Map<String, String> params = null;
     private UserPhone userPhone = null;
     private UserReg userReg = null;
     private RequestQueue requestQueue = null;
-    private StringRequest verifyRequest = null;
-    private StringRequest registerRequest = null;
+    private CommonRequset verifyRequest = null;
+    private CommonRequset registerRequest = null;
     private boolean paramPhoneCheck = false;
     private boolean paramAllDataCheck = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestQueue = Volley.newRequestQueue(this);
+        //获取全局共享请求队列
+        customApplication = (CustomApplication) getApplication();
+        requestQueue = customApplication.getRequestQueue();
         setContentView(R.layout.activity_register);
         //加载界面的各个组件
         inflate_phoneNum_EditText();
@@ -90,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
                 //当返回true时表示填写的手机号码符合格式
                 paramPhoneCheck = checkPhoneNum(context);
                 if (paramPhoneCheck == true) {
-                    verifyRequest = new StringRequest(Request.Method.POST, IPConfig.verifyAddress, new Response.Listener<String>() {
+                    verifyRequest = new CommonRequset(Request.Method.POST, IPConfig.verifyAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Respone", s);
@@ -107,14 +110,12 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError volleyError) {
                             Toast.makeText(RegisterActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
                         }
-                    }) {
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<>();
-                            params.put("userPhone", userPhone.getUserPhone());
-                            return params;
-                        }
-                    };
+                    });
+                    //设置请求参数
+                    params = new HashMap<String, String>();
+                    params.put("userPhone", userPhone.getUserPhone());
+                    verifyRequest.setParams(params);
+                    //添加请求到请求队列
                     requestQueue.add(verifyRequest);
                 }
             }
@@ -128,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 paramAllDataCheck = checkData(context);
                 if (paramAllDataCheck == true) {
-                    registerRequest = new StringRequest(Request.Method.POST, IPConfig.registerAddress, new Response.Listener<String>() {
+                    registerRequest = new CommonRequset(Request.Method.POST, IPConfig.registerAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Respone", s);
@@ -149,16 +150,14 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError volleyError) {
                             Toast.makeText(RegisterActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
                         }
-                    }) {
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<>();
-                            params.put("userPhone", userReg.getUserPhone());
-                            params.put("userPsw", userReg.getUserPsw());
-                            params.put("temVerify", userReg.getTemVerify());
-                            return params;
-                        }
-                    };
+                    });
+                    //设置请求参数
+                    params = new HashMap<String, String>();
+                    params.put("userPhone", userReg.getUserPhone());
+                    params.put("userPsw", userReg.getUserPsw());
+                    params.put("temVerify", userReg.getTemVerify());
+                    registerRequest.setParams(params);
+                    //添加请求到请求队列
                     requestQueue.add(registerRequest);
                 }
             }

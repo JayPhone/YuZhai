@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.yuzhai.global.Login;
+import com.yuzhai.global.CustomApplication;
 import com.yuzhai.ui.LoginActivity;
 import com.yuzhai.ui.UserInfoActivity;
 import com.yuzhai.yuzhaiwork.R;
@@ -37,6 +37,7 @@ public class MenuFragment extends Fragment {
 
     //其他引用
     private List<Map<String, Object>> items = null;
+    private CustomApplication customApplication;
 
     //数据
     int[] imageID = new int[]{
@@ -60,7 +61,10 @@ public class MenuFragment extends Fragment {
     //按登录与否加载布局
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (Login.getLOGIN())
+        //获取fragment的宿主Activity
+        mainActivity = getActivity();
+        customApplication = (CustomApplication) mainActivity.getApplication();
+        if (customApplication.isLOGIN())
             mainView = inflater.inflate(R.layout.fragment_menu_login, container, false);
         else
             mainView = inflater.inflate(R.layout.fragment_menu_login_no, container, false);
@@ -70,10 +74,8 @@ public class MenuFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //获取fragment的宿主Activity
-        mainActivity = getActivity();
         //如果已经登录
-        if (Login.getLOGIN()) {
+        if (customApplication.isLOGIN()) {
             //添加数据
             items = addItems(imageID, itemName, null);
             //获取头像组件
