@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yuzhai.yuzhaiwork">
 
-    <!--权限-->
+    <!-- 权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- 申明权限 操作SD卡 -->
@@ -17,7 +17,8 @@
         android:label="@string/app_chinese_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--主界面-->
+
+        <!-- 主界面 -->
         <activity
             android:name="com.yuzhai.ui.MainActivity"
             android:screenOrientation="portrait">
@@ -27,37 +28,41 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--登录界面-->
+        <!-- 登录界面 -->
         <activity
             android:name="com.yuzhai.ui.LoginActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
-        <!--注册界面-->
+        <!-- 注册界面 -->
         <activity
             android:name="com.yuzhai.ui.RegisterActivity"
             android:screenOrientation="portrait" />
-        <!--忘记密码界面-->
+        <!-- 忘记密码界面 -->
         <activity
             android:name="com.yuzhai.ui.ForgetPswdActivity"
             android:screenOrientation="portrait" />
-        <!--类别界面-->
+        <!-- 类别界面 -->
         <activity
             android:name="com.yuzhai.ui.CategoryActivity"
             android:screenOrientation="portrait" />
-        <!--广告界面-->
+        <!-- 广告界面 -->
         <activity
             android:name="com.yuzhai.ui.AdvertiseActivity"
             android:screenOrientation="portrait" />
-        <!--个人信息界面-->
+        <!-- 个人信息界面 -->
         <activity
             android:name="com.yuzhai.ui.UserInfoActivity"
             android:screenOrientation="portrait" />
+        <activity android:name="com.yuzhai.ui.ForgetPswActivity" />
+        <activity android:name="com.yuzhai.ui.AccountManagementActivity"></activity>
     </application>
 
 </manifest>
