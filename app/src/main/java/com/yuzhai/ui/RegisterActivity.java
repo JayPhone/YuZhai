@@ -20,7 +20,7 @@ import com.yuzhai.dao.JsonUtil;
 import com.yuzhai.entry.UserPhone;
 import com.yuzhai.entry.UserReg;
 import com.yuzhai.global.CustomApplication;
-import com.yuzhai.http.CommonRequset;
+import com.yuzhai.http.CommonRequest;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -46,8 +46,8 @@ public class RegisterActivity extends AppCompatActivity {
     private UserPhone userPhone = null;
     private UserReg userReg = null;
     private RequestQueue requestQueue = null;
-    private CommonRequset verifyRequest = null;
-    private CommonRequset registerRequest = null;
+    private CommonRequest verifyRequest = null;
+    private CommonRequest registerRequest = null;
     private boolean paramPhoneCheck = false;
     private boolean paramAllDataCheck = false;
 
@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
                 //当返回true时表示填写的手机号码符合格式
                 paramPhoneCheck = checkPhoneNum(context);
                 if (paramPhoneCheck == true) {
-                    verifyRequest = new CommonRequset(Request.Method.POST, IPConfig.verifyAddress, new Response.Listener<String>() {
+                    verifyRequest = new CommonRequest(RegisterActivity.this, Request.Method.POST, IPConfig.verifyAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Respone", s);
@@ -129,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 paramAllDataCheck = checkData(context);
                 if (paramAllDataCheck == true) {
-                    registerRequest = new CommonRequset(Request.Method.POST, IPConfig.registerAddress, new Response.Listener<String>() {
+                    registerRequest = new CommonRequest(RegisterActivity.this, Request.Method.POST, IPConfig.registerAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Respone", s);

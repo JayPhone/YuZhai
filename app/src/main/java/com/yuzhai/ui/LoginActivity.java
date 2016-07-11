@@ -19,7 +19,7 @@ import com.yuzhai.config.IPConfig;
 import com.yuzhai.dao.JsonUtil;
 import com.yuzhai.entry.UserLogin;
 import com.yuzhai.global.CustomApplication;
-import com.yuzhai.http.CommonRequset;
+import com.yuzhai.http.CommonRequest;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     //其他引用
     private CustomApplication customApplication;
     private RequestQueue requestQueue = null;
-    private CommonRequset loginRequest = null;
+    private CommonRequest loginRequest = null;
     private UserLogin userLogin = null;
     private boolean paramsCheck = false;
     private Map<String, String> params = null;
@@ -82,15 +82,20 @@ public class LoginActivity extends AppCompatActivity {
                 //当返回true时表示所有填写的参数均符合格式
                 paramsCheck = checkData(LoginActivity.this);
                 if (paramsCheck == true) {
-                    loginRequest = new CommonRequset(Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
+                    loginRequest = new CommonRequest(LoginActivity.this, Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Response", s);
                             String response = JsonUtil.decodeJson(s, "code");
                             Log.i("Code", response);
                             if (response.equals("1")) {
-                                Log.i("cookie", loginRequest.getCookie());
+                                //保存登陆成功的手机号和密码
+                                customApplication.addUserInfo(userLogin.getUserPhone(), userLogin.getUserPsw());
+                                //保存登陆成功的账号的cookie
+                                customApplication.addCookie(loginRequest.getResponseCookie());
+                                //设置为登录状态
                                 customApplication.setLOGIN(true);
+                                //替换为登录的界面
                                 Intent replaceFragment = new Intent();
                                 replaceFragment.setAction("yzgz.broadcast.replace.fragment");
                                 sendBroadcast(replaceFragment);
