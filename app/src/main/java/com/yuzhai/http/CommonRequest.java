@@ -1,12 +1,14 @@
 package com.yuzhai.http;
 
+import android.app.Activity;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
-import com.yuzhai.global.Login;
+import com.yuzhai.global.CustomApplication;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -15,11 +17,15 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/7/9.
  */
-public class CommonRequset extends StringRequest {
-    private Map<String, String> mParams;
+public class CommonRequest extends StringRequest {
 
-    public CommonRequset(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    private Map<String, String> mParams;
+    private CustomApplication customApplication;
+    private String responseCookie;
+
+    public CommonRequest(Activity activity, int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
+        customApplication = (CustomApplication) activity.getApplication();
     }
 
     //重写获取参数方法
@@ -42,7 +48,9 @@ public class CommonRequset extends StringRequest {
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         try {
             Map<String, String> responseHeaders = response.headers;
-            Login.setCOOKIE(responseHeaders.get("Set-Cookie"));
+            if (responseHeaders.containsKey("Set-Cookie")) {
+                responseCookie = responseHeaders.get("Set-Cookie");
+            }
             String dataString = new String(response.data, "UTF-8");
             return Response.success(dataString, HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
@@ -52,15 +60,15 @@ public class CommonRequset extends StringRequest {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        if (Login.getCOOKIE() != null) {
+        if (customApplication.getCookie() != null) {
             HashMap headers = new HashMap();
-            headers.put("Cookie", Login.getCOOKIE());
+            headers.put("Cookie", customApplication.getCookie());
             return headers;
         }
         return super.getHeaders();
     }
 
-    public String getCookie() {
-        return Login.getCOOKIE();
+    public String getResponseCookie() {
+        return responseCookie;
     }
 }

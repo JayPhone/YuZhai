@@ -19,9 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- 主界面 -->
+        <!--欢迎界面-->
         <activity
-            android:name="com.yuzhai.ui.MainActivity"
+            android:name="com.yuzhai.ui.WelcomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,19 +29,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 主界面 -->
+        <activity
+            android:name="com.yuzhai.ui.MainActivity"
+            android:screenOrientation="portrait"/>
         <!-- 登录界面 -->
         <activity
             android:name="com.yuzhai.ui.LoginActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:screenOrientation="portrait"/>
         <!-- 注册界面 -->
         <activity
             android:name="com.yuzhai.ui.RegisterActivity"
@@ -62,7 +58,9 @@
         <activity
             android:name="com.yuzhai.ui.UserInfoActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.yuzhai.ui.SearchActivity"></activity>
+        <!--搜索界面-->
+        <activity android:name="com.yuzhai.ui.SearchActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
