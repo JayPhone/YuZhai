@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -70,6 +72,7 @@ public class SubOrderFragment extends Fragment implements
 
         activity = getActivity();
 
+
         /******
          * 自定义的下拉菜单
          * mSpinerPopWindow是设置您想要做下拉菜单的自定义对象
@@ -84,6 +87,7 @@ public class SubOrderFragment extends Fragment implements
         mTView1 = (TextView) activity.findViewById(R.id.tv_value1);
         mBtnDropDown = (ImageView) activity.findViewById(R.id.bt_dropdown);
         mBtnDropDown1 = (ImageView) activity.findViewById(R.id.bt_dropdown1);
+
 
         mTView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,10 +204,10 @@ public class SubOrderFragment extends Fragment implements
 
 
     protected void AddImageDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity,AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("添加图片");
         builder.setCancelable(true); //响应back按钮
-        builder.setItems(new String[]{"本地相册选择", "手机相机添加", "取消选择图片"},
+        builder.setItems(new String[]{"本地相册选择", "手机相机添加"},
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -213,7 +217,6 @@ public class SubOrderFragment extends Fragment implements
                                 Intent intent = new Intent(Intent.ACTION_PICK,
                                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(intent, IMAGE_OPEN);
-                                //通过onResume()刷新数据
                                 break;
                             case 1: //手机相机
                                 dialog.dismiss();
@@ -231,9 +234,6 @@ public class SubOrderFragment extends Fragment implements
 //                                Intent intentPhoto = new Intent("android.media.action.IMAGE_CAPTURE"); //拍照
 //                                intentPhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 //                                startActivityForResult(intentPhoto, TAKE_PHOTO);
-                                break;
-                            case 2: //取消添加
-                                dialog.dismiss();
                                 break;
                             default:
                                 break;

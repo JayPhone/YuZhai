@@ -19,7 +19,7 @@ import java.io.File;
  * Created by Administrator on 2016/7/8.
  */
 public class UserInfoActivity extends AppCompatActivity {
-    private ImageView userPicture,out;
+    private ImageView userPicture, out;
     private RelativeLayout userChangePic;
 
     @Override
@@ -28,9 +28,9 @@ public class UserInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_userinfo);
 
         //获取id
-        userPicture = (ImageView)findViewById(R.id.userpicture);
-        userChangePic = (RelativeLayout)findViewById(R.id.userrela);
-        out = (ImageView)findViewById(R.id.out);
+        userPicture = (ImageView) findViewById(R.id.userpicture);
+        userChangePic = (RelativeLayout) findViewById(R.id.userrela);
+        out = (ImageView) findViewById(R.id.out);
 
         out.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +50,7 @@ public class UserInfoActivity extends AppCompatActivity {
 
     //对话框显示图片的添加
     protected void AddImageDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("添加图片");
         builder.setCancelable(true); //响应back按钮
         builder.setItems(new String[]{"本地相册选择", "手机相机添加"},

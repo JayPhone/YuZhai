@@ -44,9 +44,9 @@ public class SpinerPopWindow extends PopupWindow implements OnItemClickListener{
 		setHeight(800);
 		
 		setFocusable(true);
-    	ColorDrawable dw = new ColorDrawable(0x00);
+    	ColorDrawable dw = new ColorDrawable(0x01);
 		setBackgroundDrawable(dw);
-	
+
 		
 		mListView = (ListView) view.findViewById(R.id.listview);
 		
@@ -74,6 +74,4 @@ public class SpinerPopWindow extends PopupWindow implements OnItemClickListener{
 		}
 	}
 
-
-	
 }
