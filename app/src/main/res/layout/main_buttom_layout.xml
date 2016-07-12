@@ -3,13 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:layout_alignParentBottom="true"
-    android:background="@color/colorwhite"
-    android:orientation="vertical">
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/color_cecece" />
+    android:background="@color/colorwhite">
 
     <LinearLayout
         android:layout_width="match_parent"

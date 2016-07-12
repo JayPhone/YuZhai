@@ -41,9 +41,13 @@ public class WelcomeActivity extends AppCompatActivity {
                     if (response.equals("1")) {
                         //设置为登录状态
                         customApplication.setLOGIN(true);
+                        //保存登陆成功的账号的cookie
+                        customApplication.addCookie(loginRequest.getResponseCookie());
+                        //进入主界面
                         Intent main_intent = new Intent();
                         main_intent.setClass(WelcomeActivity.this, MainActivity.class);
                         startActivity(main_intent);
+                        //替换菜单为已登录界面
                         Intent replaceFragment = new Intent();
                         replaceFragment.setAction("yzgz.broadcast.replace.fragment");
                         sendBroadcast(replaceFragment);

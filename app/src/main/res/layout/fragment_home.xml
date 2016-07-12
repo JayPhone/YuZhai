@@ -5,59 +5,69 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/main_toolbar"
+        android:id="@+id/home_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/mainColor"
-        toolbar:titleTextColor="#FFFFFF"
-        toolbar:logo="@drawable/person"
-        toolbar:title="主页" />
+        toolbar:title="主页"
+        toolbar:titleTextColor="@color/colorwhite" />
 
-    <com.yuzhai.view.PointViewFlipper
-        android:id="@+id/fli"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/main_toolbar"
-        android:autoStart="true"
-        android:clickable="true"
-        android:flipInterval="3000">
-
-        <ImageView
-            android:id="@+id/image_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY" />
-
-        <ImageView
-            android:id="@+id/image_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY" />
-
-        <ImageView
-            android:id="@+id/image_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY" />
-
-        <ImageView
-            android:id="@+id/image_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY" />
-    </com.yuzhai.view.PointViewFlipper>
-
-    <include
-        android:id="@+id/point_panel"
-        layout="@layout/home_point_buttom_layout"
-        android:layout_width="match_parent"
-        android:layout_height="14dp"
-        android:layout_alignBottom="@id/fli" />
-
-    <com.yuzhai.view.CategoryGridView
-        android:id="@+id/category"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/fli"
-        android:numColumns="3" />
+        android:layout_below="@+id/home_toolbar"
+        android:scrollbars="none">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.yuzhai.view.PointViewFlipper
+                android:id="@+id/fli"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:autoStart="true"
+                android:clickable="true"
+                android:flipInterval="3000">
+
+                <ImageView
+                    android:id="@+id/image_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitXY" />
+
+                <ImageView
+                    android:id="@+id/image_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitXY" />
+
+                <ImageView
+                    android:id="@+id/image_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitXY" />
+
+                <ImageView
+                    android:id="@+id/image_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitXY" />
+            </com.yuzhai.view.PointViewFlipper>
+
+            <include
+                android:id="@+id/point_panel"
+                layout="@layout/home_point_buttom_layout"
+                android:layout_width="match_parent"
+                android:layout_height="14dp"
+                android:layout_alignBottom="@id/fli" />
+
+            <com.yuzhai.view.CategoryGridView
+                android:id="@+id/category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fli"
+                android:numColumns="3" />
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

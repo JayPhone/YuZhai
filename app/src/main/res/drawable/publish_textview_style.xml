@@ -6,11 +6,4 @@
 
     <!--设置填充颜色-->
     <solid android:color="#ededed" />
-
-    <padding
-        android:bottom="9dp"
-        android:left="9dp"
-        android:right="9dp"
-        android:top="9dp" />
-
 </shape>

@@ -9,18 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/mainColor"
-        toolbar:logo="@drawable/person"
         toolbar:title="@string/ordername"
-        toolbar:titleTextColor="#FFFFFF">
-
-
-    </android.support.v7.widget.Toolbar>
+        toolbar:titleTextColor="@color/colorwhite" />
 
     <LinearLayout
         android:id="@+id/linearlayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/order_toolbar"
+        android:layout_below="@+id/order_toolbar"
         android:orientation="horizontal">
 
         <TextView
@@ -29,10 +25,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="发布"
-            android:textSize="20sp"
-
-            />
-
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="0dp"
@@ -48,9 +41,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/linearlayout1"
-        android:src="@drawable/line"
         android:scaleType="matrix"
-        />
+        android:src="@drawable/line" />
 
 
 </RelativeLayout>

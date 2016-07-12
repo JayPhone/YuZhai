@@ -6,16 +6,13 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -52,8 +49,8 @@ public class SubOrderFragment extends Fragment implements
 
     private TextView mTView, mTView1;
     private ImageView mBtnDropDown, mBtnDropDown1;
-    private List<String> wantodo = new ArrayList<String>();//你想要做的填充数组
-    private List<String> linktime = new ArrayList<String>();//时间的填充数组
+    private List<String> wantodo = new ArrayList<>();//你想要做的填充数组
+    private List<String> linktime = new ArrayList<>();//时间的填充数组
     private SpinerPopWindow mSpinerPopWindow;
     private SpinerPopWindow mSpinerPopWindow1;
 
@@ -63,7 +60,7 @@ public class SubOrderFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sub_publish, container, false);
+        return inflater.inflate(R.layout.fragment_publish_scroll, container, false);
     }
 
     @Override
@@ -204,7 +201,7 @@ public class SubOrderFragment extends Fragment implements
 
 
     protected void AddImageDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity,AlertDialog.THEME_HOLO_LIGHT);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("添加图片");
         builder.setCancelable(true); //响应back按钮
         builder.setItems(new String[]{"本地相册选择", "手机相机添加"},

@@ -114,6 +114,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     //初始化分类面板
     public void initCategory(Activity mainActivity) {
         category = (CategoryGridView) mainActivity.findViewById(R.id.category);
+        category.setFocusable(false);
         categoryData = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             Map<String, Object> map = new HashMap<>();
