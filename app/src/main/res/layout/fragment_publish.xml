@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,195 +21,209 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/need_title"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/publish_textview_style"
-        android:hint="需求标题"
-        android:padding="5dp"
-        android:singleLine="true" />
+        android:layout_height="match_parent">
 
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/publish_textview_style"
-        android:hint="您要求的详细描述"
-        android:lines="4"
-        android:padding="5dp" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:background="@color/colorwhite"
-        android:padding="5dp">
-
-        <ImageView
-            android:id="@+id/upload_picture"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:scaleType="centerInside"
-            android:src="@drawable/music" />
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/upload_picture"
-            android:gravity="center_vertical"
-            android:text="点击图标上传图片"
-            android:textSize="16sp" />
-    </RelativeLayout>
+            android:background="@color/color_f1f0f0"
+            android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/publish_textview_style"
-        android:padding="5dp">
 
-        <ImageView
-            android:id="@+id/type_icon"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/it" />
+            <EditText
+                android:id="@+id/need_title"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/publish_textview_style"
+                android:hint="需求标题"
+                android:padding="5dp"
+                android:singleLine="true" />
 
-        <TextView
-            android:id="@+id/type_title"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/type_icon"
-            android:gravity="center_vertical"
-            android:text="项目类型"
-            android:textSize="16sp" />
 
-        <Spinner
-            android:id="@+id/type_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/type_title"
-            android:spinnerMode="dialog" />
-    </RelativeLayout>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/publish_textview_style"
+                android:hint="您要求的详细描述"
+                android:lines="4"
+                android:padding="5dp" />
 
-    <RelativeLayout
-        android:id="@+id/ll_lowwarn1"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:background="@drawable/publish_textview_style"
-        android:padding="5dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:background="@color/colorwhite"
+                android:padding="5dp">
 
-        <ImageView
-            android:id="@+id/date_icon"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/game" />
+                <ImageView
+                    android:id="@+id/upload_picture"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/camera" />
 
-        <TextView
-            android:id="@+id/date_title"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/date_icon"
-            android:gravity="center_vertical"
-            android:text="预期时长"
-            android:textSize="16sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/upload_picture"
+                    android:gravity="center_vertical"
+                    android:text="点击图标上传图片"
+                    android:textSize="16sp" />
+            </RelativeLayout>
 
-        <Spinner
-            android:id="@+id/date_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/date_title"
-            android:spinnerMode="dialog" />
-    </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/publish_textview_style"
+                android:padding="5dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:background="@drawable/publish_textview_style"
-        android:padding="5dp">
+                <ImageView
+                    android:id="@+id/type_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/it" />
 
-        <ImageView
-            android:id="@+id/phone_icon"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/movie" />
+                <TextView
+                    android:id="@+id/type_title"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/type_icon"
+                    android:gravity="center_vertical"
+                    android:text="项目类型"
+                    android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/phone_title"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/phone_icon"
-            android:gravity="center_vertical"
-            android:text="联系电话 :"
-            android:textSize="16sp" />
+                <Spinner
+                    android:id="@+id/type_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/type_title"
+                    android:spinnerMode="dialog" />
+            </RelativeLayout>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/phone_title"
-            android:background="@drawable/publish_textview_style"
-            android:inputType="number"
-            android:maxLength="11"
-            android:singleLine="true" />
-    </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/ll_lowwarn1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/publish_textview_style"
+                android:padding="5dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:background="@drawable/publish_textview_style"
-        android:padding="5dp">
+                <ImageView
+                    android:id="@+id/date_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/game" />
 
-        <ImageView
-            android:id="@+id/money_icon"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/write" />
+                <TextView
+                    android:id="@+id/date_title"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/date_icon"
+                    android:gravity="center_vertical"
+                    android:text="预期时长"
+                    android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/money_title"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/money_icon"
-            android:gravity="center_vertical"
-            android:text="项目金额 :"
-            android:textSize="16sp" />
+                <Spinner
+                    android:id="@+id/date_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/date_title"
+                    android:spinnerMode="dialog" />
+            </RelativeLayout>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="50dp"
-            android:layout_toRightOf="@+id/money_title"
-            android:background="@drawable/publish_textview_style"
-            android:inputType="number"
-            android:singleLine="true" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/publish_textview_style"
+                android:padding="5dp">
 
-        <TextView
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:text="￥" />
-    </RelativeLayout>
+                <ImageView
+                    android:id="@+id/phone_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/movie" />
 
-    <Button
-        android:id="@+id/publish_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/register_button_registerlogin_style"
-        android:text="发  布"
-        android:textColor="@color/colorwhite"
-        android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/phone_title"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/phone_icon"
+                    android:gravity="center_vertical"
+                    android:text="联系电话 :"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/phone_title"
+                    android:background="@drawable/publish_textview_style"
+                    android:inputType="number"
+                    android:maxLength="11"
+                    android:singleLine="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/publish_textview_style"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/money_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/write" />
+
+                <TextView
+                    android:id="@+id/money_title"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/money_icon"
+                    android:gravity="center_vertical"
+                    android:text="项目金额 :"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="50dp"
+                    android:layout_toRightOf="@+id/money_title"
+                    android:background="@drawable/publish_textview_style"
+                    android:inputType="number"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:text="￥" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/publish_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/register_button_registerlogin_style"
+                android:text="发  布"
+                android:textColor="@color/colorwhite"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
