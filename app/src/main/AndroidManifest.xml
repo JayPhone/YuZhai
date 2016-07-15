@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--欢迎界面-->
+        <!-- 欢迎界面 -->
         <activity
             android:name="com.yuzhai.ui.WelcomeActivity"
             android:screenOrientation="portrait">
@@ -59,14 +59,15 @@
         <activity
             android:name="com.yuzhai.ui.UserInfoActivity"
             android:screenOrientation="portrait" />
-        <!--搜索界面-->
+        <!-- 搜索界面 -->
         <activity
             android:name="com.yuzhai.ui.SearchActivity"
             android:screenOrientation="portrait" />
-        <!--详细描述界面-->
+        <!-- 详细描述界面 -->
         <activity
             android:name="com.yuzhai.ui.DetailActivity"
             android:screenOrientation="portrait" />
+        <activity android:name="com.yuzhai.ui.ChangePswdActivity"></activity>
     </application>
 
 </manifest>
