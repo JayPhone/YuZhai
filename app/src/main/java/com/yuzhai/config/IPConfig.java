@@ -7,6 +7,6 @@ package com.yuzhai.config;
  */
 public interface IPConfig {
     final static String verifyAddress = "http://192.168.191.4:8080/jfinal_yzgz/login/verify";
-    final static String loginAddress = "http://192.168.191.4:8080/jfinal_yzgz/login/login";
+    final static String loginAddress = "http://192.168.191.8:8080/jfinal_yzgz/login/login";
     final static String registerAddress = "http://192.168.191.4:8080/jfinal_yzgz/login/register";
 }

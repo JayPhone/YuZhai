@@ -118,6 +118,7 @@ public class OrderFragment extends Fragment {
         orderViews.add(acceptView);
         //创建viewPager的适配器
         orderViewPagerAdapter = new OrderViewPagerAdapter(orderViews);
+        orderViewPager.setOffscreenPageLimit(2);
         orderViewPager.setAdapter(orderViewPagerAdapter);
         orderViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

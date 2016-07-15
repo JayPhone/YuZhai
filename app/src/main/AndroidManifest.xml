@@ -67,7 +67,10 @@
         <activity
             android:name="com.yuzhai.ui.DetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.yuzhai.ui.ChangePswdActivity"></activity>
+        <!-- 修改密码界面 -->
+        <activity
+            android:name="com.yuzhai.ui.ChangePswdActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

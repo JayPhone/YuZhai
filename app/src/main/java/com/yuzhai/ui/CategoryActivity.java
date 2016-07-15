@@ -62,7 +62,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     private List<Map<String, Object>> works;
     private List<Map<String, Object>> infos;
-    private List<Map<String, Object>> resumnes;
+    private List<Map<String, Object>> resumes;
 
     private int title;
     private String[] categoryTexts = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
@@ -71,7 +71,7 @@ public class CategoryActivity extends AppCompatActivity {
     //订单日期
     private String[] dates = new String[]{"2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14"};
     //订单名称
-    private String[] names = new String[]{
+    private String[] workTitles = new String[]{
             "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
             "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
             "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
@@ -84,6 +84,30 @@ public class CategoryActivity extends AppCompatActivity {
     private String[] prices = new String[]{"100", "150", "200", "250", "300", "350", "400"};
     //期限
     private String[] limits = new String[]{"7天", "15天", "30天", "半年", "一年", "半年", "一年"};
+
+    private int[] headImage = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
+
+    private String[] phones = new String[]{"13048119089", "13048119089", "13048119089", "13048119089", "13048119089", "13048119089", "13048119089"};
+
+    private String[] sexs = new String[]{"男", "女", "男", "女", "男", "女", "男"};
+
+    private String[] names = new String[]{"李狗蛋", "李狗蛋", "李狗蛋", "李狗蛋", "李狗蛋", "李狗蛋", "李狗蛋"};
+
+    private int[] infoImage = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
+
+    private String[] infoTitles = new String[]{
+            "菲媒称菲律宾支付南海仲裁案律师费三千万",
+            "菲媒称菲律宾支付南海仲裁案律师费三千万",
+            "菲媒称菲律宾支付南海仲裁案律师费三千万",
+            "菲媒称菲律宾支付南海仲裁案律师费三千万",
+            "菲媒称菲律宾支付南海仲裁案律师费三千万",
+            "菲媒称菲律宾支付南海仲裁案律师费三千万",
+            "菲媒称菲律宾支付南海仲裁案律师费三千万"
+    };
+
+    private String[] infoUpdateTimes = new String[]{"刚刚更新", "刚刚更新", "刚刚更新", "刚刚更新", "刚刚更新", "刚刚更新", "刚刚更新"};
+
+    private String[] infoFroms = new String[]{"御宅工作", "御宅工作", "御宅工作", "御宅工作", "御宅工作", "御宅工作", "御宅工作"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -145,6 +169,8 @@ public class CategoryActivity extends AppCompatActivity {
         categoryViews.add(resumeView);
         //创建viewPager的适配器
         categoryViewPagerAdapter = new CategoryViewPagerAdapter(categoryViews);
+        //三页界面切换时不重新加载
+        categoryViewPager.setOffscreenPageLimit(3);
         categoryViewPager.setAdapter(categoryViewPagerAdapter);
         categoryViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -237,7 +263,7 @@ public class CategoryActivity extends AppCompatActivity {
             Map<String, Object> item = new HashMap<>();
             item.put("image", typeImages[i]);
             item.put("date", dates[i]);
-            item.put("name", names[i]);
+            item.put("name", workTitles[i]);
             item.put("price", prices[i]);
             item.put("limit", limits[i]);
             works.add(item);
@@ -270,9 +296,82 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
     private void initInfoPage() {
+        infoRefresh = (SwipeRefreshLayout) infoView.findViewById(R.id.info_refresh);
+        infoListView = (ListView) infoView.findViewById(R.id.info_listview);
+        infos = new ArrayList<>();
+        for (int i = 0; i < infoImage.length; i++) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("image", infoImage[i]);
+            item.put("title", infoTitles[i]);
+            item.put("time", infoUpdateTimes[i]);
+            item.put("from", infoFroms[i]);
+            infos.add(item);
+        }
+        final SimpleAdapter adapter = new SimpleAdapter(
+                this,
+                infos,
+                R.layout.category_info_listview_item_layout,
+                new String[]{"image", "title", "time", "from"},
+                new int[]{R.id.info_image, R.id.title, R.id.update_time, R.id.info_from}
+        );
 
+        infoListView.setAdapter(adapter);
+        infoRefresh.setColorSchemeResources(R.color.mainColor);
+        infoRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                infoListView.setAdapter(adapter);
+                infoRefresh.setRefreshing(false);
+            }
+        });
+
+        infoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent_detail = new Intent();
+                intent_detail.setClass(CategoryActivity.this, DetailActivity.class);
+                startActivity(intent_detail);
+            }
+        });
     }
 
     private void initResumePage() {
+        resumeRefresh = (SwipeRefreshLayout) resumeView.findViewById(R.id.resume_refresh);
+        resumeListView = (ListView) resumeView.findViewById(R.id.resume_listview);
+        resumes = new ArrayList<>();
+        for (int i = 0; i < headImage.length; i++) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("image", headImage[i]);
+            item.put("name", names[i]);
+            item.put("sex", sexs[i]);
+            item.put("phone", phones[i]);
+            resumes.add(item);
+        }
+        final SimpleAdapter adapter = new SimpleAdapter(
+                this,
+                resumes,
+                R.layout.category_resume_listview_item_layout,
+                new String[]{"name", "sex", "phone", "image"},
+                new int[]{R.id.name, R.id.sex, R.id.phone, R.id.picture}
+        );
+
+        resumeListView.setAdapter(adapter);
+        resumeRefresh.setColorSchemeResources(R.color.mainColor);
+        resumeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                resumeListView.setAdapter(adapter);
+                resumeRefresh.setRefreshing(false);
+            }
+        });
+
+        resumeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent_detail = new Intent();
+                intent_detail.setClass(CategoryActivity.this, DetailActivity.class);
+                startActivity(intent_detail);
+            }
+        });
     }
 }

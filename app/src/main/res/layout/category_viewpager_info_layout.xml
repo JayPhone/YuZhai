@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/info_refresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:gravity="center"
+    <ListView
+        android:id="@+id/info_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="我是资讯界面"
-        android:textSize="30sp" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:divider="@color/color_f1f0f0"
+        android:dividerHeight="10dp" />
+
+</android.support.v4.widget.SwipeRefreshLayout>

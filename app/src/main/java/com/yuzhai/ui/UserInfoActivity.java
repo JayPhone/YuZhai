@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.yuzhaiwork.R;
@@ -17,8 +18,10 @@ import com.yuzhai.yuzhaiwork.R;
  * Created by Administrator on 2016/7/8.
  */
 public class UserInfoActivity extends AppCompatActivity {
-    private Button exit_login;
-    private ImageView userPicture, out;
+    private TextView changePswd;
+    private Button loginExit;
+    private ImageView userPicture;
+    private ImageView back;
     private RelativeLayout userChangePic;
     private CustomApplication customApplication;
 
@@ -27,14 +30,16 @@ public class UserInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinfo);
         customApplication = (CustomApplication) getApplication();
+        initViews();
+    }
 
-        //获取id
+    public void initViews() {
+        changePswd = (TextView) findViewById(R.id.change_pswd);
         userPicture = (ImageView) findViewById(R.id.userpicture);
         userChangePic = (RelativeLayout) findViewById(R.id.userrela);
-        out = (ImageView) findViewById(R.id.back_image);
-        exit_login = (Button) findViewById(R.id.exit_login);
-
-        out.setOnClickListener(new View.OnClickListener() {
+        back = (ImageView) findViewById(R.id.back_image);
+        loginExit = (Button) findViewById(R.id.exit_login);
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -47,7 +52,7 @@ public class UserInfoActivity extends AppCompatActivity {
             }
         });
 
-        exit_login.setOnClickListener(new View.OnClickListener() {
+        loginExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //清除登录的手机号和密码
@@ -61,6 +66,14 @@ public class UserInfoActivity extends AppCompatActivity {
                 replaceFragment.setAction("yzgz.broadcast.replace.fragment");
                 sendBroadcast(replaceFragment);
                 finish();
+            }
+        });
+        changePswd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_changePswd = new Intent();
+                intent_changePswd.setClass(UserInfoActivity.this, ChangePswdActivity.class);
+                startActivity(intent_changePswd);
             }
         });
     }
