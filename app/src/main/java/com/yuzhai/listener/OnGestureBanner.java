@@ -43,10 +43,10 @@ public class OnGestureBanner implements GestureDetector.OnGestureListener {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (e1.getX() - e2.getX() > 50) {
+        if (e1.getX() - e2.getX() > 10) {
             picturePanel.stopFlipping();
             picturePanel.showNext();
-        } else if (e2.getX() - e1.getX() > 50) {
+        } else if (e2.getX() - e1.getX() > 10) {
             picturePanel.stopFlipping();
             picturePanel.showPrevious();
         }

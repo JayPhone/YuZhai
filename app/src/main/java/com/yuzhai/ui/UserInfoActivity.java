@@ -31,7 +31,7 @@ public class UserInfoActivity extends AppCompatActivity {
         //获取id
         userPicture = (ImageView) findViewById(R.id.userpicture);
         userChangePic = (RelativeLayout) findViewById(R.id.userrela);
-        out = (ImageView) findViewById(R.id.out);
+        out = (ImageView) findViewById(R.id.back_image);
         exit_login = (Button) findViewById(R.id.exit_login);
 
         out.setOnClickListener(new View.OnClickListener() {

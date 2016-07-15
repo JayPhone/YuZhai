@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.yuzhai.ui.AdvertiseActivity;
 import com.yuzhai.ui.CategoryActivity;
 import com.yuzhai.ui.MainActivity;
+import com.yuzhai.ui.SearchActivity;
 import com.yuzhai.view.CategoryGridView;
 import com.yuzhai.view.PointViewFlipper;
 import com.yuzhai.yuzhaiwork.R;
@@ -30,14 +31,19 @@ import java.util.Map;
  * Created by Administrator on 2016/6/10.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener {
+    private Activity mainActivity;
     //滚动面板下方的圆点面板
     private LinearLayout pointPanel;
     //滚动面板下方的圆点
     private TextView point_1, point_2, point_3, point_4;
     //圆点数组
     private TextView[] points;
+    //搜索框
+    private TextView searchView;
     //滚动面板的图片
     private ImageView image_1, image_2, image_3, image_4;
+    //用于弹出个人信息面板
+    private ImageView personImage;
     //滚动面板
     private PointViewFlipper picturePanel;
     //类别面板
@@ -68,16 +74,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initValues() {
-        Activity mainActivity = getActivity();
+        mainActivity = getActivity();
+        //初始化标题栏
+        initToolbar(mainActivity);
         //初始化焦点图
         initBanner(mainActivity);
         //初始化分类面板
         initCategory(mainActivity);
     }
 
+    //初始化标题栏
+    public void initToolbar(final Activity mainActivity) {
+        personImage = (ImageView) mainActivity.findViewById(R.id.person_image);
+        personImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.menu.showMenu();
+            }
+        });
+        searchView = (TextView) mainActivity.findViewById(R.id.search_view);
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent search_intent = new Intent();
+                search_intent.setClass(mainActivity, SearchActivity.class);
+                startActivity(search_intent);
+            }
+        });
+    }
+
     //初始化焦点图
     public void initBanner(Activity mainActivity) {
-
         //初始化下面的圆点面板
         pointPanel = (LinearLayout) mainActivity.findViewById(R.id.point_panel);
         point_1 = (TextView) pointPanel.findViewById(R.id.point_1);
@@ -116,7 +143,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         category = (CategoryGridView) mainActivity.findViewById(R.id.category);
         category.setFocusable(false);
         categoryData = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < imageId.length; i++) {
             Map<String, Object> map = new HashMap<>();
             map.put("image", imageId[i]);
             map.put("text", categoryTexts[i]);
@@ -128,6 +155,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent_category = new Intent(getActivity(), CategoryActivity.class);
+                intent_category.putExtra("title", position);
                 startActivity(intent_category);
             }
         });

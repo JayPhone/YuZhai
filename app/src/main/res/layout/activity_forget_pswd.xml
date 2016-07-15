@@ -1,36 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:toolbar="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.yuzhai.ui.ForgetPswdActivity">
 
     <RelativeLayout
-        android:id="@+id/relaout"
+        android:id="@+id/forget_pswd_toolbar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/mainColor">
 
         <ImageView
-            android:id="@+id/down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:id="@+id/back_image"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             android:clickable="true"
-            android:src="@drawable/out" />
+            android:src="@drawable/back" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:gravity="center_horizontal|center_vertical"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:text="忘记密码"
             android:textColor="@color/colorwhite"
             android:textSize="20dp" />
@@ -41,7 +35,7 @@
         android:id="@+id/relayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/relaout"
+        android:layout_below="@+id/forget_pswd_toolbar"
         android:layout_marginLeft="@dimen/register_relativeLayout_marginLeftR"
         android:layout_marginRight="@dimen/register_relativeLayout_marginLeftR"
         android:layout_marginTop="15dp">

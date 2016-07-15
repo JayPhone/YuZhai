@@ -6,24 +6,37 @@
     tools:context="com.yuzhai.ui.SearchActivity">
 
     <LinearLayout
-        android:id="@+id/linearlayouttop"
+        android:id="@+id/history_record_top"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/colorgary"
+        android:background="@color/mainColor"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:id="@+id/back_image"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
             android:src="@drawable/back" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorwhite"
+            android:src="@drawable/search_black" />
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:layout_weight="5"
+            android:background="@color/colorwhite"
             android:hint="请输入您想要搜索的内容" />
 
         <Button
@@ -32,25 +45,24 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@drawable/search_button"
-            android:text="搜索" />
+            android:text="搜索"
+            android:textColor="@color/colorwhite" />
 
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/contentPanel"
+    <ListView
+        android:id="@+id/history_record_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/linearlayouttop"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/history_record_top" />
 
-        <fragment
-            android:name="com.yuzhai.fragment.SearchFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout="@layout/fragment_search" />
-
-
-    </ScrollView>
-
+    <Button
+        android:id="@+id/delete_history_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/history_record_listview"
+        android:background="@color/colorgary"
+        android:text="消除历史纪录"
+        android:textColor="@color/colorBlack" />
 
 </RelativeLayout>

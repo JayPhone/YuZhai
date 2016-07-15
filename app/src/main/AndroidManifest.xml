@@ -32,12 +32,13 @@
         <!-- 主界面 -->
         <activity
             android:name="com.yuzhai.ui.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <!-- 登录界面 -->
         <activity
             android:name="com.yuzhai.ui.LoginActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <!-- 注册界面 -->
         <activity
             android:name="com.yuzhai.ui.RegisterActivity"
@@ -59,8 +60,13 @@
             android:name="com.yuzhai.ui.UserInfoActivity"
             android:screenOrientation="portrait" />
         <!--搜索界面-->
-        <activity android:name="com.yuzhai.ui.SearchActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.yuzhai.ui.SearchActivity"
+            android:screenOrientation="portrait" />
+        <!--详细描述界面-->
+        <activity
+            android:name="com.yuzhai.ui.DetailActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
