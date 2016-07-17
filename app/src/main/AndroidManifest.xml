@@ -71,6 +71,9 @@
         <activity
             android:name="com.yuzhai.ui.ChangePswdActivity"
             android:screenOrientation="portrait" />
+        <activity android:name="com.yuzhai.ui.SetUpActivity" />
+        <activity android:name="com.yuzhai.ui.FeedBackActivity" />
+        <activity android:name="com.yuzhai.ui.headerImageActivity"></activity>
     </application>
 
 </manifest>
