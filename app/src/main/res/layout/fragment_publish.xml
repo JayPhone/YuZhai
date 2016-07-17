@@ -49,7 +49,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/publish_textview_style"
                 android:hint="您要求的详细描述"
-                android:lines="4"
+                android:lines="6"
                 android:padding="5dp" />
 
             <RelativeLayout
@@ -183,7 +183,7 @@
                     android:id="@+id/money_icon"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/write" />
+                    android:src="@drawable/corn" />
 
                 <TextView
                     android:id="@+id/money_title"
@@ -216,9 +216,7 @@
                 android:id="@+id/publish_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="15dp"
+                android:layout_margin="15dp"
                 android:background="@drawable/register_button_registerlogin_style"
                 android:text="发  布"
                 android:textColor="@color/colorwhite"

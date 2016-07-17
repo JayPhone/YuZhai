@@ -16,7 +16,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.dao.JsonUtil;
+import com.yuzhai.util.JsonUtil;
 import com.yuzhai.entry.UserPhone;
 import com.yuzhai.entry.UserReg;
 import com.yuzhai.global.CustomApplication;

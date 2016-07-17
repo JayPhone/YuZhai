@@ -1,4 +1,4 @@
-package com.yuzhai.dao;
+package com.yuzhai.util;
 
 import com.google.gson.Gson;
 
