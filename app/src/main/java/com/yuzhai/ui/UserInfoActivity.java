@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
@@ -18,7 +20,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.util.BitmapUtil;
@@ -30,8 +31,6 @@ import java.util.Locale;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.RuntimePermissions;
 
 /**
@@ -179,37 +178,39 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void showGallery() {
-        Intent intent_gallery = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent_gallery = new Intent(Intent.ACTION_PICK);
         intent_gallery.setType("image/*");
         startActivityForResult(intent_gallery, GALLERY_PEQUEST);
-    }
-
-    //当第一次被拒绝后，第二次显示一个理由来解释为什么需要许可
-    @OnShowRationale(Manifest.permission.CAMERA)
-    public void showRationaleForCamera(permissions.dispatcher.PermissionRequest request) {
-        // 调用proceed() or cancel() 上提供的 PermissionRequest来决定继续执行还是终止操作
-        Toast.makeText(this, "该权限用于调用手机相机", Toast.LENGTH_SHORT).show();
-    }
-
-    //许可被拒绝后的处理
-    @OnPermissionDenied(Manifest.permission.CAMERA)
-    public void onCameraDenied() {
-        Toast.makeText(this, "拒绝授予相机权限", Toast.LENGTH_SHORT).show();
     }
 
     //当用户选择不再提示后的处理
     @OnNeverAskAgain(Manifest.permission.CAMERA)
     void onCameraNeverAskAgain() {
-        Toast.makeText(this, "相机权限授予被拒绝,请手动开启", Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("权限申请");
+        builder.setMessage("请到设置 - 应用 - 御宅工作 - 权限中开启相机权限，以正常使用头像上传，需求图片上传等功能");
+        builder.setPositiveButton("设置", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent_getPermission = new Intent(Settings.ACTION_SETTINGS);
+                startActivity(intent_getPermission);
+            }
+        });
+        builder.setNegativeButton("取消", null).create().show();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_PEQUEST && resultCode == Activity.RESULT_OK) {
-            headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 70, 70));
+            headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 200, 200));
         } else if (requestCode == GALLERY_PEQUEST && resultCode == Activity.RESULT_OK) {
-
+            Uri uri = data.getData();
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(path, 70, 70));
+            }
         }
     }
 

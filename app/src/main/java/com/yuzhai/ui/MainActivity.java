@@ -52,6 +52,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int click_time = 0;
     private IntentFilter filter = null;
 
+    //fragment的Tag
+    private final String homeFragmentTag = "homeFragment";
+    private final String orderFragmentTag = "orderFragment";
+    private final String publishFragmentTag = "publishFragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 changeStatus(home_icon, home_image, home_text, R.id.home_image, R.id.home_text, R.drawable.home_click, R.color.mainColor);
                 if (homeFragment == null) {
                     homeFragment = new HomeFragment();
-                    fragmentTransaction.add(R.id.main_content, homeFragment);
+                    fragmentTransaction.add(R.id.main_content, homeFragment, homeFragmentTag);
                 } else {
                     fragmentTransaction.show(homeFragment);
                 }
@@ -160,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 changeStatus(order_icon, order_image, order_text, R.id.order_image, R.id.order_text, R.drawable.order_click, R.color.mainColor);
                 if (orderFragment == null) {
                     orderFragment = new OrderFragment();
-                    fragmentTransaction.add(R.id.main_content, orderFragment);
+                    fragmentTransaction.add(R.id.main_content, orderFragment, orderFragmentTag);
                 } else {
                     fragmentTransaction.show(orderFragment);
                 }
@@ -169,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 changeStatus(publish_icon, publish_image, publish_text, R.id.publish_image, R.id.publish_text, R.drawable.publish_click, R.color.mainColor);
                 if (publishFragment == null) {
                     publishFragment = new PublishFragment();
-                    fragmentTransaction.add(R.id.main_content, publishFragment);
+                    fragmentTransaction.add(R.id.main_content, publishFragment, publishFragmentTag);
                 } else {
                     fragmentTransaction.show(publishFragment);
                 }
@@ -231,5 +236,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(replaceFragment);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        fragmentManager.findFragmentByTag(publishFragmentTag).onActivityResult(requestCode, resultCode, data);
     }
 }

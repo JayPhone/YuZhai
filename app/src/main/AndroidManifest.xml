@@ -58,7 +58,13 @@
         <!-- 个人信息界面 -->
         <activity
             android:name="com.yuzhai.ui.UserInfoActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
         <!-- 搜索界面 -->
         <activity
             android:name="com.yuzhai.ui.SearchActivity"
@@ -70,6 +76,18 @@
         <!-- 修改密码界面 -->
         <activity
             android:name="com.yuzhai.ui.ChangePswdActivity"
+            android:screenOrientation="portrait" />
+        <!--设置界面-->
+        <activity
+            android:name="com.yuzhai.ui.SetUpActivity"
+            android:screenOrientation="portrait" />
+        <!--反馈界面-->
+        <activity
+            android:name="com.yuzhai.ui.FeedBackActivity"
+            android:screenOrientation="portrait" />
+        <!--头像界面-->
+        <activity
+            android:name="com.yuzhai.ui.headerImageActivity"
             android:screenOrientation="portrait" />
     </application>
 

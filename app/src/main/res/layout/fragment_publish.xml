@@ -31,7 +31,6 @@
             android:background="@color/color_f1f0f0"
             android:orientation="vertical">
 
-
             <EditText
                 android:id="@+id/need_title"
                 android:layout_width="match_parent"
@@ -42,14 +41,22 @@
                 android:padding="5dp"
                 android:singleLine="true" />
 
-
             <EditText
+                android:id="@+id/need_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/publish_textview_style"
                 android:hint="您要求的详细描述"
                 android:lines="6"
+                android:padding="5dp" />
+
+            <LinearLayout
+                android:id="@+id/images_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorwhite"
+                android:orientation="horizontal"
                 android:padding="5dp" />
 
             <RelativeLayout
@@ -60,9 +67,10 @@
                 android:padding="5dp">
 
                 <ImageView
-                    android:id="@+id/upload_picture"
+                    android:id="@+id/upload_image"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
+                    android:clickable="true"
                     android:scaleType="centerInside"
                     android:src="@drawable/camera" />
 
@@ -70,7 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@+id/upload_picture"
+                    android:layout_toRightOf="@+id/upload_image"
                     android:gravity="center_vertical"
                     android:text="点击图标上传图片"
                     android:textSize="16sp" />

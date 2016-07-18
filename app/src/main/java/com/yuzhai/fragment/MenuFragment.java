@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.ui.LoginActivity;
+import com.yuzhai.ui.SetUpActivity;
 import com.yuzhai.ui.UserInfoActivity;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -108,8 +110,11 @@ public class MenuFragment extends Fragment {
                 }
             });
         }
+        initListView(items);
+    }
 
-        //向ListView中添加数据
+    public void initListView(List<Map<String, Object>> items) {
+        //给ListView设置设配器
         menuItems = (ListView) mainActivity.findViewById(R.id.menu_items);
         SimpleAdapter adapter = new SimpleAdapter(mainActivity,
                 items,
@@ -118,6 +123,50 @@ public class MenuFragment extends Fragment {
                 new int[]{R.id.item_image, R.id.item_text}
         );
         menuItems.setAdapter(adapter);
+
+        if (customApplication.isLOGIN()) {
+            menuItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position) {
+                        case 0:
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            Intent intent_setUp = new Intent();
+                            intent_setUp.setClass(mainActivity, SetUpActivity.class);
+                            startActivity(intent_setUp);
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
+                    }
+                }
+            });
+        } else {
+            menuItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position) {
+                        case 0:
+                            break;
+                        case 1:
+                            Intent intent_setUp = new Intent();
+                            intent_setUp.setClass(mainActivity, SetUpActivity.class);
+                            startActivity(intent_setUp);
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                    }
+                }
+            });
+        }
     }
 
     //往ListView添加数据
