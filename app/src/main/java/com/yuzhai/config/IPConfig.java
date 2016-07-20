@@ -9,4 +9,6 @@ public interface IPConfig {
     final static String verifyAddress = "http://192.168.191.1:8080/jfinal_yzgz/login/verify";
     final static String loginAddress = "http://192.168.191.1:8080/jfinal_yzgz/login/login";
     final static String registerAddress = "http://192.168.191.1:8080/jfinal_yzgz/login/register";
+    final static String publishAddress = "http://192.168.191.1:8080/jfinal_yzgz/publish/save";
+    final static String uploadHeadAddress = "http://192.168.191.1:8080/jfinal_yzgz/headupload/uploadUserHead";
 }

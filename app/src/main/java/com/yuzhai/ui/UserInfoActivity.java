@@ -5,29 +5,38 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
+import com.yuzhai.http.CommonRequest;
+import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.util.BitmapUtil;
+import com.yuzhai.util.CheckData;
+import com.yuzhai.util.FileUtil;
+import com.yuzhai.util.GetPathUtil;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
@@ -47,15 +56,17 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     private RelativeLayout changeUserName;
 
     private CustomApplication customApplication;
-    private String imagePath;
-    private int CAMERA_PEQUEST = 1;
-    private int GALLERY_PEQUEST = 2;
+    private String imageCameraPath;
+    private RequestQueue requestQueue;
+    private final int CAMERA_PEQUEST = 1;
+    private final int IMAGEPICK_PEQUEST = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinfo);
         customApplication = (CustomApplication) getApplication();
+        requestQueue = customApplication.getRequestQueue();
         initViews();
     }
 
@@ -89,10 +100,10 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.header_image:
                 //打开查看头像界面
-                Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(imagePath)), "image/*");
-                startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setAction(android.content.Intent.ACTION_VIEW);
+//                intent.setDataAndType(Uri.fromFile(new File(imageCameraPath)), "image/*");
+//                startActivity(intent);
                 break;
             case R.id.change_pswd:
                 //打开修改密码界面
@@ -121,13 +132,34 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
 
     //修改用户名对话框
     public void changeUserNameDialog() {
+        final View view = getLayoutInflater().inflate(R.layout.userinfo_change_username_layout, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("输入用户名");
-        builder.setView(getLayoutInflater().inflate(R.layout.userinfo_change_username_layout, null));
+        builder.setView(view);
         builder.setPositiveButton("修改", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                final EditText changeUserName = (EditText) view.findViewById(R.id.change_user_name_edit);
+                if (!CheckData.isEmpty(changeUserName.getText().toString())) {
+                    CommonRequest commonRequest = new CommonRequest(Request.Method.POST, null, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String s) {
+                            //设置用户名
+                            userName.setText(changeUserName.getText().toString());
+                            Toast.makeText(UserInfoActivity.this, "用户名修改成功", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Toast.makeText(UserInfoActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("userName", changeUserName.getText().toString());
+                    commonRequest.setParams(params);
+                    commonRequest.setmHeaders(createHeaders());
+                    requestQueue.add(commonRequest);
+                }
             }
         });
         builder.setNegativeButton("取消", null).create().show();
@@ -147,7 +179,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                                 UserInfoActivityPermissionsDispatcher.showCameraWithCheck(UserInfoActivity.this);
                                 break;
                             case 1:
-                                showGallery();
+                                showImagePick();
                                 break;
                         }
                     }
@@ -158,29 +190,26 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     //执行需要权限的操作。如果这是由permissionsdispatcher执行，许可将被授予
     @NeedsPermission(Manifest.permission.CAMERA)
     public void showCamera() {
-        String state = Environment.getExternalStorageState();
-        if (state.equals(Environment.MEDIA_MOUNTED)) {
-            Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            //保存图片的路径
-            String out_file_path = Environment.getExternalStorageDirectory() + "/YuZhai/headerImage";
-            //创建图片路径文件夹
-            File dir = new File(out_file_path);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            imagePath = out_file_path + "/hdIMG_" + new DateFormat().format("yyyyMMdd_HHmmss", Calendar.getInstance(Locale.CHINA)) + ".jpg";
-            Log.i("path", imagePath);
-            intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(imagePath)));
-            startActivityForResult(intent_camera, CAMERA_PEQUEST);
-        } else {
-            Log.i("错误", "请确认已经插入SD卡");
-        }
+        //生成路径
+        imageCameraPath = FileUtil.createFilePath(FileUtil.HEAD_IMAGE);
+        //启动相机
+        Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(imageCameraPath)));
+        startActivityForResult(intent_camera, CAMERA_PEQUEST);
     }
 
-    public void showGallery() {
-        Intent intent_gallery = new Intent(Intent.ACTION_PICK);
-        intent_gallery.setType("image/*");
-        startActivityForResult(intent_gallery, GALLERY_PEQUEST);
+    public void showImagePick() {
+        Intent intent_imagePick = new Intent(Intent.ACTION_PICK);
+        intent_imagePick.setType("image/*");
+        //是否按比例缩放
+        intent_imagePick.putExtra("scale", "true");
+        //图片输出大小
+        intent_imagePick.putExtra("outputX", 640);
+        intent_imagePick.putExtra("outputY", 640);
+        //图片输出格式
+        intent_imagePick.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent_imagePick.putExtra("return-data", false);
+        startActivityForResult(intent_imagePick, IMAGEPICK_PEQUEST);
     }
 
     //当用户选择不再提示后的处理
@@ -202,16 +231,46 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_PEQUEST && resultCode == Activity.RESULT_OK) {
-            headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 200, 200));
-        } else if (requestCode == GALLERY_PEQUEST && resultCode == Activity.RESULT_OK) {
-            Uri uri = data.getData();
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(path, 70, 70));
-            }
+        switch (requestCode) {
+            case CAMERA_PEQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imageCameraPath, 100, 100));
+                    uploadHeaderImage(new File(imageCameraPath));
+                }
+                break;
+            case IMAGEPICK_PEQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    //将获取到的图片URI传给图片裁剪
+                    Uri uri = data.getData();
+                    imageCameraPath = GetPathUtil.getImageAbsolutePath(this, uri);
+                    headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imageCameraPath, 100, 100));
+                    uploadHeaderImage(new File(imageCameraPath));
+                }
+                break;
         }
+    }
+
+    public void uploadHeaderImage(File file) {
+        FileUploadRequest fileUploadRequest = new FileUploadRequest(IPConfig.uploadHeadAddress, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                Toast.makeText(UserInfoActivity.this, "头像上传成功", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Toast.makeText(UserInfoActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
+            }
+        }, "image", file, null);
+        fileUploadRequest.setmHeaders(createHeaders());
+        requestQueue.add(fileUploadRequest);
+    }
+
+    public Map<String, String> createHeaders() {
+        //设置请求参数
+        Map<String, String> headers = new HashMap<>();
+        headers.put("cookie", customApplication.getCookie());
+        return headers;
     }
 
     //权限许可情况调用

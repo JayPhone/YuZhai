@@ -111,7 +111,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/register_button"
+        android:id="@+id/change_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/relayout1"

@@ -1,6 +1,5 @@
 package com.yuzhai.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +15,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.util.JsonUtil;
 import com.yuzhai.entry.UserLogin;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.util.CheckData;
+import com.yuzhai.util.JsonUtil;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.HashMap;
@@ -80,9 +79,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //校验数据
                 //当返回true时表示所有填写的参数均符合格式
-                paramsCheck = checkData(LoginActivity.this);
+                paramsCheck = checkData();
                 if (paramsCheck == true) {
-                    loginRequest = new CommonRequest(LoginActivity.this, Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
+                    loginRequest = new CommonRequest(Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Response", s);
@@ -124,24 +123,24 @@ public class LoginActivity extends AppCompatActivity {
      *如果填写的数据不正确，返回false
      * 如果填写的数据全部都正确，返回true
      */
-    public boolean checkData(Context context) {
+    public boolean checkData() {
         //获取账号和密码
         String userName_str = userNameEdit.getText().toString();
         String pswd_str = passwordEdit.getText().toString();
 
         /*CheckData类用于校验填写的数据*/
         if (CheckData.isEmpty(userName_str)) {
-            Toast.makeText(context, "手机号码不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "手机号码不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (!CheckData.matchLength(userName_str, 11)) {
-            Toast.makeText(context, "手机号码长度应为11位", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "手机号码长度应为11位", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (CheckData.isEmpty(pswd_str)) {
-            Toast.makeText(context, "密码不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "密码不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
 

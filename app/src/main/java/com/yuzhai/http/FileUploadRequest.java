@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +32,7 @@ public class FileUploadRequest extends Request<String> {
     private List<File> mFileParts;
     private String mFilePartName;
     private Map<String, String> mParams;
+    private Map<String, String> mHeaders;
 
     /**
      * 单个文件＋参数 上传
@@ -100,12 +99,19 @@ public class FileUploadRequest extends Request<String> {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        Map<String, String> headers = super.getHeaders();
-
-        if (headers == null || headers.equals(Collections.emptyMap())) {
-            headers = new HashMap<>();
+        if (getmHeaders() != null) {
+            return getmHeaders();
         }
-        return headers;
+        return super.getHeaders();
+    }
+
+
+    public Map<String, String> getmHeaders() {
+        return mHeaders;
+    }
+
+    public void setmHeaders(Map<String, String> mHeaders) {
+        this.mHeaders = mHeaders;
     }
 
     @Override

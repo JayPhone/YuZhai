@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorgary"
+    android:background="@color/color_f1f0f0"
     android:orientation="vertical"
     tools:context="com.yuzhai.ui.FeedBackActivity">
 
@@ -30,23 +30,20 @@
             android:text="意见反馈"
             android:textColor="@color/colorwhite"
             android:textSize="20dp" />
-
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:background="@color/colorwhite">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="5dp"
             android:background="@null"
-            android:hint="请输入你想反馈的信息" />
+            android:hint="请输入你想反馈的信息"
+            android:padding="5dp" />
     </ScrollView>
 
     <LinearLayout
@@ -59,23 +56,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="10dp"
             android:gravity="center_vertical"
-            android:text="手机号码"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="2dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@color/colorgary"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp" />
+            android:text="手机号码 :"
+            android:textSize="16sp" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
             android:background="@null" />
 
     </LinearLayout>
@@ -83,43 +72,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1dp"
         android:background="@color/colorwhite"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="10dp"
             android:gravity="center_vertical"
-            android:text="邮箱"
-            android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="2dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@color/colorgary"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp" />
+            android:text="    邮箱     :"
+            android:textSize="16sp" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
             android:background="@null" />
-
     </LinearLayout>
 
     <Button
         android:id="@+id/login_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/register_button_registerlogin_style"
-        android:text="提交"
+        android:text="提 交"
         android:textColor="@color/colorwhite"
         android:textSize="20sp" />
 

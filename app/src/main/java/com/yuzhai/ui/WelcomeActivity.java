@@ -50,7 +50,7 @@ public class WelcomeActivity extends AppCompatActivity {
         customApplication = (CustomApplication) getApplication();
         requestQueue = customApplication.getRequestQueue();
         if (customApplication.getUserPhone() != null && customApplication.getPassword() != null) {
-            loginRequest = new CommonRequest(this, Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
+            loginRequest = new CommonRequest(Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String s) {
                     String response = JsonUtil.decodeJson(s, "code");

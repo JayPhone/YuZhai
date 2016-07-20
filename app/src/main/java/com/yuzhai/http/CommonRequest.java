@@ -1,17 +1,13 @@
 package com.yuzhai.http;
 
-import android.app.Activity;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
-import com.yuzhai.global.CustomApplication;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,13 +15,12 @@ import java.util.Map;
  */
 public class CommonRequest extends StringRequest {
 
-    private Map<String, String> mParams;
-    private CustomApplication customApplication;
     private String responseCookie;
+    private Map<String, String> mParams;
+    private Map<String, String> mHeaders;
 
-    public CommonRequest(Activity activity, int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    public CommonRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
-        customApplication = (CustomApplication) activity.getApplication();
     }
 
     //重写获取参数方法
@@ -60,12 +55,18 @@ public class CommonRequest extends StringRequest {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        if (customApplication.getCookie() != null) {
-            HashMap headers = new HashMap();
-            headers.put("Cookie", customApplication.getCookie());
-            return headers;
+        if (getmHeaders() != null) {
+            return getmHeaders();
         }
         return super.getHeaders();
+    }
+
+    public Map<String, String> getmHeaders() {
+        return mHeaders;
+    }
+
+    public void setmHeaders(Map<String, String> mHeaders) {
+        this.mHeaders = mHeaders;
     }
 
     public String getResponseCookie() {

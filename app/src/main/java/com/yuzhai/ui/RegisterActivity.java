@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
                 //当返回true时表示填写的手机号码符合格式
                 paramPhoneCheck = checkPhoneNum(context);
                 if (paramPhoneCheck == true) {
-                    verifyRequest = new CommonRequest(RegisterActivity.this, Request.Method.POST, IPConfig.verifyAddress, new Response.Listener<String>() {
+                    verifyRequest = new CommonRequest(Request.Method.POST, IPConfig.verifyAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Respone", s);
@@ -129,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 paramAllDataCheck = checkData(context);
                 if (paramAllDataCheck == true) {
-                    registerRequest = new CommonRequest(RegisterActivity.this, Request.Method.POST, IPConfig.registerAddress, new Response.Listener<String>() {
+                    registerRequest = new CommonRequest(Request.Method.POST, IPConfig.registerAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Respone", s);

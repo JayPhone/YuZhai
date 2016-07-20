@@ -6,18 +6,18 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,15 +25,23 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.yuzhai.config.IPConfig;
+import com.yuzhai.entry.PublishEntry;
+import com.yuzhai.global.CustomApplication;
+import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.util.BitmapUtil;
+import com.yuzhai.util.CheckData;
+import com.yuzhai.util.FileUtil;
+import com.yuzhai.util.GetPathUtil;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
@@ -44,20 +52,35 @@ import permissions.dispatcher.RuntimePermissions;
  * Created by Administrator on 2016/7/13.
  */
 @RuntimePermissions
-public class PublishFragment extends Fragment implements View.OnTouchListener {
+public class PublishFragment extends Fragment implements View.OnTouchListener, View.OnClickListener {
+    //全局变量
     private Activity mainActivity;
-    private EditText needContent;
-    private ImageView uploadImage;
+    private CustomApplication customApplication;
+    private RequestQueue requestQueue;
+
+    //组件引用
+    private EditText needTitleEdit;
+    private EditText needContentEdit;
+    private LinearLayout imagesPreviewLayout;
+    private ImageView uploadImageView;
     private Spinner typeSpinner;
     private Spinner dateSpinner;
-    private String[] typeTexts = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
-    private String[] dateTexts = new String[]{"7天", "15天", "30天", "365天"};
-    private int CAMERA_PEQUEST = 1;
-    private int GALLERY_PEQUEST = 2;
-    private List<String> imagesPath;
+    private EditText contactEdit;
+    private EditText moneyEdit;
+    private Button publishButton;
+
+    //数据引用
+    private String[] typeTexts = new String[]{"请选择项目类型", "软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
+    private String[] dateTexts = new String[]{"请选择预期时长", "7天", "15天", "30天", "365天"};
+
     private String imagePath;
-    private LinearLayout imagesPreview;
-    private List<ImageView> imageViews;
+    private List<String> imagePathsList;
+    private List<ImageView> imageViewsList;
+    private PublishEntry publishEntry;
+
+    //Activity请求码
+    private final int CAMERA_PEQUEST = 1;
+    private final int IMAGEPICK_PEQUEST = 2;
 
     @Override
 
@@ -69,24 +92,33 @@ public class PublishFragment extends Fragment implements View.OnTouchListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        imagesPath = new ArrayList<>();
-        imageViews = new ArrayList<>();
+        customApplication = (CustomApplication) mainActivity.getApplication();
+        requestQueue = customApplication.getRequestQueue();
+        imagePathsList = new ArrayList<>();
+        imageViewsList = new ArrayList<>();
         initViews();
-        initTypeSpinner();
-        initDateSpinner();
     }
 
     public void initViews() {
-        imagesPreview = (LinearLayout) mainActivity.findViewById(R.id.images_preview);
-        needContent = (EditText) mainActivity.findViewById(R.id.need_content);
-        needContent.setOnTouchListener(this);
-        uploadImage = (ImageView) mainActivity.findViewById(R.id.upload_image);
-        uploadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addImageDialog();
-            }
-        });
+        //查找引用
+        needTitleEdit = (EditText) mainActivity.findViewById(R.id.need_title);
+        needContentEdit = (EditText) mainActivity.findViewById(R.id.need_content);
+        imagesPreviewLayout = (LinearLayout) mainActivity.findViewById(R.id.images_preview);
+        uploadImageView = (ImageView) mainActivity.findViewById(R.id.upload_image);
+        contactEdit = (EditText) mainActivity.findViewById(R.id.contact);
+        moneyEdit = (EditText) mainActivity.findViewById(R.id.money);
+        publishButton = (Button) mainActivity.findViewById(R.id.publish_button);
+
+        //设置触摸监听器
+        needContentEdit.setOnTouchListener(this);
+
+        //设置点击监听器
+        uploadImageView.setOnClickListener(this);
+        publishButton.setOnClickListener(this);
+
+        //初始化两个选择器
+        initTypeSpinner();
+        initDateSpinner();
     }
 
     //对话框显示图片的添加方式
@@ -100,15 +132,20 @@ public class PublishFragment extends Fragment implements View.OnTouchListener {
                         switch (which) {
                             case 0:
                                 //每次只能上传5张图片
-                                if (imagesPath.size() < 5) {
-                                    Log.i("count", imagesPath.size() + "");
+                                if (imagePathsList.size() < 5) {
+                                    Log.i("count", imagePathsList.size() + "");
                                     PublishFragmentPermissionsDispatcher.showCameraWithCheck(PublishFragment.this);
                                 } else {
                                     Toast.makeText(mainActivity, "一次最多只能上传5张图片", Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             case 1:
-                                showGallery();
+                                if (imagePathsList.size() < 5) {
+                                    Log.i("count", imagePathsList.size() + "");
+                                    showImagePick();
+                                } else {
+                                    Toast.makeText(mainActivity, "一次最多只能上传5张图片", Toast.LENGTH_SHORT).show();
+                                }
                                 break;
                         }
                     }
@@ -116,31 +153,27 @@ public class PublishFragment extends Fragment implements View.OnTouchListener {
         builder.create().show();
     }
 
-    public void showGallery() {
-        Intent intent_gallery = new Intent(Intent.ACTION_PICK);
-        intent_gallery.setType("image/*");
-        startActivityForResult(intent_gallery, GALLERY_PEQUEST);
-    }
-
     @NeedsPermission(Manifest.permission.CAMERA)
     public void showCamera() {
-        String state = Environment.getExternalStorageState();
-        if (state.equals(Environment.MEDIA_MOUNTED)) {
-            //保存图片的路径
-            String out_file_path = Environment.getExternalStorageDirectory() + "/YuZhai/needImage";
-            //创建图片路径文件夹
-            File dir = new File(out_file_path);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            imagePath = out_file_path + "/hdIMG_" + new DateFormat().format("yyyyMMdd_HHmmss", Calendar.getInstance(Locale.CHINA)) + ".jpg";
-            Log.i("path", imagePath);
-            Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(imagePath)));
-            startActivityForResult(intent_camera, CAMERA_PEQUEST);
-        } else {
-            Log.i("错误", "请确认已经插入SD卡");
-        }
+        imagePath = FileUtil.createFilePath(FileUtil.NEED_IMAGE);
+        Log.i("path", imagePath);
+        Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(imagePath)));
+        startActivityForResult(intent_camera, CAMERA_PEQUEST);
+    }
+
+    public void showImagePick() {
+        Intent intent_imagePick = new Intent(Intent.ACTION_PICK);
+        intent_imagePick.setType("image/*");
+        //是否按比例缩放
+        intent_imagePick.putExtra("scale", "true");
+        //图片输出大小
+        intent_imagePick.putExtra("outputX", 640);
+        intent_imagePick.putExtra("outputY", 640);
+        //图片输出格式
+        intent_imagePick.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent_imagePick.putExtra("return-data", false);
+        startActivityForResult(intent_imagePick, IMAGEPICK_PEQUEST);
     }
 
     //当用户选择不再提示后的处理
@@ -162,21 +195,43 @@ public class PublishFragment extends Fragment implements View.OnTouchListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_PEQUEST && resultCode == Activity.RESULT_OK) {
-            ImageView needImage = new ImageView(mainActivity);
-            needImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(180, 180);
-            params.rightMargin = 10;
-            needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 150, 150));
-            imagesPreview.addView(needImage, params);
-            //添加当前图片路径到List
-            imagesPath.add(imagePath);
-            //添加当前图片到List
-            imageViews.add(needImage);
-            Log.i("paths", imagesPath.toString());
+        switch (requestCode) {
+            case CAMERA_PEQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    ImageView needImage = new ImageView(mainActivity);
+                    needImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(180, 180);
+                    params.rightMargin = 10;
+                    needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 150, 150));
+                    imagesPreviewLayout.addView(needImage, params);
+                    //添加当前图片路径到List
+                    imagePathsList.add(imagePath);
+                    //添加当前图片到List
+                    imageViewsList.add(needImage);
+                    Log.i("paths", imagePathsList.toString());
+                }
+                break;
+            case IMAGEPICK_PEQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    ImageView needImage = new ImageView(mainActivity);
+                    needImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(180, 180);
+                    params.rightMargin = 10;
+                    Uri uri = data.getData();
+                    imagePath = GetPathUtil.getImageAbsolutePath(mainActivity, uri);
+                    needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 150, 150));
+                    imagesPreviewLayout.addView(needImage, params);
+                    //添加当前图片路径到List
+                    imagePathsList.add(imagePath);
+                    //添加当前图片到List
+                    imageViewsList.add(needImage);
+                    Log.i("paths", imagePathsList.toString());
+                }
+                break;
         }
     }
 
+    //初始化类型选择器
     public void initTypeSpinner() {
         typeSpinner = (Spinner) mainActivity.findViewById(R.id.type_spinner);
         List<Map<String, String>> types = new ArrayList<>();
@@ -198,6 +253,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener {
         typeSpinner.setAdapter(adapter);
     }
 
+    //初始化期限选择器
     public void initDateSpinner() {
         dateSpinner = (Spinner) mainActivity.findViewById(R.id.date_spinner);
         List<Map<String, String>> types = new ArrayList<>();
@@ -229,9 +285,129 @@ public class PublishFragment extends Fragment implements View.OnTouchListener {
                         v.getParent().requestDisallowInterceptTouchEvent(false);
                         break;
                 }
-
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.upload_image:
+                addImageDialog();
+                break;
+            case R.id.publish_button:
+                if (customApplication.isLOGIN() == false) {
+                    Toast.makeText(mainActivity, "您尚未登陆，请登录后再发布需求", Toast.LENGTH_SHORT).show();
+                } else {
+                    //校验数据
+                    //当返回true时表示所有填写的参数均符合格式
+                    if (checkData()) {
+                        FileUploadRequest fileUploadRequest = new FileUploadRequest(IPConfig.publishAddress, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String s) {
+                                Log.i("response", s);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                            }
+                        }, "images", createUploadFile(), createParams());
+
+                        //添加cookie
+                        fileUploadRequest.setmHeaders(createHeaders());
+                        requestQueue.add(fileUploadRequest);
+                    }
+                }
+                break;
+        }
+    }
+
+    /*校验数据
+     *如果填写的数据不正确，返回false
+     * 如果填写的数据全部都正确，返回true
+     */
+    public boolean checkData() {
+        //获取填写的内容
+        String title = needTitleEdit.getText().toString();
+        String content = needContentEdit.getText().toString();
+        String type = typeSpinner.getSelectedItem().toString();
+        type = type.substring(6, type.length() - 1);
+        String date = dateSpinner.getSelectedItem().toString();
+        date = date.substring(6, date.length() - 1);
+        String contact = contactEdit.getText().toString();
+        String money = moneyEdit.getText().toString();
+
+        /*CheckData类用于校验填写的数据*/
+        if (CheckData.isEmpty(title)) {
+            Toast.makeText(mainActivity, "需求标题不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (CheckData.isEmpty(content)) {
+            Toast.makeText(mainActivity, "需求内容不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (type.equals("请选择项目类型")) {
+            Toast.makeText(mainActivity, "请选择项目类型", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (date.equals("请选择预期时长")) {
+            Toast.makeText(mainActivity, "请选择预期时长", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (CheckData.isEmpty(contact)) {
+            Toast.makeText(mainActivity, "联系电话不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!CheckData.matchLength(contact, 11)) {
+            Toast.makeText(mainActivity, "手机号码长度应为11位", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (CheckData.isEmpty(money)) {
+            Toast.makeText(mainActivity, "项目金额不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        //校验成功后，保存填写的信息
+        publishEntry = new PublishEntry(title, content, type, date, contact, money);
+        return true;
+    }
+
+    //生成图片文件List
+    public List<File> createUploadFile() {
+        List<File> filesList = new ArrayList<>();
+        if (imagePathsList.size() == 0) {
+            return null;
+        } else {
+            for (int i = 0; i < imagePathsList.size(); i++) {
+                filesList.add(new File(imagePathsList.get(i)));
+            }
+            return filesList;
+        }
+    }
+
+    public Map<String, String> createHeaders() {
+        //设置请求参数
+        Map<String, String> headers = new HashMap<>();
+        headers.put("cookie", customApplication.getCookie());
+        return headers;
+    }
+
+    //生成请求参数
+    public Map<String, String> createParams() {
+        Map<String, String> params = new HashMap<>();
+        params.put("title", publishEntry.getTitle());
+        params.put("descript", publishEntry.getDescript());
+        params.put("type", publishEntry.getType());
+        params.put("deadline", publishEntry.getDeadline());
+        params.put("tel", publishEntry.getTel());
+        params.put("money", publishEntry.getMoney());
+        return params;
     }
 
     //权限许可情况调用

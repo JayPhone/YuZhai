@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorgary"
+    android:background="@color/color_f1f0f0"
     android:orientation="vertical"
     tools:context="com.yuzhai.ui.SetUpActivity">
 
     <RelativeLayout
+        android:id="@+id/set_up_toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/mainColor">
@@ -34,50 +35,52 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/account_safe"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/set_up_toolbar"
+        android:layout_marginTop="5dp"
         android:background="@color/colorwhite"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
-        android:text="账户安全"
-        android:textColor="@color/colorBlack"
-        android:textSize="20dp" />
+        android:text="  账户安全"
+        android:textSize="16dp" />
 
 
     <TextView
         android:id="@+id/feed_back"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/account_safe"
+        android:layout_marginTop="10dp"
         android:background="@color/colorwhite"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
-        android:text="意见反馈"
-        android:textColor="@color/colorBlack"
-        android:textSize="20dp" />
+        android:text="  意见反馈"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/clear_cache"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/feed_back"
+        android:layout_marginTop="1dp"
+        android:background="@color/colorwhite"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:text="  清除缓存"
+        android:textSize="16dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="2dp"
+        android:layout_below="@+id/clear_cache"
+        android:layout_marginTop="1dp"
         android:background="@color/colorwhite"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
-        android:text="清除缓存"
-        android:textColor="@color/colorBlack"
-        android:textSize="20dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="2dp"
-        android:background="@color/colorwhite"
-        android:gravity="center_vertical"
-        android:paddingLeft="5dp"
-        android:text="关于版本"
-        android:textColor="@color/colorBlack"
-        android:textSize="20dp" />
+        android:text="  关于版本"
+        android:textSize="16dp" />
 
 
-</LinearLayout>
+</RelativeLayout>
