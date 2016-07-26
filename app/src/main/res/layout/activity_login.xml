@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorwhite"
     tools:context="com.yuzhai.ui.LoginActivity">
 
     <ImageView
@@ -13,49 +12,90 @@
 
     <RelativeLayout
         android:id="@+id/relayout1"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageview"
         android:layout_marginLeft="@dimen/login_relativeLayout_marginLeftR"
         android:layout_marginRight="@dimen/login_relativeLayout_marginLeftR">
 
-        <EditText
-            android:id="@+id/username"
-            android:layout_width="fill_parent"
+        <RelativeLayout
+            android:id="@+id/user_name_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/login_editable_first_marginT"
-            android:background="@color/colorgary"
-            android:hint="@string/username"
-            android:inputType="number"
-            android:maxLength="11"
-            android:padding="@dimen/login_editable_middle_padding"
-            android:singleLine="true" />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_bg"
+            android:gravity="center_vertical"
+            android:padding="@dimen/login_editable_middle_padding">
 
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="fill_parent"
+            <ImageView
+                android:id="@+id/user_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/user" />
+
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/user_image"
+                android:background="@null"
+                android:hint="@string/username"
+                android:inputType="number"
+                android:lines="1"
+                android:maxLength="11"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/color_8c8c8c"
+                android:textColorHint="@color/color_cecece" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/pswd_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/username"
-            android:layout_marginTop="@dimen/login_editable_second_marginT"
-            android:background="@color/colorgary"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:maxLength="16"
-            android:padding="@dimen/login_editable_middle_padding"
-            android:singleLine="true" />
+            android:layout_below="@id/user_name_layout"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_bg"
+            android:gravity="center_vertical"
+            android:padding="@dimen/login_editable_middle_padding">
 
+            <ImageView
+                android:id="@+id/pswd_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/password" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/pswd_image"
+                android:background="@null"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:maxLength="16"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:textColor="@color/color_8c8c8c"
+                android:textColorHint="@color/color_cecece" />
+        </RelativeLayout>
 
     </RelativeLayout>
 
     <Button
         android:id="@+id/login_login"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/relayout1"
         android:layout_marginLeft="@dimen/login_relativeLayout_marginLeftR"
         android:layout_marginRight="@dimen/login_relativeLayout_marginLeftR"
         android:layout_marginTop="@dimen/login_button_marginT"
-        android:background="@drawable/register_button_registerlogin_style"
+        android:background="@drawable/button_style"
         android:text="@string/login"
         android:textColor="@color/colorwhite"
         android:textSize="@dimen/login_button_login_textsize" />
@@ -69,8 +109,8 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="@dimen/login_textview_last_marginB"
         android:layout_marginLeft="@dimen/login_relativeLayout_marginLeftR"
-        android:text="@string/login_register"
-        android:textColor="@color/mainColor"
+        android:text="  注    册  "
+        android:textColor="@drawable/buttom_text_style"
         android:textSize="@dimen/login_textview_last_textsize" />
 
     <TextView
@@ -80,9 +120,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="@dimen/login_textview_last_marginB"
-        android:layout_marginRight="22dp"
+        android:layout_marginRight="@dimen/login_relativeLayout_marginLeftR"
         android:text="@string/forget_psw"
-        android:textColor="@color/mainColor"
+        android:textColor="@drawable/buttom_text_style"
         android:textSize="@dimen/login_textview_last_textsize" />
 
 </RelativeLayout>

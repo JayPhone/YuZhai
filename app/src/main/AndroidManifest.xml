@@ -71,7 +71,7 @@
             android:screenOrientation="portrait" />
         <!-- 详细描述界面 -->
         <activity
-            android:name="com.yuzhai.ui.DetailActivity"
+            android:name="com.yuzhai.ui.DetailWorkActivity"
             android:screenOrientation="portrait" />
         <!-- 修改密码界面 -->
         <activity

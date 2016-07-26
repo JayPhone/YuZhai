@@ -58,7 +58,7 @@
             android:layout_marginTop="5dp"
             android:gravity="center_vertical"
             android:scaleType="centerCrop"
-            android:src="@drawable/down" />
+            android:src="@drawable/head_default" />
 
     </RelativeLayout>
 
@@ -87,7 +87,7 @@
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
             android:text="未设置"
-            android:textColor="#eeeeee"
+            android:textColor="@color/color_cecece"
             android:textSize="16sp" />
     </RelativeLayout>
 
@@ -131,8 +131,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
-            android:text="132******94"
-            android:textColor="#eeeeee"
+            android:textColor="@color/color_cecece"
             android:textSize="16sp" />
     </RelativeLayout>
 
@@ -160,7 +159,7 @@
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
             android:text="未认证"
-            android:textColor="#eeeeee"
+            android:textColor="@color/color_cecece"
             android:textSize="16sp" />
     </RelativeLayout>
 
@@ -171,7 +170,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/register_button_registerlogin_style"
+        android:background="@drawable/button_style"
         android:gravity="center"
         android:text="退出登录"
         android:textColor="@color/colorwhite"

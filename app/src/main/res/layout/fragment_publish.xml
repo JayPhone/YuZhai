@@ -226,7 +226,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:background="@drawable/register_button_registerlogin_style"
+                android:background="@drawable/button_style"
                 android:text="发  布"
                 android:textColor="@color/colorwhite"
                 android:textSize="20sp" />

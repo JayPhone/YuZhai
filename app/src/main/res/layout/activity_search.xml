@@ -14,36 +14,45 @@
 
         <ImageView
             android:id="@+id/back_image"
-            android:layout_width="30dp"
+            android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:clickable="true"
             android:src="@drawable/back" />
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/colorwhite"
-            android:src="@drawable/search_black" />
-
-        <EditText
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:layout_weight="5"
-            android:background="@color/colorwhite"
-            android:hint="请输入您想要搜索的内容" />
+            android:background="@drawable/search_edit_bg">
+
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/search_black" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/search_icon"
+                android:background="@null"
+                android:hint="请输入搜索内容"
+                android:lines="1"
+                android:textColorHint="@color/color_cecece" />
+        </RelativeLayout>
 
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
+            android:layout_margin="6dp"
+            android:layout_weight="1.2"
             android:background="@drawable/search_button"
             android:text="搜索"
             android:textColor="@color/colorwhite" />

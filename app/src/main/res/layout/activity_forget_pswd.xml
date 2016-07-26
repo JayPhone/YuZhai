@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/register_editable_first_marginT"
-            android:background="@color/colorgary"
+            android:background="@color/color_f1f0f0"
             android:hint="@string/register_phone_num_hint"
             android:inputType="number"
             android:maxLength="11"
@@ -53,7 +53,7 @@
             android:singleLine="true" />
 
         <LinearLayout
-            android:id="@+id/linearlayout"
+            android:id="@+id/verify_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/phone_num"
@@ -65,7 +65,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
-                android:background="@color/colorgary"
+                android:background="@color/color_f1f0f0"
                 android:hint="@string/register_code_hint"
                 android:inputType="number"
                 android:maxLength="6"
@@ -74,21 +74,26 @@
 
             <Button
                 android:id="@+id/code_button"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="2dp"
                 android:layout_marginLeft="@dimen/register_button_code_marginL"
+                android:layout_marginTop="2dp"
                 android:layout_weight="2"
+                android:background="@drawable/code_button_style"
                 android:padding="0dp"
-                android:text="@string/register_get_code_button" />
+                android:text="@string/register_get_code_button"
+                android:textColor="@color/colorwhite" />
         </LinearLayout>
 
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linearlayout"
+            android:layout_below="@+id/verify_layout"
             android:layout_marginTop="@dimen/register_editable_middle_marginT"
-            android:background="@color/colorgary"
+            android:background="@color/color_f1f0f0"
             android:hint="新密码"
             android:inputType="textPassword"
             android:maxLength="16"
@@ -101,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/password"
             android:layout_marginTop="@dimen/register_editable_middle_marginT"
-            android:background="@color/colorgary"
+            android:background="@color/color_f1f0f0"
             android:hint="重复输入一次"
             android:inputType="textPassword"
             android:maxLength="16"
@@ -112,13 +117,14 @@
 
     <Button
         android:id="@+id/change_button"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/relayout1"
         android:layout_marginLeft="22dp"
         android:layout_marginRight="22dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/register_button_registerlogin_style"
+        android:background="@drawable/button_style"
         android:text="修改密码"
         android:textColor="#FFFFFF"
         android:textSize="@dimen/register_button_register_textsize" />

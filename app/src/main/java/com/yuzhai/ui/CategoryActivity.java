@@ -1,5 +1,6 @@
 package com.yuzhai.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -18,8 +20,19 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.yuzhai.adapter.CategoryViewPagerAdapter;
+import com.yuzhai.config.IPConfig;
+import com.yuzhai.global.CustomApplication;
+import com.yuzhai.http.CommonRequest;
+import com.yuzhai.util.JsonUtil;
 import com.yuzhai.yuzhaiwork.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,26 +77,12 @@ public class CategoryActivity extends AppCompatActivity {
     private List<Map<String, Object>> infos;
     private List<Map<String, Object>> resumes;
 
+    private CustomApplication customApplication;
+    private RequestQueue requestQueue;
+    private ProgressDialog progressDialog;
+
     private int title;
     private String[] categoryTexts = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
-    //订单图标类型
-    private int[] typeImages = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
-    //订单日期
-    private String[] dates = new String[]{"2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14"};
-    //订单名称
-    private String[] workTitles = new String[]{
-            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
-            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
-            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
-            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
-            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
-            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
-            "【LOGO设计】千树设计主管标志设计商标设计/设计名称"
-    };
-    //订单金额
-    private String[] prices = new String[]{"100", "150", "200", "250", "300", "350", "400"};
-    //期限
-    private String[] limits = new String[]{"7天", "15天", "30天", "半年", "一年", "半年", "一年"};
 
     private int[] headImage = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
 
@@ -109,10 +108,14 @@ public class CategoryActivity extends AppCompatActivity {
 
     private String[] infoFroms = new String[]{"御宅工作", "御宅工作", "御宅工作", "御宅工作", "御宅工作", "御宅工作", "御宅工作"};
 
+    private String workResponse = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+        customApplication = (CustomApplication) getApplication();
+        requestQueue = customApplication.getRequestQueue();
         title = getIntent().getIntExtra("title", -1);
         initViews();
         initViewPagerView();
@@ -154,6 +157,27 @@ public class CategoryActivity extends AppCompatActivity {
         });
         if (title != -1) {
             categoryTitle.setText(categoryTexts[title]);
+            CommonRequest commonRequest = new CommonRequest(Request.Method.POST, IPConfig.ordersAddress, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String s) {
+                    Log.i("response", s);
+                    workResponse = s;
+                    works = JsonUtil.decodeResponseForJob(s, title);
+                    workListView.setAdapter(createWorkAdapter(works));
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+
+                }
+            });
+            Map<String, String> params = new HashMap<>();
+            params.put("itemType", categoryTexts[title]);
+            Map<String, String> headers = new HashMap<>();
+            headers.put("cookie", customApplication.getCookie());
+            commonRequest.setParams(params);
+            commonRequest.setmHeaders(headers);
+            requestQueue.add(commonRequest);
         }
     }
 
@@ -258,30 +282,38 @@ public class CategoryActivity extends AppCompatActivity {
     private void initWorkPage() {
         workRefresh = (SwipeRefreshLayout) workView.findViewById(R.id.work_refresh);
         workListView = (ListView) workView.findViewById(R.id.work_listview);
-        works = new ArrayList<>();
-        for (int i = 0; i < typeImages.length; i++) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("image", typeImages[i]);
-            item.put("date", dates[i]);
-            item.put("name", workTitles[i]);
-            item.put("price", prices[i]);
-            item.put("limit", limits[i]);
-            works.add(item);
-        }
-        final SimpleAdapter adapter = new SimpleAdapter(
-                this,
-                works,
-                R.layout.category_work_listview_item_layout,
-                new String[]{"date", "image", "name", "price", "limit"},
-                new int[]{R.id.date, R.id.type_image, R.id.name, R.id.price, R.id.limit}
-        );
-        workListView.setAdapter(adapter);
         workRefresh.setColorSchemeResources(R.color.mainColor);
         workRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                workListView.setAdapter(adapter);
-                workRefresh.setRefreshing(false);
+                CommonRequest commonRequest = new CommonRequest(Request.Method.POST, IPConfig.ordersAddress, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        Log.i("workResponse", s);
+                        progressDialog.dismiss();
+                        workResponse = s;
+                        works = JsonUtil.decodeResponseForJob(s, title);
+                        workListView.setAdapter(createWorkAdapter(works));
+                        workRefresh.setRefreshing(false);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                });
+                Map<String, String> params = new HashMap<>();
+                params.put("itemType", categoryTexts[title]);
+                Map<String, String> headers = new HashMap<>();
+                headers.put("cookie", customApplication.getCookie());
+                commonRequest.setmHeaders(headers);
+                commonRequest.setParams(params);
+                requestQueue.add(commonRequest);
+
+                progressDialog = new ProgressDialog(CategoryActivity.this);
+                progressDialog.setMessage("数据加载中");
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.show();
             }
         });
 
@@ -289,7 +321,18 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent_detail = new Intent();
-                intent_detail.setClass(CategoryActivity.this, DetailActivity.class);
+                JSONArray jsonArray = null;
+                String data = null;
+                try {
+                    jsonArray = JsonUtil.decodeToJsonArray(workResponse, "order");
+                    data = jsonArray.get(position).toString();
+                    Log.i("data", data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                intent_detail.setClass(CategoryActivity.this, DetailWorkActivity.class);
+                intent_detail.putExtra("data", data);
+                intent_detail.putExtra("type", title);
                 startActivity(intent_detail);
             }
         });
@@ -329,7 +372,7 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent_detail = new Intent();
-                intent_detail.setClass(CategoryActivity.this, DetailActivity.class);
+                intent_detail.setClass(CategoryActivity.this, DetailWorkActivity.class);
                 startActivity(intent_detail);
             }
         });
@@ -369,9 +412,20 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent_detail = new Intent();
-                intent_detail.setClass(CategoryActivity.this, DetailActivity.class);
+                intent_detail.setClass(CategoryActivity.this, DetailWorkActivity.class);
                 startActivity(intent_detail);
             }
         });
+    }
+
+    public SimpleAdapter createWorkAdapter(List<Map<String, Object>> works) {
+        SimpleAdapter adapter = new SimpleAdapter(
+                CategoryActivity.this,
+                works,
+                R.layout.category_work_listview_item_layout,
+                new String[]{"date", "image", "name", "price", "limit"},
+                new int[]{R.id.date, R.id.type_image, R.id.name, R.id.price, R.id.limit}
+        );
+        return adapter;
     }
 }

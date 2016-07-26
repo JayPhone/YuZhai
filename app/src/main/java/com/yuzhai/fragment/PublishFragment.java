@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -81,6 +82,8 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     //Activity请求码
     private final int CAMERA_PEQUEST = 1;
     private final int IMAGEPICK_PEQUEST = 2;
+
+    private ProgressDialog progressDialog;
 
     @Override
 
@@ -306,16 +309,23 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                             @Override
                             public void onResponse(String s) {
                                 Log.i("response", s);
+                                progressDialog.dismiss();
+                                Toast.makeText(mainActivity, "发布成功", Toast.LENGTH_SHORT).show();
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
+                                Toast.makeText(mainActivity, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
                             }
                         }, "images", createUploadFile(), createParams());
 
                         //添加cookie
                         fileUploadRequest.setmHeaders(createHeaders());
                         requestQueue.add(fileUploadRequest);
+                        progressDialog = new ProgressDialog(mainActivity);
+                        progressDialog.setMessage("正在发布");
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.show();
                     }
                 }
                 break;

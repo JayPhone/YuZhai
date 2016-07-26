@@ -2,8 +2,12 @@ package com.yuzhai.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +18,14 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.ui.LoginActivity;
 import com.yuzhai.ui.SetUpActivity;
 import com.yuzhai.ui.UserInfoActivity;
+import com.yuzhai.util.BitmapCache;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;
@@ -36,10 +44,16 @@ public class MenuFragment extends Fragment {
     private Button login_register = null;
     private ImageView userHeader = null;
     private TextView verifyRealName = null;
+    private TextView userName = null;
 
     //其他引用
     private List<Map<String, Object>> items = null;
     private CustomApplication customApplication;
+    private RequestQueue requestQueue;
+    private String userHeadURL;
+    private String userNameStr;
+    IntentFilter headFilter;
+    IntentFilter nameFilter;
 
     //数据
     int[] imageID = new int[]{
@@ -66,15 +80,31 @@ public class MenuFragment extends Fragment {
         //获取fragment的宿主Activity
         mainActivity = getActivity();
         customApplication = (CustomApplication) mainActivity.getApplication();
-        if (customApplication.isLOGIN())
+        requestQueue = customApplication.getRequestQueue();
+        if (customApplication.isLOGIN()) {
+            if (getArguments() != null) {
+                if (getArguments().getString("userHead") != null) {
+                    userHeadURL = getArguments().getString("userHead");
+                    Log.i("userHead", userHeadURL);
+                }
+                if (getArguments().getString("userName") != null) {
+                    userNameStr = getArguments().getString("userName");
+                    Log.i("userName", userNameStr);
+                }
+            }
             mainView = inflater.inflate(R.layout.fragment_menu_login, container, false);
-        else
+        } else {
             mainView = inflater.inflate(R.layout.fragment_menu_login_no, container, false);
+        }
         return mainView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        headFilter = new IntentFilter("yzgz.broadcast.replace.head");
+        nameFilter = new IntentFilter("yzgz.broadcast.replace.name");
+        mainActivity.registerReceiver(headReceiver, headFilter);
+        mainActivity.registerReceiver(nameReceiver, nameFilter);
         super.onActivityCreated(savedInstanceState);
         //如果已经登录
         if (customApplication.isLOGIN()) {
@@ -82,14 +112,36 @@ public class MenuFragment extends Fragment {
             items = addItems(imageID, itemName, null);
             //获取头像组件
             userHeader = (ImageView) mainActivity.findViewById(R.id.head_image);
+            if (userHeadURL != null) {
+                ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
+                ImageLoader.ImageListener listener = ImageLoader.getImageListener(userHeader, R.drawable.head_default, R.drawable.head_default);
+                imageLoader.get(IPConfig.addressPrefix + userHeadURL, listener, 200, 200);
+            }
             userHeader.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("userPhone", customApplication.getUserPhone());
                     Intent intent = new Intent();
                     intent.setClass(mainActivity, UserInfoActivity.class);
+                    if (userHeadURL != null) {
+                        bundle.putString("userHead", IPConfig.addressPrefix + userHeadURL);
+                    }
+                    if (userNameStr != null) {
+                        bundle.putString("userName", userNameStr);
+                    }
+                    intent.putExtras(bundle);
                     mainActivity.startActivity(intent);
                 }
             });
+
+            userName = (TextView) mainActivity.findViewById(R.id.user_name);
+            if (userNameStr != null) {
+                userName.setText(userNameStr);
+            } else {
+                userName.setText(customApplication.getUserPhone());
+            }
+
             verifyRealName = (TextView) mainActivity.findViewById(R.id.verify_real_name);
             verifyRealName.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -194,5 +246,34 @@ public class MenuFragment extends Fragment {
             datas.add(data);
         }
         return datas;
+    }
+
+    BroadcastReceiver headReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String headPath = intent.getStringExtra("userHead");
+            Log.i("path", headPath);
+            ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
+            ImageLoader.ImageListener listener = ImageLoader.getImageListener(userHeader, R.drawable.head_default, R.drawable.head_default);
+            imageLoader.get(IPConfig.addressPrefix + headPath, listener, 200, 200);
+            userHeadURL = headPath;
+        }
+    };
+
+    BroadcastReceiver nameReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String tempUserName = intent.getStringExtra("userName");
+            Log.i("userName", tempUserName);
+            userNameStr = tempUserName;
+            userName.setText(tempUserName);
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mainActivity.unregisterReceiver(headReceiver);
+        mainActivity.unregisterReceiver(nameReceiver);
     }
 }

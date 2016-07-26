@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -55,24 +56,31 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void onResponse(String s) {
                     String response = JsonUtil.decodeJson(s, "code");
                     if (response.equals("1")) {
+                        //用户头像路径
+                        String userHead = JsonUtil.decodeJson(s, "userHead");
+                        //用户名
+                        String userName = JsonUtil.decodeJson(s, "userName");
                         //设置为登录状态
                         customApplication.setLOGIN(true);
                         //保存登陆成功的账号的cookie
                         customApplication.addCookie(loginRequest.getResponseCookie());
                         //进入主界面
                         Intent main_intent = new Intent();
+                        if (!userHead.equals("")) {
+                            main_intent.putExtra("userHead", userHead);
+                        }
+                        if (!userName.equals("")) {
+                            main_intent.putExtra("userName", userName);
+                        }
                         main_intent.setClass(WelcomeActivity.this, MainActivity.class);
                         startActivity(main_intent);
-                        //替换菜单为已登录界面
-                        Intent replaceFragment = new Intent();
-                        replaceFragment.setAction("yzgz.broadcast.replace.fragment");
-                        sendBroadcast(replaceFragment);
                         finish();
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
+                    Toast.makeText(WelcomeActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
                     Intent main_intent = new Intent();
                     main_intent.setClass(WelcomeActivity.this, MainActivity.class);
                     startActivity(main_intent);

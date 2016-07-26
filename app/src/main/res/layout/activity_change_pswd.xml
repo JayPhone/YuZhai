@@ -77,7 +77,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/register_button_registerlogin_style"
+        android:background="@drawable/button_style"
         android:text="确 认 修 改"
         android:textColor="@color/colorwhite"
         android:textSize="18sp" />

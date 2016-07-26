@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,10 +25,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.FileUploadRequest;
+import com.yuzhai.util.BitmapCache;
 import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.CheckData;
 import com.yuzhai.util.FileUtil;
@@ -49,6 +52,7 @@ import permissions.dispatcher.RuntimePermissions;
 public class UserInfoActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView changePswd;
     private TextView userName;
+    private TextView userPhone;
     private Button loginExit;
     private ImageView headerImage;
     private ImageView back;
@@ -61,12 +65,25 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     private final int CAMERA_PEQUEST = 1;
     private final int IMAGEPICK_PEQUEST = 2;
 
+    private String userHeadUrl;
+    private String userNameStr;
+    private String userPhoneStr;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinfo);
         customApplication = (CustomApplication) getApplication();
         requestQueue = customApplication.getRequestQueue();
+        if (getIntent().getStringExtra("userHead") != null) {
+            userHeadUrl = getIntent().getStringExtra("userHead");
+        }
+        if (getIntent().getStringExtra("userName") != null) {
+            userNameStr = getIntent().getStringExtra("userName");
+        }
+        if (getIntent().getStringExtra("userPhone") != null) {
+            userPhoneStr = getIntent().getStringExtra("userPhone");
+        }
         initViews();
     }
 
@@ -77,6 +94,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         changePswd = (TextView) findViewById(R.id.change_pswd);
         changeUserName = (RelativeLayout) findViewById(R.id.change_user_name_layout);
         userName = (TextView) findViewById(R.id.user_name);
+        userPhone = (TextView) findViewById(R.id.phone_num);
         loginExit = (Button) findViewById(R.id.exit_login);
         //设置监听器
         back.setOnClickListener(this);
@@ -85,6 +103,8 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         changePswd.setOnClickListener(this);
         changeUserName.setOnClickListener(this);
         loginExit.setOnClickListener(this);
+
+        initData();
     }
 
     @Override
@@ -130,6 +150,22 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    public void initData() {
+        if (userHeadUrl != null) {
+            ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
+            ImageLoader.ImageListener listener = ImageLoader.getImageListener(headerImage, R.drawable.head_default, R.drawable.head_default);
+            imageLoader.get(userHeadUrl, listener, 200, 200);
+        }
+
+        if (userNameStr != null) {
+            userName.setText(userNameStr);
+        }
+
+        if (userPhoneStr != null) {
+            userPhone.setText(userPhoneStr);
+        }
+    }
+
     //修改用户名对话框
     public void changeUserNameDialog() {
         final View view = getLayoutInflater().inflate(R.layout.userinfo_change_username_layout, null);
@@ -141,12 +177,17 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(DialogInterface dialog, int which) {
                 final EditText changeUserName = (EditText) view.findViewById(R.id.change_user_name_edit);
                 if (!CheckData.isEmpty(changeUserName.getText().toString())) {
-                    CommonRequest commonRequest = new CommonRequest(Request.Method.POST, null, new Response.Listener<String>() {
+                    CommonRequest commonRequest = new CommonRequest(Request.Method.POST, IPConfig.renameAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
+                            Log.i("response", s);
                             //设置用户名
                             userName.setText(changeUserName.getText().toString());
                             Toast.makeText(UserInfoActivity.this, "用户名修改成功", Toast.LENGTH_SHORT).show();
+                            Intent replace_name = new Intent();
+                            replace_name.putExtra("userName", changeUserName.getText().toString());
+                            replace_name.setAction("yzgz.broadcast.replace.name");
+                            sendBroadcast(replace_name);
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -155,7 +196,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                         }
                     });
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("userName", changeUserName.getText().toString());
+                    params.put("newname", changeUserName.getText().toString());
                     commonRequest.setParams(params);
                     commonRequest.setmHeaders(createHeaders());
                     requestQueue.add(commonRequest);
@@ -254,7 +295,12 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         FileUploadRequest fileUploadRequest = new FileUploadRequest(IPConfig.uploadHeadAddress, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                Log.i("response", s);
                 Toast.makeText(UserInfoActivity.this, "头像上传成功", Toast.LENGTH_SHORT).show();
+                Intent replace_head = new Intent();
+                replace_head.putExtra("userHead", s);
+                replace_head.setAction("yzgz.broadcast.replace.head");
+                sendBroadcast(replace_head);
             }
         }, new Response.ErrorListener() {
             @Override

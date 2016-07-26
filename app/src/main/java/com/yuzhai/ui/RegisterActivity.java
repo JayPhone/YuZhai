@@ -108,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(RegisterActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
                         }
                     });
                     //设置请求参数
@@ -136,7 +136,8 @@ public class RegisterActivity extends AppCompatActivity {
                             String respone = JsonUtil.decodeJson(s, "code");
                             Log.i("Code", respone);
                             if (respone.equals("1")) {
-                                Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                                finish();
                             } else if (respone.equals("-1")) {
                                 Toast.makeText(RegisterActivity.this, "用户已存在", Toast.LENGTH_SHORT).show();
                             } else if (respone.equals("0")) {
@@ -148,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(RegisterActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
                         }
                     });
                     //设置请求参数

@@ -85,9 +85,13 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Response", s);
-                            String response = JsonUtil.decodeJson(s, "code");
-                            Log.i("Code", response);
-                            if (response.equals("1")) {
+                            String responseCode = JsonUtil.decodeJson(s, "code");
+                            Log.i("Code", responseCode);
+                            if (responseCode.equals("1")) {
+                                //用户头像路径
+                                String userHead = JsonUtil.decodeJson(s, "userHead");
+                                //用户名
+                                String userName = JsonUtil.decodeJson(s, "userName");
                                 //保存登陆成功的手机号和密码
                                 customApplication.addUserInfo(userLogin.getUserPhone(), userLogin.getUserPsw());
                                 //保存登陆成功的账号的cookie
@@ -96,20 +100,24 @@ public class LoginActivity extends AppCompatActivity {
                                 customApplication.setLOGIN(true);
                                 //替换为登录的界面
                                 Intent replaceFragment = new Intent();
+                                replaceFragment.putExtra("userHead", userHead);
+                                replaceFragment.putExtra("userName", userName);
                                 replaceFragment.setAction("yzgz.broadcast.replace.fragment");
                                 sendBroadcast(replaceFragment);
                                 finish();
-                            } else if (response.equals("-1")) {
+                            } else if (responseCode.equals("-1")) {
                                 Toast.makeText(LoginActivity.this, "账号或密码错误", Toast.LENGTH_SHORT).show();
+                            } else if (responseCode.equals("0")) {
+                                Toast.makeText(LoginActivity.this, "账号不存在", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(LoginActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
                         }
                     });
-                    params = new HashMap<String, String>();
+                    params = new HashMap<>();
                     params.put("userPhone", userLogin.getUserPhone());
                     params.put("userPsw", userLogin.getUserPsw());
                     loginRequest.setParams(params);

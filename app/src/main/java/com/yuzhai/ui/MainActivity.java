@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -57,10 +58,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String orderFragmentTag = "orderFragment";
     private final String publishFragmentTag = "publishFragment";
 
+    private String userHeadURL;
+    private String userNameStr;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (getIntent().getStringExtra("userHead") != null) {
+            userHeadURL = getIntent().getStringExtra("userHead");
+        }
+        if (getIntent().getStringExtra("userName") != null) {
+            userNameStr = getIntent().getStringExtra("userName");
+        }
         //初始化组件
         initComponent();
     }
@@ -97,6 +107,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //主界面Fragment，个人信息Fragment
         menuFragment = new MenuFragment();
         homeFragment = new HomeFragment();
+        Bundle bundle = new Bundle();
+        if (userHeadURL != null) {
+            bundle.putString("userHead", userHeadURL);
+        }
+        if (userNameStr != null) {
+            bundle.putString("userName", userNameStr);
+        }
+        menuFragment.setArguments(bundle);
         // 设置主界面视图
         fragmentTransaction.replace(R.id.main_content, homeFragment);
         // 设置滑动菜单的属性值
@@ -219,15 +237,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void replaceMenu() {
-        fragmentTransaction.replace(R.id.menu_content, new MenuFragment()).commit();
-    }
-
     //登录成功后替换界面
     BroadcastReceiver replaceFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             menuFragment = new MenuFragment();
+            Bundle bundle = new Bundle();
+            if (intent.getStringExtra("userHead") != null && !intent.getStringExtra("userHead").equals("")) {
+                String userHead = intent.getStringExtra("userHead");
+                bundle.putString("userHead",userHead);
+                Log.i("userHead", userHead);
+            }
+            if (intent.getStringExtra("userName") != null && !intent.getStringExtra("userName").equals("")) {
+                String userName = intent.getStringExtra("userName");
+                bundle.putString("userName", userName);
+                Log.i("userName", userName);
+            }
+            menuFragment.setArguments(bundle);
             getFragmentManager().beginTransaction().replace(R.id.menu_content, menuFragment).commitAllowingStateLoss();
         }
     };
