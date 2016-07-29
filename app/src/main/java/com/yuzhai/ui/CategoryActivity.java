@@ -332,7 +332,7 @@ public class CategoryActivity extends AppCompatActivity {
                 }
                 intent_detail.setClass(CategoryActivity.this, DetailWorkActivity.class);
                 intent_detail.putExtra("data", data);
-                intent_detail.putExtra("type", title);
+                intent_detail.putExtra("type", (int) works.get(position).get("image"));
                 startActivity(intent_detail);
             }
         });

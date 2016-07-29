@@ -38,6 +38,7 @@
         android:layout_marginTop="10dp"
         android:background="@color/colorgary"
         android:hint="旧密码"
+        android:inputType="textPassword"
         android:maxLength="11"
         android:padding="10dp"
         android:singleLine="true" />

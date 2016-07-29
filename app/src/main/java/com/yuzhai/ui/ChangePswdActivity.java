@@ -1,7 +1,9 @@
 package com.yuzhai.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,10 +13,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.yuzhai.config.IPConfig;
 import com.yuzhai.entry.UserChangePswd;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.util.CheckData;
+import com.yuzhai.util.JsonUtil;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.HashMap;
@@ -52,15 +56,29 @@ public class ChangePswdActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (checkData() == true) {
-                    CommonRequest changeRequest = new CommonRequest(Request.Method.POST, null, new Response.Listener<String>() {
+                    CommonRequest changeRequest = new CommonRequest(Request.Method.POST, IPConfig.alterPswdAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
-
+                            Log.i("response_alter_pswd", s);
+                            if (JsonUtil.decodeJson(s, "code").equals("1")) {
+                                Toast.makeText(ChangePswdActivity.this, "密码修改成功,请重新登陆", Toast.LENGTH_SHORT).show();
+                                //设置为没登录
+                                customApplication.setLOGIN(false);
+                                //替换侧滑菜单界面为非登录界面
+                                Intent replaceFragment = new Intent();
+                                replaceFragment.setAction("yzgz.broadcast.replace.fragment");
+                                sendBroadcast(replaceFragment);
+                                //启动主界面，由于设置了singleTask模式，上层的activity被弹出
+                                Intent intent_main = new Intent(ChangePswdActivity.this, MainActivity.class);
+                                startActivity(intent_main);
+                            } else if (JsonUtil.decodeJson(s, "code").equals("-1")) {
+                                Toast.makeText(ChangePswdActivity.this, "原密码错误", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-
+                            Toast.makeText(ChangePswdActivity.this, "服务器开小差了", Toast.LENGTH_SHORT).show();
                         }
                     });
                     changeRequest.setParams(createParams());
@@ -104,8 +122,8 @@ public class ChangePswdActivity extends AppCompatActivity {
     public Map<String, String> createParams() {
         //设置请求参数
         Map<String, String> params = new HashMap<>();
-        params.put("oldPswd", userChangePswd.getOldPswd());
-        params.put("newPswd", userChangePswd.getNewPswd());
+        params.put("oldPsw", userChangePswd.getOldPswd());
+        params.put("userPsw", userChangePswd.getNewPswd());
         return params;
     }
 

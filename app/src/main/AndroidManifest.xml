@@ -14,7 +14,7 @@
     <application
         android:name="com.yuzhai.global.CustomApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_chinese_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -32,6 +32,7 @@
         <!-- 主界面 -->
         <activity
             android:name="com.yuzhai.ui.MainActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <!-- 登录界面 -->
@@ -60,9 +61,9 @@
             android:name="com.yuzhai.ui.UserInfoActivity"
             android:screenOrientation="portrait">
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
         <!-- 搜索界面 -->
@@ -88,6 +89,10 @@
         <!--头像界面-->
         <activity
             android:name="com.yuzhai.ui.headerImageActivity"
+            android:screenOrientation="portrait" />
+        <!--实名认证界面-->
+        <activity
+            android:name="com.yuzhai.ui.IdentityAuthenActivity"
             android:screenOrientation="portrait" />
     </application>
 

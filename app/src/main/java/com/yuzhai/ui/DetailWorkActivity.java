@@ -143,7 +143,7 @@ public class DetailWorkActivity extends AppCompatActivity {
 
     public void pictureRequest(ImageView imageView, String path, int width) {
         ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
-        ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView, defaultImage[type], defaultImage[type]);
+        ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView, type, type);
         imageLoader.get(IPConfig.addressPrefix + path, listener, (width - 30), 600);
     }
 }

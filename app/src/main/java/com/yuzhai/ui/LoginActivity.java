@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(LoginActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "服务器开小差了", Toast.LENGTH_SHORT).show();
                         }
                     });
                     params = new HashMap<>();

@@ -3,6 +3,7 @@ package com.yuzhai.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -17,24 +18,27 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.adapter.OrderViewPagerAdapter;
+import com.yuzhai.adapter.PublishedListViewAdapter;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
+import com.yuzhai.ui.DetailWorkActivity;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.OrderViewPager;
 import com.yuzhai.yuzhaiwork.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +62,6 @@ public class OrderFragment extends Fragment {
     private ListView acceptedListView;
     private View publishView;
     private View acceptView;
-    private Button publishedCancle;
 
     private Bitmap cursor;
     private int currentItem;
@@ -72,10 +75,9 @@ public class OrderFragment extends Fragment {
 
     private CustomApplication customApplication;
     private RequestQueue requestQueue;
+    private String publishedResponse;
 
     private ProgressDialog progressDialog;
-
-    private View publishedItemView;
 
     //订单图标类型
     private int[] typeImages = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
@@ -197,36 +199,31 @@ public class OrderFragment extends Fragment {
     //初始化发布页面
     public void initPublishedPage() {
         publishedOrderRefresh = (SwipeRefreshLayout) publishView.findViewById(R.id.published_order_refresh);
-        publishedItemView = mainActivity.getLayoutInflater().inflate(R.layout.order_published_item_layout, null);
-        publishedCancle = (Button) publishedItemView.findViewById(R.id.cancel_order);
-        publishedCancle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mainActivity, "hello", Toast.LENGTH_SHORT).show();
-//                AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-//                builder.setTitle("取消订单");
-//                builder.setMessage("您确定要取消订单，如果该订单已经被接，则需要赔付一定的金额，您还要继续吗?");
-//                builder.setPositiveButton("我要退", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                });
-//                builder.setNegativeButton("先不退", null);
-//                builder.create().show();
-            }
-        });
         publishedListView = (ListView) publishView.findViewById(R.id.published_listview);
         publishedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mainActivity, "hello", Toast.LENGTH_SHORT).show();
+                Intent intent_detail = new Intent();
+                JSONArray jsonArray = null;
+                String data = null;
+                try {
+                    jsonArray = JsonUtil.decodeToJsonArray(publishedResponse, "order");
+                    data = jsonArray.get(position).toString();
+                    Log.i("data", data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                intent_detail.setClass(mainActivity, DetailWorkActivity.class);
+                intent_detail.putExtra("data", data);
+                intent_detail.putExtra("type", (int)publishedOrders.get(position).get("image"));
+                startActivity(intent_detail);
             }
         });
         CommonRequest commonRequest = new CommonRequest(Request.Method.POST, IPConfig.orderPublishedAddress, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
                 Log.i("response", s);
+                publishedResponse = s;
                 progressDialog.dismiss();
                 publishedOrders = JsonUtil.decodeResponseForPublished(s);
                 publishedListView.setAdapter(createPublishedAdapter(publishedOrders));
@@ -252,6 +249,7 @@ public class OrderFragment extends Fragment {
                     @Override
                     public void onResponse(String s) {
                         Log.i("response", s);
+                        publishedResponse = s;
                         publishedOrders = JsonUtil.decodeResponseForPublished(s);
                         publishedListView.setAdapter(createPublishedAdapter(publishedOrders));
                         publishedOrderRefresh.setRefreshing(false);
@@ -300,14 +298,8 @@ public class OrderFragment extends Fragment {
         });
     }
 
-    public SimpleAdapter createPublishedAdapter(List<Map<String, Object>> publishedOrders) {
-        SimpleAdapter adapter = new SimpleAdapter(
-                mainActivity,
-                publishedOrders,
-                R.layout.order_published_item_layout,
-                new String[]{"currentstatu", "date", "image", "name", "price", "publishId", "limit"},
-                new int[]{R.id.status, R.id.date, R.id.type_image, R.id.name, R.id.price, R.id.order_id, R.id.limit}
-        );
+    public PublishedListViewAdapter createPublishedAdapter(List<Map<String, Object>> publishedOrders) {
+        PublishedListViewAdapter adapter = new PublishedListViewAdapter(mainActivity, publishedOrders);
         return adapter;
     }
 
@@ -317,4 +309,5 @@ public class OrderFragment extends Fragment {
         headers.put("cookie", customApplication.getCookie());
         return headers;
     }
+
 }

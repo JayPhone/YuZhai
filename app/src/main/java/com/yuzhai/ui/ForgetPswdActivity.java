@@ -1,5 +1,6 @@
 package com.yuzhai.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -103,7 +104,7 @@ public class ForgetPswdActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.change_button:
                 if (checkData() == true) {
-                    CommonRequest ForgetRequest = new CommonRequest(Request.Method.POST, null, new Response.Listener<String>() {
+                    CommonRequest ForgetRequest = new CommonRequest(Request.Method.POST, IPConfig.forgetPswdAddress, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String s) {
                             Log.i("Respone", s);
@@ -111,6 +112,8 @@ public class ForgetPswdActivity extends AppCompatActivity implements View.OnClic
                             Log.i("Code", respone);
                             if (respone.equals("1")) {
                                 Toast.makeText(ForgetPswdActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                                Intent intent_login = new Intent(ForgetPswdActivity.this, LoginActivity.class);
+                                startActivity(intent_login);
                             } else if (respone.equals("0")) {
                                 Toast.makeText(ForgetPswdActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
                             } else if (respone.equals("2")) {
@@ -120,7 +123,7 @@ public class ForgetPswdActivity extends AppCompatActivity implements View.OnClic
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(ForgetPswdActivity.this, "网络异常,请检测网络后重试", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ForgetPswdActivity.this, "服务器开小差了", Toast.LENGTH_SHORT).show();
                         }
                     });
 

@@ -7,10 +7,13 @@
 
     <ImageView
         android:id="@+id/imageview"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/login_imageview_logo_height" />
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/title" />
 
     <RelativeLayout
+        android:layout_marginTop="5dp"
         android:id="@+id/relayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

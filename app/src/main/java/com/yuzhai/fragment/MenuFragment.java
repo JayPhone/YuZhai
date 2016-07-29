@@ -22,6 +22,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
+import com.yuzhai.ui.IdentityAuthenActivity;
 import com.yuzhai.ui.LoginActivity;
 import com.yuzhai.ui.SetUpActivity;
 import com.yuzhai.ui.UserInfoActivity;
@@ -186,6 +187,9 @@ public class MenuFragment extends Fragment {
                         case 1:
                             break;
                         case 2:
+                            Intent intent_inentityAuthen = new Intent();
+                            intent_inentityAuthen.setClass(mainActivity, IdentityAuthenActivity.class);
+                            startActivity(intent_inentityAuthen);
                             break;
                         case 3:
                             Intent intent_setUp = new Intent();
