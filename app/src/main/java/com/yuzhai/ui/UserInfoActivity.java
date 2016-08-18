@@ -140,7 +140,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 //清除cookie
                 customApplication.clearCookie();
                 //退出登录
-                customApplication.setLOGIN(false);
+                customApplication.setLoginState(false);
                 //替换个人信息界面为未登录
                 Intent replaceFragment = new Intent();
                 replaceFragment.setAction("yzgz.broadcast.replace.fragment");
@@ -197,8 +197,8 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                     });
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("newname", changeUserName.getText().toString());
-                    commonRequest.setParams(params);
-                    commonRequest.setmHeaders(createHeaders());
+                    commonRequest.setRequestParams(params);
+                    commonRequest.setRequestHeaders(createHeaders());
                     requestQueue.add(commonRequest);
                 }
             }

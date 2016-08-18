@@ -82,7 +82,7 @@ public class MenuFragment extends Fragment {
         mainActivity = getActivity();
         customApplication = (CustomApplication) mainActivity.getApplication();
         requestQueue = customApplication.getRequestQueue();
-        if (customApplication.isLOGIN()) {
+        if (customApplication.isLogin()) {
             if (getArguments() != null) {
                 if (getArguments().getString("userHead") != null) {
                     userHeadURL = getArguments().getString("userHead");
@@ -108,7 +108,7 @@ public class MenuFragment extends Fragment {
         mainActivity.registerReceiver(nameReceiver, nameFilter);
         super.onActivityCreated(savedInstanceState);
         //如果已经登录
-        if (customApplication.isLOGIN()) {
+        if (customApplication.isLogin()) {
             //添加数据
             items = addItems(imageID, itemName, null);
             //获取头像组件
@@ -177,7 +177,7 @@ public class MenuFragment extends Fragment {
         );
         menuItems.setAdapter(adapter);
 
-        if (customApplication.isLOGIN()) {
+        if (customApplication.isLogin()) {
             menuItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

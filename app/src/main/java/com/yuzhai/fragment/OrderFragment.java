@@ -234,7 +234,7 @@ public class OrderFragment extends Fragment {
 
             }
         });
-        commonRequest.setmHeaders(createHeaders());
+        commonRequest.setRequestHeaders(createHeaders());
         requestQueue.add(commonRequest);
         progressDialog = new ProgressDialog(mainActivity);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -260,7 +260,7 @@ public class OrderFragment extends Fragment {
 
                     }
                 });
-                commonRequest.setmHeaders(createHeaders());
+                commonRequest.setRequestHeaders(createHeaders());
                 requestQueue.add(commonRequest);
             }
         });

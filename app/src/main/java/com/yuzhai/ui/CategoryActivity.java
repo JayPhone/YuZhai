@@ -175,8 +175,8 @@ public class CategoryActivity extends AppCompatActivity {
             params.put("itemType", categoryTexts[title]);
             Map<String, String> headers = new HashMap<>();
             headers.put("cookie", customApplication.getCookie());
-            commonRequest.setParams(params);
-            commonRequest.setmHeaders(headers);
+            commonRequest.setRequestParams(params);
+            commonRequest.setRequestHeaders(headers);
             requestQueue.add(commonRequest);
         }
     }
@@ -306,8 +306,8 @@ public class CategoryActivity extends AppCompatActivity {
                 params.put("itemType", categoryTexts[title]);
                 Map<String, String> headers = new HashMap<>();
                 headers.put("cookie", customApplication.getCookie());
-                commonRequest.setmHeaders(headers);
-                commonRequest.setParams(params);
+                commonRequest.setRequestHeaders(headers);
+                commonRequest.setRequestParams(params);
                 requestQueue.add(commonRequest);
 
                 progressDialog = new ProgressDialog(CategoryActivity.this);

@@ -113,10 +113,10 @@ public class DetailWorkActivity extends AppCompatActivity {
                 });
                 Map<String, String> params = new HashMap<>();
                 params.put("orderId", (String) datas.get("publishId"));
-                commonRequest.setParams(params);
+                commonRequest.setRequestParams(params);
                 Map<String, String> headers = new HashMap<>();
                 headers.put("cookie", customApplication.getCookie());
-                commonRequest.setmHeaders(headers);
+                commonRequest.setRequestHeaders(headers);
                 requestQueue.add(commonRequest);
             }
         });

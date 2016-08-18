@@ -97,7 +97,7 @@ public class ForgetPswdActivity extends AppCompatActivity implements View.OnClic
                         }
                     });
                     //设置请求参数
-                    verifyRequest.setParams(createFirstParams());
+                    verifyRequest.setRequestParams(createFirstParams());
                     //添加请求到请求队列
                     requestQueue.add(verifyRequest);
                 }
@@ -127,7 +127,7 @@ public class ForgetPswdActivity extends AppCompatActivity implements View.OnClic
                         }
                     });
 
-                    ForgetRequest.setParams(createSecondParams());
+                    ForgetRequest.setRequestParams(createSecondParams());
                     //添加请求到请求队列
                     requestQueue.add(ForgetRequest);
                 }

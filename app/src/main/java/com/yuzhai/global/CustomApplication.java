@@ -14,7 +14,7 @@ public class CustomApplication extends Application {
     private RequestQueue mRequestQueue;
     private UserInfoOperate userInfoOperate;
     private CookieOperate cookieOperate;
-    private boolean LOGIN = false;
+    private boolean login = false;
 
     @Override
     public void onCreate() {
@@ -62,11 +62,11 @@ public class CustomApplication extends Application {
     }
 
     //登录操作
-    public boolean isLOGIN() {
-        return LOGIN;
+    public boolean isLogin() {
+        return login;
     }
 
-    public void setLOGIN(boolean LOGIN) {
-        this.LOGIN = LOGIN;
+    public void setLoginState(boolean loginState) {
+        this.login = loginState;
     }
 }

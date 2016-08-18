@@ -63,7 +63,7 @@ public class ChangePswdActivity extends AppCompatActivity {
                             if (JsonUtil.decodeJson(s, "code").equals("1")) {
                                 Toast.makeText(ChangePswdActivity.this, "密码修改成功,请重新登陆", Toast.LENGTH_SHORT).show();
                                 //设置为没登录
-                                customApplication.setLOGIN(false);
+                                customApplication.setLoginState(false);
                                 //替换侧滑菜单界面为非登录界面
                                 Intent replaceFragment = new Intent();
                                 replaceFragment.setAction("yzgz.broadcast.replace.fragment");
@@ -81,8 +81,8 @@ public class ChangePswdActivity extends AppCompatActivity {
                             Toast.makeText(ChangePswdActivity.this, "服务器开小差了", Toast.LENGTH_SHORT).show();
                         }
                     });
-                    changeRequest.setParams(createParams());
-                    changeRequest.setmHeaders(createHeaders());
+                    changeRequest.setRequestParams(createParams());
+                    changeRequest.setRequestHeaders(createHeaders());
                     requestQueue.add(changeRequest);
                 }
             }

@@ -6,18 +6,83 @@ package com.yuzhai.config;
  * 主要功能：IP地址相关的信息
  */
 public interface IPConfig {
-    final static String IPAddress = "119.29.176.249:8080";
-    final static String addressPrefix = "http://" + IPAddress + "/jfinal_yzgz";
-    final static String verifyAddress = "http://" + IPAddress + "/jfinal_yzgz/login/verify";
-    final static String loginAddress = "http://" + IPAddress + "/jfinal_yzgz/login/login";
-    final static String registerAddress = "http://" + IPAddress + "/jfinal_yzgz/login/register";
-    final static String publishAddress = "http://" + IPAddress + "/jfinal_yzgz/publish/save";
-    final static String uploadHeadAddress = "http://" + IPAddress + "/jfinal_yzgz/headupload/uploadUserHead";
-    final static String renameAddress = "http://" + IPAddress + "/jfinal_yzgz/rename";
-    final static String ordersAddress = "http://" + IPAddress + "/jfinal_yzgz/selectOrderByType";
-    final static String applyAddress = "http://" + IPAddress + "/jfinal_yzgz/apply";
-    final static String orderPublishedAddress = "http://" + IPAddress + "/jfinal_yzgz/selectOrderByType/personalPublish";
-    final static String alterPswdAddress = "http://" + IPAddress + "/jfinal_yzgz/login/alter_psw";
-    final static String forgetPswdAddress = "http://" + IPAddress + "/jfinal_yzgz/login/forget_psw";
-    final static String cancelPublishedOrderAddress = "http://" + IPAddress + "/jfinal_yzgz/cancelPublish";
+    /**
+     * 协议名称
+     */
+    String protocol = "http";
+
+    /**
+     * 目标地址和端口
+     */
+    String DesAddress = "192.168.191.3:8088";
+
+    /**
+     * 主机名称
+     */
+    String hostName = "jfinal_yzgz";
+
+    /**
+     * 地址前缀
+     */
+    String addressPrefix = protocol + "://" + DesAddress + "/" + hostName;
+
+    /**
+     * 获取验证码地址
+     */
+    String verifyAddress = addressPrefix + "/login/verify";
+
+    /**
+     * 用户登录地址
+     */
+    String loginAddress = addressPrefix + "/login/login";
+
+    /**
+     * 用户注册地址
+     */
+    String registerAddress = addressPrefix + "/login/register";
+
+    /**
+     * 修改用户密码地址
+     */
+    String alterPswdAddress = addressPrefix + "/login/alter_psw";
+
+    /**
+     * 忘记密码修改地址
+     */
+    String forgetPswdAddress = addressPrefix + "/login/forget_psw";
+
+    /**
+     * 发布需求地址
+     */
+    String publishAddress = addressPrefix + "/publish/save";
+
+    /**
+     * 上传用户头像地址
+     */
+    String uploadHeadAddress = addressPrefix + "/headupload/uploadUserHead";
+
+    /**
+     * 重命名用户名地址
+     */
+    String renameAddress = addressPrefix + "/rename";
+
+    /**
+     * 通过需求类型查看项目订单地址
+     */
+    String ordersAddress = addressPrefix + "/selectOrderByType";
+
+    /**
+     * 查看已接收订单地址
+     */
+    String applyAddress = addressPrefix + "/apply";
+
+    /**
+     * 查看已发布订单地址
+     */
+    String orderPublishedAddress = addressPrefix + "/selectOrderByType/personalPublish";
+
+    /**
+     * 取消已发布订单地址
+     */
+    String cancelPublishedOrderAddress = addressPrefix + "/cancelPublish";
 }

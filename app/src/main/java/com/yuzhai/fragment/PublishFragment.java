@@ -299,7 +299,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 addImageDialog();
                 break;
             case R.id.publish_button:
-                if (customApplication.isLOGIN() == false) {
+                if (customApplication.isLogin() == false) {
                     Toast.makeText(mainActivity, "您尚未登陆，请登录后再发布需求", Toast.LENGTH_SHORT).show();
                 } else {
                     //校验数据

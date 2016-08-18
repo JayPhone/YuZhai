@@ -111,8 +111,8 @@ public class PublishedListViewAdapter extends BaseAdapter {
 
                             }
                         });
-                        cancelPublishOrderRequest.setmHeaders(createHeaders());
-                        cancelPublishOrderRequest.setParams(createParams((String) datas.get(position).get("publishId")));
+                        cancelPublishOrderRequest.setRequestHeaders(createHeaders());
+                        cancelPublishOrderRequest.setRequestParams(createParams((String) datas.get(position).get("publishId")));
                         requestQueue.add(cancelPublishOrderRequest);
                     }
                 });

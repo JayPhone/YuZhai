@@ -61,9 +61,9 @@ public class WelcomeActivity extends AppCompatActivity {
                         //用户名
                         String userName = JsonUtil.decodeJson(s, "userName");
                         //设置为登录状态
-                        customApplication.setLOGIN(true);
+                        customApplication.setLoginState(true);
                         //保存登陆成功的账号的cookie
-                        customApplication.addCookie(loginRequest.getResponseCookie());
+                        customApplication.addCookie(loginRequest.getmResponseCookie());
                         //进入主界面
                         Intent main_intent = new Intent();
                         if (!userHead.equals("")) {
@@ -90,7 +90,7 @@ public class WelcomeActivity extends AppCompatActivity {
             params = new HashMap<>();
             params.put("userPhone", customApplication.getUserPhone());
             params.put("userPsw", customApplication.getPassword());
-            loginRequest.setParams(params);
+            loginRequest.setRequestParams(params);
             requestQueue.add(loginRequest);
         } else {
             Intent main_intent = new Intent();

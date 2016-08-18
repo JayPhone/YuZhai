@@ -114,7 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
                     //设置请求参数
                     params = new HashMap<String, String>();
                     params.put("userPhone", userPhone.getUserPhone());
-                    verifyRequest.setParams(params);
+                    verifyRequest.setRequestParams(params);
                     //添加请求到请求队列
                     requestQueue.add(verifyRequest);
                 }
@@ -157,7 +157,7 @@ public class RegisterActivity extends AppCompatActivity {
                     params.put("userPhone", userReg.getUserPhone());
                     params.put("userPsw", userReg.getUserPsw());
                     params.put("temVerify", userReg.getTemVerify());
-                    registerRequest.setParams(params);
+                    registerRequest.setRequestParams(params);
                     //添加请求到请求队列
                     requestQueue.add(registerRequest);
                 }
@@ -245,4 +245,5 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
 }
