@@ -30,4 +30,22 @@ public class ParamsNameConfig {
         public final static String USERPHONE = "userPhone";
     }
 
+    /**
+     * 注册参数
+     */
+    public class RegisterParam {
+        /**
+         * 注册号码
+         */
+        public final static String USERPHONE = "userPhone";
+        /**
+         * 验证码
+         */
+        public final static String TEMVERIFY = "temVerify";
+        /**
+         * 注册密码
+         */
+        public final static String USERPSW = "userPsw";
+    }
+
 }

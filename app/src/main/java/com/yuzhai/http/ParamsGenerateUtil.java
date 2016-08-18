@@ -35,4 +35,20 @@ public class ParamsGenerateUtil {
         params.put(ParamsNameConfig.VerifyParam.USERPHONE, phoneNum);
         return params;
     }
+
+    /**
+     * 生成注册请求的参数集
+     *
+     * @param regPhone  注册号码
+     * @param checkCode 验证码
+     * @param regPsw    注册密码
+     * @return 返回注册请求的参数集
+     */
+    public static Map<String, String> generateRegisterParams(String regPhone, String checkCode, String regPsw) {
+        Map<String, String> params = new HashMap<>();
+        params.put(ParamsNameConfig.RegisterParam.USERPHONE, regPhone);
+        params.put(ParamsNameConfig.RegisterParam.TEMVERIFY, checkCode);
+        params.put(ParamsNameConfig.RegisterParam.USERPSW, regPsw);
+        return params;
+    }
 }

@@ -168,7 +168,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.hideFragment(fragmentTransaction);
         //重置所有的导航颜色
         this.resetNavigator();
+
         switch (v.getId()) {
+
             case R.id.home_icon:
                 //设置点击的导航的图片和文字颜色为高亮
                 changeStatus(home_icon, home_image, home_text, R.id.home_image, R.id.home_text, R.drawable.home_click, R.color.mainColor);
@@ -179,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     fragmentTransaction.show(homeFragment);
                 }
                 break;
+
             case R.id.order_icon:
                 changeStatus(order_icon, order_image, order_text, R.id.order_image, R.id.order_text, R.drawable.order_click, R.color.mainColor);
                 if (orderFragment == null) {
@@ -188,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     fragmentTransaction.show(orderFragment);
                 }
                 break;
+
             case R.id.publish_icon:
                 changeStatus(publish_icon, publish_image, publish_text, R.id.publish_image, R.id.publish_text, R.drawable.publish_click, R.color.mainColor);
                 if (publishFragment == null) {
@@ -198,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
         }
+
+        //提交事务
         fragmentTransaction.commit();
     }
 
@@ -245,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Bundle bundle = new Bundle();
             if (intent.getStringExtra("userHead") != null && !intent.getStringExtra("userHead").equals("")) {
                 String userHead = intent.getStringExtra("userHead");
-                bundle.putString("userHead",userHead);
+                bundle.putString("userHead", userHead);
                 Log.i("userHead", userHead);
             }
             if (intent.getStringExtra("userName") != null && !intent.getStringExtra("userName").equals("")) {

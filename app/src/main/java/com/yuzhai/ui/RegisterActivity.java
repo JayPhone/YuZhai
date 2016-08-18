@@ -1,6 +1,5 @@
 package com.yuzhai.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,241 +8,291 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.util.JsonUtil;
+import com.yuzhai.config.RespParamsNameConfig;
 import com.yuzhai.entry.UserPhone;
 import com.yuzhai.entry.UserReg;
-import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
-import com.yuzhai.util.CheckData;
+import com.yuzhai.http.ParamsGenerateUtil;
+import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.util.JsonUtil;
+import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 账户注册界面
  */
-public class RegisterActivity extends AppCompatActivity {
-    //组件引用
-    private EditText phoneNumEdit = null;
-    private EditText passwordEdit = null;
-    private EditText confirmPswdEdit = null;
-    private EditText codeEdit = null;
-    private Button codeButton = null;
-    private Button registerButton = null;
-    private TextView loginTextView = null;
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+    /**
+     * 账号输入框
+     */
+    private EditText regPhoneEdit;
 
-    //其他引用
-    private CustomApplication customApplication;
-    private Map<String, String> params = null;
-    private UserPhone userPhone = null;
+    /**
+     * 验证码输入框
+     */
+    private EditText checkCodeEdit;
+
+    /**
+     * 密码输入框
+     */
+    private EditText pswEdit;
+
+    /**
+     * 确认密码输入框
+     */
+    private EditText cfmPswEdit;
+
+    /**
+     * 获取验证码按钮
+     */
+    private Button checkCodeButton;
+
+    /**
+     * 注册按钮
+     */
+    private Button registerButton;
+
+    /**
+     * 登录导航文本
+     */
+    private TextView loginTextView;
+
+    /**
+     * 记录获取验证码信息的实体
+     */
+    private UserPhone userPhone;
+
+    /**
+     * 记录注册信息的实体
+     */
     private UserReg userReg = null;
-    private RequestQueue requestQueue = null;
-    private CommonRequest verifyRequest = null;
-    private CommonRequest registerRequest = null;
-    private boolean paramPhoneCheck = false;
-    private boolean paramAllDataCheck = false;
+
+    /**
+     * 请求队列
+     */
+    private RequestQueue requestQueue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //获取全局共享请求队列
-        customApplication = (CustomApplication) getApplication();
-        requestQueue = customApplication.getRequestQueue();
         setContentView(R.layout.activity_register);
-        //加载界面的各个组件
-        inflate_phoneNum_EditText();
-        inflate_code_EditText();
-        inflate_password_EditText();
-        inflate_confirmPswd_EditText();
-        inflate_code_button(RegisterActivity.this);
-        inflate_register_button(RegisterActivity.this);
-        inflate_buttom_textview();
+        //初始化控件
+        initViews();
+        //获取请求队列
+        requestQueue = RequestQueueSingleton.getInstance(this).getRequestQueue();
     }
 
-    public void inflate_code_EditText() {
-        codeEdit = (EditText) findViewById(R.id.code_field);
-    }
-
-    public void inflate_phoneNum_EditText() {
-        phoneNumEdit = (EditText) findViewById(R.id.phone_num);
-    }
-
-    public void inflate_password_EditText() {
-        passwordEdit = (EditText) findViewById(R.id.password);
-    }
-
-    public void inflate_confirmPswd_EditText() {
-        confirmPswdEdit = (EditText) findViewById(R.id.affirmPsw);
-    }
-
-    public void inflate_code_button(final Context context) {
-        codeButton = (Button) findViewById(R.id.code_button);
-        codeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //验证手机号码合法性
-                //当返回true时表示填写的手机号码符合格式
-                paramPhoneCheck = checkPhoneNum(context);
-                if (paramPhoneCheck == true) {
-                    verifyRequest = new CommonRequest(Request.Method.POST, IPConfig.verifyAddress, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String s) {
-                            Log.i("Respone", s);
-                            String respone = JsonUtil.decodeJson(s, "code");
-                            Log.i("Code", respone);
-                            if (respone.equals("1")) {
-                                Toast.makeText(RegisterActivity.this, "获取验证码成功,请注意查收", Toast.LENGTH_SHORT).show();
-                            } else if (respone.equals("-1")) {
-                                Toast.makeText(RegisterActivity.this, "获取验证码失败,请稍后重试", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(RegisterActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    //设置请求参数
-                    params = new HashMap<String, String>();
-                    params.put("userPhone", userPhone.getUserPhone());
-                    verifyRequest.setRequestParams(params);
-                    //添加请求到请求队列
-                    requestQueue.add(verifyRequest);
-                }
-            }
-        });
-    }
-
-    public void inflate_register_button(final Context context) {
+    /**
+     * 初始化控件实例，并设置相应的点击事件
+     */
+    public void initViews() {
+        regPhoneEdit = (EditText) findViewById(R.id.phone_num);
+        checkCodeEdit = (EditText) findViewById(R.id.code_field);
+        checkCodeButton = (Button) findViewById(R.id.code_button);
+        pswEdit = (EditText) findViewById(R.id.password);
+        cfmPswEdit = (EditText) findViewById(R.id.affirmPsw);
         registerButton = (Button) findViewById(R.id.register_button);
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paramAllDataCheck = checkData(context);
-                if (paramAllDataCheck == true) {
-                    registerRequest = new CommonRequest(Request.Method.POST, IPConfig.registerAddress, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String s) {
-                            Log.i("Respone", s);
-                            String respone = JsonUtil.decodeJson(s, "code");
-                            Log.i("Code", respone);
-                            if (respone.equals("1")) {
-//                                Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                                finish();
-                            } else if (respone.equals("-1")) {
-                                Toast.makeText(RegisterActivity.this, "用户已存在", Toast.LENGTH_SHORT).show();
-                            } else if (respone.equals("0")) {
-                                Toast.makeText(RegisterActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
-                            } else if (respone.equals("2")) {
-                                Toast.makeText(RegisterActivity.this, "验证码已过期，请重新获取", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(RegisterActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    //设置请求参数
-                    params = new HashMap<String, String>();
-                    params.put("userPhone", userReg.getUserPhone());
-                    params.put("userPsw", userReg.getUserPsw());
-                    params.put("temVerify", userReg.getTemVerify());
-                    registerRequest.setRequestParams(params);
-                    //添加请求到请求队列
-                    requestQueue.add(registerRequest);
-                }
-            }
-        });
+        loginTextView = (TextView) findViewById(R.id.login_nav);
+
+        checkCodeButton.setOnClickListener(this);
+        registerButton.setOnClickListener(this);
+        loginTextView.setOnClickListener(this);
     }
 
-    //获取验证码时校验数据
-    public Boolean checkPhoneNum(Context context) {
-        //获取手机号码
-        String userName_str = phoneNumEdit.getText().toString();
-        if (userName_str.equals("")) {
-            Toast.makeText(context, "手机号码不能为空", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            //点击获取验证码按钮
+            case R.id.code_button:
+                //发送获取验证码请求
+                sendVerifyRequest();
+                break;
+
+            //点击注册按钮
+            case R.id.register_button:
+                sendRegisterRequest();
+                break;
+
+            //点击登录导航文本
+            case R.id.login_nav:
+                Intent login = new Intent(this, LoginActivity.class);
+                startActivity(login);
+                break;
+        }
+    }
+
+    /**
+     * 发送获取验证码请求
+     */
+    public void sendVerifyRequest() {
+        if (checkRegPhone(regPhoneEdit.getText().toString())) {
+            //生成获取验证码请求参数
+            Map<String, String> params = ParamsGenerateUtil.generateVerifyParams(userPhone.getUserPhone());
+
+            //创建获取验证码请求
+            CommonRequest verifyRequest = new CommonRequest(IPConfig.verifyAddress,
+                    null,
+                    params,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String s) {
+                            Log.i("response", s);
+                            String responseCode = JsonUtil.decodeJson(s, RespParamsNameConfig.VerifyResParam.CODE);
+
+                            if (responseCode.equals("1")) {
+                                UnRepeatToast.showToast(RegisterActivity.this, "验证码发射成功,请注意捕获");
+                            }
+
+                            if (responseCode.equals("-1")) {
+                                UnRepeatToast.showToast(RegisterActivity.this, "验证码发射失败,请稍后再来");
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            UnRepeatToast.showToast(RegisterActivity.this, "服务器睡着了");
+                        }
+                    });
+
+            //添加获取验证码请求到请求队列
+            requestQueue.add(verifyRequest);
+        }
+    }
+
+    /**
+     * 发送注册请求
+     */
+    public void sendRegisterRequest() {
+        if (checkRegDatas(regPhoneEdit.getText().toString(),
+                checkCodeEdit.getText().toString(),
+                pswEdit.getText().toString(),
+                cfmPswEdit.getText().toString())) {
+
+            //生成注册请求参数
+            Map<String, String> params = ParamsGenerateUtil.generateRegisterParams(userReg.getUserPhone(),
+                    userReg.getTemVerify(),
+                    userReg.getUserPsw());
+
+            //创建注册请求
+            CommonRequest regRequest = new CommonRequest(IPConfig.registerAddress,
+                    null,
+                    params,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.i("response", response);
+                            String responseCode = JsonUtil.decodeJson(response, RespParamsNameConfig.RegisterParam.CODE);
+
+                            if (responseCode.equals("-1")) {
+                                UnRepeatToast.showToast(RegisterActivity.this, "用户已存在");
+                            }
+
+                            if (responseCode.equals("0")) {
+                                UnRepeatToast.showToast(RegisterActivity.this, "验证码错误");
+                            }
+
+                            if (responseCode.equals("1")) {
+                                Log.i("reg-success", "register success");
+                                finish();
+                            }
+
+                            if (responseCode.equals("2")) {
+                                UnRepeatToast.showToast(RegisterActivity.this, "验证码已过期，请重新获取");
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            UnRepeatToast.showToast(RegisterActivity.this, "服务器睡着了");
+                        }
+                    });
+
+            //添加注册请求到请求队列
+            requestQueue.add(regRequest);
+        }
+    }
+
+    /**
+     * 用于校验获取验证码操作的数据
+     *
+     * @param phoneNumber 获取验证码的手机号码
+     * @return 果填写的数据其中一项或全部不正确，返回false，否则返回true
+     */
+    public Boolean checkRegPhone(String phoneNumber) {
+        if (phoneNumber.equals("")) {
+            UnRepeatToast.showToast(this, "手机号码不能为空");
             return false;
         }
 
-        if (userName_str.length() < 11) {
-            Toast.makeText(context, "手机号码长度应为11位", Toast.LENGTH_SHORT).show();
+        if (phoneNumber.length() != 11) {
+            UnRepeatToast.showToast(this, "手机号码长度应为11位");
             return false;
         }
 
-        //获取手机验证码的手机号
-        userPhone = new UserPhone(userName_str);
+        //校验成功后，保存手机号
+        userPhone = new UserPhone(phoneNumber);
         return true;
     }
 
-    //账号注册时校验数据
-    public boolean checkData(Context context) {
-        //获取账号和密码
-        String userName_str = phoneNumEdit.getText().toString();
-        String identCode_str = codeEdit.getText().toString();
-        String pswd_str = passwordEdit.getText().toString();
-        String confirmPswd_str = confirmPswdEdit.getText().toString();
-        //校验手机号码
-        if (CheckData.isEmpty(userName_str)) {
-            Toast.makeText(context, "手机号码不能为空", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+    /**
+     * 用于校验注册操作的数据
+     *
+     * @param regPhoneText  填写的注册号码
+     * @param checkCodeText 填写的验证码
+     * @param pswText       填写的密码
+     * @param cfmPswText    重复密码
+     * @return 如果填写的数据其中一项或全部不正确，返回false，否则返回true
+     */
+    public boolean checkRegDatas(String regPhoneText,
+                                 String checkCodeText,
+                                 String pswText,
+                                 String cfmPswText) {
 
-        if (!CheckData.matchLength(userName_str, 11)) {
-            Toast.makeText(context, "手机号码格式错误", Toast.LENGTH_SHORT).show();
+        //校验手机号码
+        if (!checkRegPhone(regPhoneText)) {
             return false;
         }
 
         //校验验证码
-        if (CheckData.isEmpty(identCode_str)) {
-            Toast.makeText(context, "验证码不能为空", Toast.LENGTH_SHORT).show();
+        if (checkCodeText.equals("")) {
+            UnRepeatToast.showToast(this, "验证码不能为空");
             return false;
         }
 
-        if (!CheckData.matchLength(identCode_str, 6)) {
-            Toast.makeText(context, "验证码格式错误", Toast.LENGTH_SHORT).show();
+        if (checkCodeText.length() != 6) {
+            UnRepeatToast.showToast(this, "验证码长度应为6位");
             return false;
         }
 
         //校验密码
-        if (CheckData.isEmpty(pswd_str)) {
-            Toast.makeText(context, "密码不能为空", Toast.LENGTH_SHORT).show();
+        if (pswText.equals("")) {
+            UnRepeatToast.showToast(this, "密码不能为空");
             return false;
         }
 
-        if (CheckData.lessLength(pswd_str, 6)) {
-            Toast.makeText(context, "密码长度应为6-16位", Toast.LENGTH_SHORT).show();
+        if (pswText.length() < 6) {
+            UnRepeatToast.showToast(this, "密码长度不能小于6位");
             return false;
         }
 
-        //校验第二次密码
-        if (!CheckData.matchString(pswd_str, confirmPswd_str)) {
-            Toast.makeText(context, "两次密码不一致", Toast.LENGTH_SHORT).show();
+        //校验两次密码是否一致
+        if (!cfmPswText.equals(pswText)) {
+            UnRepeatToast.showToast(this, "两次密码不一致");
             return false;
         }
 
-        userReg = new UserReg(userName_str, pswd_str, identCode_str);
+        //校验成功后，保存填写的用户名和密码和验证码
+        userReg = new UserReg(regPhoneText, pswText, checkCodeText);
         return true;
     }
-
-    public void inflate_buttom_textview() {
-        loginTextView = (TextView) findViewById(R.id.login_nav);
-        loginTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent_login = new Intent();
-                intent_login.setClass(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent_login);
-            }
-        });
-    }
-
 }

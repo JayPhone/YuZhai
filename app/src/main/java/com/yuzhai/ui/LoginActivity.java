@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements
     /**
      * 密码输入框
      */
-    private EditText passwordEdit;
+    private EditText pswEdit;
 
     /**
      * 登录按钮
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements
      */
     public void initViews() {
         userPhoneEdit = (EditText) findViewById(R.id.username);
-        passwordEdit = (EditText) findViewById(R.id.password);
+        pswEdit = (EditText) findViewById(R.id.password);
         loginButton = (Button) findViewById(R.id.login_login);
         registerTextView = (TextView) findViewById(R.id.register_nav);
         forgetPswdTextView = (TextView) findViewById(R.id.forget_pswd_nav);
@@ -132,7 +132,7 @@ public class LoginActivity extends AppCompatActivity implements
      * 点击登陆按钮后,校验输入的信息,发送登录请求
      */
     public void sendLoginRequest() {
-        if (checkData(userPhoneEdit.getText().toString(), passwordEdit.getText().toString())) {
+        if (checkData(userPhoneEdit.getText().toString(), pswEdit.getText().toString())) {
             //生成登录请求参数
             Map<String, String> params = ParamsGenerateUtil.generateLoginParams(
                     userLogin.getUserPhone(),
@@ -181,6 +181,11 @@ public class LoginActivity extends AppCompatActivity implements
         return true;
     }
 
+    /**
+     * 对服务器响应的数据进行处理
+     *
+     * @param response 响应数据
+     */
     @Override
     public void onResponse(String response) {
         Log.i("response", response);
