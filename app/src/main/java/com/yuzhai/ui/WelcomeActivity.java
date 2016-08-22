@@ -9,19 +9,20 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
+import com.yuzhai.http.ParamsGenerateUtil;
+import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.util.JsonUtil;
+import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
@@ -33,10 +34,24 @@ import permissions.dispatcher.RuntimePermissions;
  */
 @RuntimePermissions
 public class WelcomeActivity extends AppCompatActivity {
+    /**
+     * 全局Applicant对象，用于保存返回的Cookie
+     */
     private CustomApplication customApplication;
+
+    /**
+     * 请求队列
+     */
     private RequestQueue requestQueue;
+
+    /**
+     * 登录请求
+     */
     private CommonRequest loginRequest;
-    private Map<String, String> params;
+
+    private final String CODE = "code";
+    private final String USERHEAD = "userHead";
+    private final String USERNAME = "userName";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,60 +61,87 @@ public class WelcomeActivity extends AppCompatActivity {
         WelcomeActivityPermissionsDispatcher.showWriteExternalStorageWithCheck(WelcomeActivity.this);
     }
 
+    /**
+     * 需要获取到权限才能执行以下方法
+     */
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void showWriteExternalStorage() {
+        //获取全局Applicant对象，主要用于保存cookie
         customApplication = (CustomApplication) getApplication();
-        requestQueue = customApplication.getRequestQueue();
+
+        //获取请求队列
+        requestQueue = RequestQueueSingleton.getInstance(this).getRequestQueue();
+
+        //如果用户曾经登录过，将自动登陆
         if (customApplication.getUserPhone() != null && customApplication.getPassword() != null) {
-            loginRequest = new CommonRequest(Request.Method.POST, IPConfig.loginAddress, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String s) {
-                    String response = JsonUtil.decodeJson(s, "code");
-                    if (response.equals("1")) {
-                        //用户头像路径
-                        String userHead = JsonUtil.decodeJson(s, "userHead");
-                        //用户名
-                        String userName = JsonUtil.decodeJson(s, "userName");
-                        //设置为登录状态
-                        customApplication.setLoginState(true);
-                        //保存登陆成功的账号的cookie
-                        customApplication.addCookie(loginRequest.getmResponseCookie());
-                        //进入主界面
-                        Intent main_intent = new Intent();
-                        if (!userHead.equals("")) {
-                            main_intent.putExtra("userHead", userHead);
-                        }
-                        if (!userName.equals("")) {
-                            main_intent.putExtra("userName", userName);
-                        }
-                        main_intent.setClass(WelcomeActivity.this, MainActivity.class);
-                        startActivity(main_intent);
-                        finish();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    Toast.makeText(WelcomeActivity.this, "服务器无响应，请稍后再试", Toast.LENGTH_SHORT).show();
-                    Intent main_intent = new Intent();
-                    main_intent.setClass(WelcomeActivity.this, MainActivity.class);
-                    startActivity(main_intent);
-                    finish();
-                }
-            });
-            params = new HashMap<>();
-            params.put("userPhone", customApplication.getUserPhone());
-            params.put("userPsw", customApplication.getPassword());
-            loginRequest.setRequestParams(params);
-            requestQueue.add(loginRequest);
+            //发送登录请求
+            sendLoginRequest(customApplication.getUserPhone(), customApplication.getPassword());
+
         } else {
-            Intent main_intent = new Intent();
-            main_intent.setClass(this, MainActivity.class);
-            startActivity(main_intent);
+            Log.i("auto_login", "fail");
+            Intent main = new Intent(this, MainActivity.class);
+            startActivity(main);
             finish();
         }
     }
 
+    /**
+     * 发送登录请求
+     *
+     * @param userPhone 登录的用户名
+     * @param userPsw   登录密码
+     */
+    public void sendLoginRequest(String userPhone, String userPsw) {
+        //生成登录请求参数
+        Map<String, String> params = ParamsGenerateUtil.generateLoginParams(
+                userPhone,
+                userPsw);
+
+        //创建登录请求
+        loginRequest = new CommonRequest(IPConfig.loginAddress,
+                null,
+                params,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String resp) {
+                        String responseCode = JsonUtil.decodeJson(resp, CODE);
+                        if (responseCode != null && responseCode.equals("1")) {
+                            //用户头像路径
+                            String userHead = JsonUtil.decodeJson(resp, USERHEAD);
+                            //用户名
+                            String userName = JsonUtil.decodeJson(resp, USERNAME);
+                            //设置为登录状态
+                            customApplication.setLoginState(true);
+                            //保存登陆成功的账号的cookie
+                            customApplication.addCookie(loginRequest.getResponseCookie());
+
+                            Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
+                            //如果用户头像路径和用户名不为空，则传递到主界面
+                            if (userHead != null) {
+                                main.putExtra(USERHEAD, userHead);
+                            }
+                            if (userName != null) {
+                                main.putExtra(USERNAME, userName);
+                            }
+                            startActivity(main);
+                            WelcomeActivity.this.finish();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        UnRepeatToast.showToast(WelcomeActivity.this, "服务器睡着了");
+                    }
+                });
+
+        //添加登录请求到请求队列
+        requestQueue.add(loginRequest);
+    }
+
+    /**
+     * 当获取读写存储器的权限拒绝时，显示一个对话框让用户开启
+     */
     @OnNeverAskAgain(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void rejectWriteExternalStorage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -108,8 +150,8 @@ public class WelcomeActivity extends AppCompatActivity {
         builder.setPositiveButton("设置", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent_getPermission = new Intent(Settings.ACTION_SETTINGS);
-                startActivityForResult(intent_getPermission, 1);
+                Intent getPermission = new Intent(Settings.ACTION_SETTINGS);
+                startActivityForResult(getPermission, 1);
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

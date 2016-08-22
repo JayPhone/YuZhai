@@ -44,12 +44,12 @@ public interface IPConfig {
     /**
      * 修改用户密码地址
      */
-    String alterPswdAddress = addressPrefix + "/login/alter_psw";
+    String alterPswAddress = addressPrefix + "/login/alter_psw";
 
     /**
      * 忘记密码修改地址
      */
-    String forgetPswdAddress = addressPrefix + "/login/forget_psw";
+    String forgetPswAddress = addressPrefix + "/login/forget_psw";
 
     /**
      * 发布需求地址
@@ -64,7 +64,7 @@ public interface IPConfig {
     /**
      * 重命名用户名地址
      */
-    String renameAddress = addressPrefix + "/rename";
+    String reNameAddress = addressPrefix + "/rename";
 
     /**
      * 通过需求类型查看项目订单地址

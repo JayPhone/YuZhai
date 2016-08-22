@@ -3,14 +3,14 @@ package com.yuzhai.entry;
 /**
  * Created by Administrator on 2016/7/19.
  */
-public class UserChangePswd {
+public class UserAlterPsw {
     private String oldPswd;
     private String newPswd;
 
-    public UserChangePswd() {
+    public UserAlterPsw() {
     }
 
-    public UserChangePswd(String oldPswd, String newPswd) {
+    public UserAlterPsw(String oldPswd, String newPswd) {
         this.oldPswd = oldPswd;
         this.newPswd = newPswd;
     }

@@ -3,14 +3,14 @@ package com.yuzhai.entry;
 /**
  * Created by Administrator on 2016/7/19.
  */
-public class UserForgetPswd extends UserLogin {
+public class UserForgetPsw extends UserLogin {
     private String temVerify;
 
-    public UserForgetPswd() {
+    public UserForgetPsw() {
         super();
     }
 
-    public UserForgetPswd(String userPhone, String userPsw, String verifyValue) {
+    public UserForgetPsw(String userPhone, String userPsw, String verifyValue) {
         super(userPhone, userPsw);
         this.temVerify = verifyValue;
     }

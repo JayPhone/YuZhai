@@ -72,7 +72,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     /**
      * 记录注册信息的实体
      */
-    private UserReg userReg = null;
+    private UserReg userReg;
 
     /**
      * 请求队列
@@ -113,12 +113,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             //点击获取验证码按钮
             case R.id.code_button:
                 //发送获取验证码请求
-                sendVerifyRequest();
+                sendVerifyRequest(regPhoneEdit.getText().toString());
                 break;
 
             //点击注册按钮
             case R.id.register_button:
-                sendRegisterRequest();
+                //发送注册请求
+                sendRegisterRequest(regPhoneEdit.getText().toString(),
+                        checkCodeEdit.getText().toString(),
+                        pswEdit.getText().toString(),
+                        cfmPswEdit.getText().toString());
                 break;
 
             //点击登录导航文本
@@ -131,9 +135,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     /**
      * 发送获取验证码请求
+     *
+     * @param regPhone 获取验证码的号码
      */
-    public void sendVerifyRequest() {
-        if (checkRegPhone(regPhoneEdit.getText().toString())) {
+    public void sendVerifyRequest(String regPhone) {
+        if (checkRegPhone(regPhone)) {
             //生成获取验证码请求参数
             Map<String, String> params = ParamsGenerateUtil.generateVerifyParams(userPhone.getUserPhone());
 
@@ -147,11 +153,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             Log.i("response", s);
                             String responseCode = JsonUtil.decodeJson(s, RespParamsNameConfig.VerifyResParam.CODE);
 
-                            if (responseCode.equals("1")) {
+                            if (responseCode != null && responseCode.equals("1")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码发射成功,请注意捕获");
                             }
 
-                            if (responseCode.equals("-1")) {
+                            if (responseCode != null && responseCode.equals("-1")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码发射失败,请稍后再来");
                             }
                         }
@@ -170,12 +176,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     /**
      * 发送注册请求
+     *
+     * @param regPhone  填写的注册号码
+     * @param checkCode 填写的验证码
+     * @param psw       填写的密码
+     * @param cfmPsw    重复密码
      */
-    public void sendRegisterRequest() {
-        if (checkRegDatas(regPhoneEdit.getText().toString(),
-                checkCodeEdit.getText().toString(),
-                pswEdit.getText().toString(),
-                cfmPswEdit.getText().toString())) {
+    public void sendRegisterRequest(String regPhone,
+                                    String checkCode,
+                                    String psw,
+                                    String cfmPsw) {
+        if (checkRegData(regPhone,
+                checkCode,
+                psw,
+                cfmPsw)) {
 
             //生成注册请求参数
             Map<String, String> params = ParamsGenerateUtil.generateRegisterParams(userReg.getUserPhone(),
@@ -188,24 +202,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     params,
                     new Response.Listener<String>() {
                         @Override
-                        public void onResponse(String response) {
-                            Log.i("response", response);
-                            String responseCode = JsonUtil.decodeJson(response, RespParamsNameConfig.RegisterParam.CODE);
+                        public void onResponse(String resp) {
+                            Log.i("response", resp);
+                            String responseCode = JsonUtil.decodeJson(resp, RespParamsNameConfig.RegisterParam.CODE);
 
-                            if (responseCode.equals("-1")) {
+                            if (responseCode != null && responseCode.equals("-1")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "用户已存在");
                             }
 
-                            if (responseCode.equals("0")) {
+                            if (responseCode != null && responseCode.equals("0")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码错误");
                             }
 
-                            if (responseCode.equals("1")) {
+                            if (responseCode != null && responseCode.equals("1")) {
                                 Log.i("reg-success", "register success");
                                 finish();
                             }
 
-                            if (responseCode.equals("2")) {
+                            if (responseCode != null && responseCode.equals("2")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码已过期，请重新获取");
                             }
                         }
@@ -226,7 +240,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * 用于校验获取验证码操作的数据
      *
      * @param phoneNumber 获取验证码的手机号码
-     * @return 果填写的数据其中一项或全部不正确，返回false，否则返回true
+     * @return 如果填写的数据其中一项或全部不正确，返回false，否则返回true
      */
     public Boolean checkRegPhone(String phoneNumber) {
         if (phoneNumber.equals("")) {
@@ -253,10 +267,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * @param cfmPswText    重复密码
      * @return 如果填写的数据其中一项或全部不正确，返回false，否则返回true
      */
-    public boolean checkRegDatas(String regPhoneText,
-                                 String checkCodeText,
-                                 String pswText,
-                                 String cfmPswText) {
+    public boolean checkRegData(String regPhoneText,
+                                String checkCodeText,
+                                String pswText,
+                                String cfmPswText) {
 
         //校验手机号码
         if (!checkRegPhone(regPhoneText)) {

@@ -45,7 +45,7 @@ public class FileUploadRequest extends Request<String> {
      * @param params
      */
     public FileUploadRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener,
-                             String filePartName, File file, Map<String, String> params) {
+                             String filePartName, File file, Map<String, String> params, Map<String, String> headers) {
         super(Method.POST, url, errorListener);
         mFileParts = new ArrayList<>();
         if (file != null && file.exists()) {
@@ -56,6 +56,7 @@ public class FileUploadRequest extends Request<String> {
         mFilePartName = filePartName;
         mListener = listener;
         mParams = params;
+        mHeaders = headers;
         buildMultipartEntity();
     }
 
@@ -70,12 +71,13 @@ public class FileUploadRequest extends Request<String> {
      * @param params
      */
     public FileUploadRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener,
-                             String filePartName, List<File> files, Map<String, String> params) {
+                             String filePartName, List<File> files, Map<String, String> params, Map<String, String> headers) {
         super(Method.POST, url, errorListener);
         mFilePartName = filePartName;
         mListener = listener;
         mFileParts = files;
         mParams = params;
+        mHeaders = headers;
         buildMultipartEntity();
     }
 

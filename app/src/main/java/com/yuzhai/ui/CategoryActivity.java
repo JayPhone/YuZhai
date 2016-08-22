@@ -1,6 +1,5 @@
 package com.yuzhai.ui;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,6 +27,7 @@ import com.yuzhai.adapter.CategoryViewPagerAdapter;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
+import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -42,7 +42,7 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/7/4.
  */
-public class CategoryActivity extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity implements View.OnClickListener {
 
     private List<View> categoryViews;
 
@@ -79,9 +79,8 @@ public class CategoryActivity extends AppCompatActivity {
 
     private CustomApplication customApplication;
     private RequestQueue requestQueue;
-    private ProgressDialog progressDialog;
 
-    private int title;
+    private int mProjectType;
     private String[] categoryTexts = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
 
     private int[] headImage = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
@@ -110,13 +109,19 @@ public class CategoryActivity extends AppCompatActivity {
 
     private String workResponse = null;
 
+    private final String TITLE = "mProjectType";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+        //获取全局Applicantion对象，用于获取Cookie
         customApplication = (CustomApplication) getApplication();
-        requestQueue = customApplication.getRequestQueue();
-        title = getIntent().getIntExtra("title", -1);
+        //获取请求队列
+        requestQueue = RequestQueueSingleton.getInstance(this).getRequestQueue();
+        //获取项目的类型
+        mProjectType = getIntent().getIntExtra(TITLE, -1);
+        //初始化组件
         initViews();
         initViewPagerView();
         initCursor();
@@ -131,38 +136,20 @@ public class CategoryActivity extends AppCompatActivity {
         titleInfo = (TextView) findViewById(R.id.title_info);
         titleResume = (TextView) findViewById(R.id.title_resume);
         categoryTitle = (TextView) findViewById(R.id.category_title);
-        titleWork.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryViewPager.setCurrentItem(0);
-            }
-        });
-        titleInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryViewPager.setCurrentItem(1);
-            }
-        });
-        titleResume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryViewPager.setCurrentItem(2);
-            }
-        });
-        backImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        if (title != -1) {
-            categoryTitle.setText(categoryTexts[title]);
+
+        titleWork.setOnClickListener(this);
+        titleInfo.setOnClickListener(this);
+        titleResume.setOnClickListener(this);
+        backImage.setOnClickListener(this);
+
+        if (mProjectType != -1) {
+            categoryTitle.setText(categoryTexts[mProjectType]);
             CommonRequest commonRequest = new CommonRequest(Request.Method.POST, IPConfig.ordersAddress, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String s) {
                     Log.i("response", s);
                     workResponse = s;
-                    works = JsonUtil.decodeResponseForJob(s, title);
+                    works = JsonUtil.decodeResponseForJob(s, mProjectType);
                     workListView.setAdapter(createWorkAdapter(works));
                 }
             }, new Response.ErrorListener() {
@@ -172,12 +159,30 @@ public class CategoryActivity extends AppCompatActivity {
                 }
             });
             Map<String, String> params = new HashMap<>();
-            params.put("itemType", categoryTexts[title]);
+            params.put("itemType", categoryTexts[mProjectType]);
             Map<String, String> headers = new HashMap<>();
             headers.put("cookie", customApplication.getCookie());
             commonRequest.setRequestParams(params);
             commonRequest.setRequestHeaders(headers);
             requestQueue.add(commonRequest);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.back_image:
+                finish();
+                break;
+            case R.id.title_work:
+                categoryViewPager.setCurrentItem(0);
+                break;
+            case R.id.title_info:
+                categoryViewPager.setCurrentItem(1);
+                break;
+            case R.id.title_resume:
+                categoryViewPager.setCurrentItem(2);
+                break;
         }
     }
 
@@ -290,9 +295,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String s) {
                         Log.i("workResponse", s);
-                        progressDialog.dismiss();
                         workResponse = s;
-                        works = JsonUtil.decodeResponseForJob(s, title);
+                        works = JsonUtil.decodeResponseForJob(s, mProjectType);
                         workListView.setAdapter(createWorkAdapter(works));
                         workRefresh.setRefreshing(false);
                     }
@@ -303,17 +307,12 @@ public class CategoryActivity extends AppCompatActivity {
                     }
                 });
                 Map<String, String> params = new HashMap<>();
-                params.put("itemType", categoryTexts[title]);
+                params.put("itemType", categoryTexts[mProjectType]);
                 Map<String, String> headers = new HashMap<>();
                 headers.put("cookie", customApplication.getCookie());
                 commonRequest.setRequestHeaders(headers);
                 commonRequest.setRequestParams(params);
                 requestQueue.add(commonRequest);
-
-                progressDialog = new ProgressDialog(CategoryActivity.this);
-                progressDialog.setMessage("数据加载中");
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.show();
             }
         });
 
@@ -428,4 +427,5 @@ public class CategoryActivity extends AppCompatActivity {
         );
         return adapter;
     }
+
 }

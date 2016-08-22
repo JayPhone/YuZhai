@@ -42,4 +42,44 @@ public class RespParamsNameConfig {
         public final static String CODE = "code";
     }
 
+    /**
+     * 忘记密码返回参数
+     */
+    public class ForgetPswParam {
+        /**
+         * 返回码: CODE
+         */
+        public final static String CODE = "code";
+    }
+
+    /**
+     * 修改密码返回参数
+     */
+    public class AlterPswParam {
+        /**
+         * 返回码: CODE
+         */
+        public final static String CODE = "code";
+    }
+
+    /**
+     * 查询已发布订单返回参数
+     */
+    public class PublishedOrdersParam {
+        /**
+         * 订单集合
+         */
+        public final static String ORDER = "order";
+        public final static String IMAGE = "image";
+    }
+
+    /**
+     * 取消已发布订单请求返回的参数
+     */
+    public class CancelPublishedOrdersParam {
+        /**
+         * 返回码: CODE
+         */
+        public final static String CODE = "code";
+    }
 }

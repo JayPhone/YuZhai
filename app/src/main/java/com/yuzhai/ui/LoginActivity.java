@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements
             //点击登陆按钮
             case R.id.login_login:
                 //发送登录请求
-                sendLoginRequest();
+                sendLoginRequest(userPhoneEdit.getText().toString(), pswEdit.getText().toString());
                 break;
 
             //点击注册导航文字
@@ -122,17 +122,20 @@ public class LoginActivity extends AppCompatActivity implements
 
             //点击忘记密码导航文字
             case R.id.forget_pswd_nav:
-                Intent forgetPsw = new Intent(this, ForgetPswdActivity.class);
+                Intent forgetPsw = new Intent(this, ForgetPswActivity.class);
                 startActivity(forgetPsw);
                 break;
         }
     }
 
     /**
-     * 点击登陆按钮后,校验输入的信息,发送登录请求
+     * 发送登录请求
+     *
+     * @param userPhone 用户名
+     * @param psw       密码
      */
-    public void sendLoginRequest() {
-        if (checkData(userPhoneEdit.getText().toString(), pswEdit.getText().toString())) {
+    public void sendLoginRequest(String userPhone, String psw) {
+        if (checkData(userPhone, psw)) {
             //生成登录请求参数
             Map<String, String> params = ParamsGenerateUtil.generateLoginParams(
                     userLogin.getUserPhone(),
@@ -191,15 +194,15 @@ public class LoginActivity extends AppCompatActivity implements
         Log.i("response", response);
         String responseCode = JsonUtil.decodeJson(response, RespParamsNameConfig.LoginRespParam.CODE);
 
-        if (responseCode.equals("-1")) {
+        if (responseCode != null && responseCode.equals("-1")) {
             UnRepeatToast.showToast(this, "账号或密码错误");
         }
 
-        if (responseCode.equals("0")) {
+        if (responseCode != null && responseCode.equals("0")) {
             UnRepeatToast.showToast(this, "账号不存在");
         }
 
-        if (responseCode.equals("1")) {
+        if (responseCode != null && responseCode.equals("1")) {
             //用户头像路径
             String userHead = JsonUtil.decodeJson(response, RespParamsNameConfig.LoginRespParam.USERHEAD);
             //用户名

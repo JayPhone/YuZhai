@@ -48,4 +48,55 @@ public class ParamsNameConfig {
         public final static String USERPSW = "userPsw";
     }
 
+    /**
+     * 重命名用户名参数
+     */
+    public class ReNameParam {
+        /**
+         * 新用户名
+         */
+        public final static String NEWNAME = "newname";
+    }
+
+    /**
+     * 忘记密码参数
+     */
+    public class ForgetPswParam {
+        /**
+         * 用户手机号码
+         */
+        public final static String USERPHONE = "userPhone";
+        /**
+         * 验证码
+         */
+        public final static String TEMVERIFY = "temVerify";
+        /**
+         * 新密码
+         */
+        public final static String USERPSW = "userPsw";
+    }
+
+    /**
+     * 修改密码参数
+     */
+    public class AlterPswParam {
+        /**
+         * 旧密码
+         */
+        public final static String OLDPSW = "oldPsw";
+        /**
+         * 新密码
+         */
+        public final static String USERPSW = "userPsw";
+    }
+
+    /**
+     * 取消已发布订单参数
+     */
+    public class CancelPublishedOrderParam {
+        /**
+         * 发布的订单号
+         */
+        public final static String PUBLISHID = "publishId";
+    }
 }

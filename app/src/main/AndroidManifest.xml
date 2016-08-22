@@ -46,7 +46,7 @@
             android:screenOrientation="portrait" />
         <!-- 忘记密码界面 -->
         <activity
-            android:name="com.yuzhai.ui.ForgetPswdActivity"
+            android:name="com.yuzhai.ui.ForgetPswActivity"
             android:screenOrientation="portrait" />
         <!-- 类别界面 -->
         <activity
@@ -76,7 +76,7 @@
             android:screenOrientation="portrait" />
         <!-- 修改密码界面 -->
         <activity
-            android:name="com.yuzhai.ui.ChangePswdActivity"
+            android:name="com.yuzhai.ui.AlterPswActivity"
             android:screenOrientation="portrait" />
         <!--设置界面-->
         <activity
