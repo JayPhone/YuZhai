@@ -60,7 +60,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     private RelativeLayout changeUserName;
 
     private String imageCameraPath;
-    private CustomApplication customApplication;
+    private CustomApplication mCustomApplication;
     private RequestQueue requestQueue;
     private final int CAMERA_PEQUEST = 1;
     private final int IMAGEPICK_PEQUEST = 2;
@@ -82,7 +82,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userinfo);
 
-        customApplication = (CustomApplication) getApplication();
+        mCustomApplication = (CustomApplication) getApplication();
 
         //获取请求队列
         requestQueue = RequestQueueSingleton.getInstance(this).getRequestQueue();
@@ -165,11 +165,11 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
             //点击退出登录按钮
             case R.id.exit_login:
                 //清除登录的手机号和密码
-                customApplication.clearUserInfo();
+                mCustomApplication.clearUserInfo();
                 //清除cookie
-                customApplication.clearCookie();
+                mCustomApplication.clearCookie();
                 //退出登录
-                customApplication.setLoginState(false);
+                mCustomApplication.setLoginState(false);
                 //替换个人信息界面为未登录
                 replaceMenuUI();
                 finish();
@@ -290,7 +290,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
 
         //创建重命名请求
         CommonRequest reNameRequest = new CommonRequest(IPConfig.reNameAddress,
-                createHeaders(),
+                generateHeaders(),
                 param,
                 new Response.Listener<String>() {
                     @Override
@@ -365,6 +365,10 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     public void sendUploadHeaderRequest(File file) {
         //创建上传头像请求
         FileUploadRequest headerUploadRequest = new FileUploadRequest(IPConfig.uploadHeadAddress,
+                generateHeaders(),
+                null,
+                "image",
+                file,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
@@ -379,11 +383,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                     public void onErrorResponse(VolleyError volleyError) {
                         UnRepeatToast.showToast(UserInfoActivity.this, "服务器睡着了");
                     }
-                },
-                "image",
-                file,
-                null,
-                createHeaders()
+                }
         );
 
         //添加到请求队列
@@ -391,14 +391,13 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * 生成请求头参数
+     * 生成请求头参数集
      *
-     * @return 生成的请求头参数集
+     * @return 返回请求头参数集
      */
-    public Map<String, String> createHeaders() {
-        //设置请求参数
+    public Map<String, String> generateHeaders() {
         Map<String, String> headers = new HashMap<>();
-        headers.put(COOKIE, customApplication.getCookie());
+        headers.put(COOKIE, mCustomApplication.getCookie());
         return headers;
     }
 

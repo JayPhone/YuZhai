@@ -111,4 +111,55 @@ public class ParamsGenerateUtil {
         params.put(ParamsNameConfig.CancelPublishedOrderParam.PUBLISHID, publishId);
         return params;
     }
+
+    /**
+     * 生成通过类型查询订单请求的参数集
+     *
+     * @param itemType 需求类型
+     * @return 返回通过类型查询订单请求的参数集
+     */
+    public static Map<String, String> generateOrdersByTypeParams(String itemType) {
+        Map<String, String> params = new HashMap<>();
+        params.put(ParamsNameConfig.OrdersByTypeParam.ITEMTYPE, itemType);
+        return params;
+    }
+
+    /**
+     * 生成申请接收订单请求的参数集
+     *
+     * @param orderId 订单ID
+     * @return 返回申请接收订单请求的参数集
+     */
+    public static Map<String, String> generateApplyOrderParams(String orderId) {
+        Map<String, String> params = new HashMap<>();
+        params.put(ParamsNameConfig.ApplyOrderParam.ORDERID, orderId);
+        return params;
+    }
+
+    /**
+     * 生成发布订单请求的参数集
+     *
+     * @param title   需求标题
+     * @param content 需求内容
+     * @param type    需求类型
+     * @param date    需求期限
+     * @param contact 联系电话
+     * @param money   项目金额
+     * @return 返回发布订单请求的参数集
+     */
+    public static Map<String, String> generatePublishOrderParams(String title,
+                                                                 String content,
+                                                                 String type,
+                                                                 String date,
+                                                                 String contact,
+                                                                 String money) {
+        Map<String, String> params = new HashMap<>();
+        params.put(ParamsNameConfig.PublishOrderParam.TITLE, title);
+        params.put(ParamsNameConfig.PublishOrderParam.DESCRIPT, content);
+        params.put(ParamsNameConfig.PublishOrderParam.TYPE, type);
+        params.put(ParamsNameConfig.PublishOrderParam.DEADLINE, date);
+        params.put(ParamsNameConfig.PublishOrderParam.TEL, contact);
+        params.put(ParamsNameConfig.PublishOrderParam.MONEY, money);
+        return params;
+    }
 }

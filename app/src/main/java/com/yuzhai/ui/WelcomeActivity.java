@@ -5,11 +5,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,6 +24,7 @@ import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
@@ -49,6 +55,16 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private CommonRequest loginRequest;
 
+    /**
+     * 显示logo的ImageView
+     */
+    private ImageView mLogoImage;
+
+    /**
+     * Logo
+     */
+    private Bitmap mBitmap;
+
     private final String CODE = "code";
     private final String USERHEAD = "userHead";
     private final String USERNAME = "userName";
@@ -57,6 +73,7 @@ public class WelcomeActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
         //获取权限
         WelcomeActivityPermissionsDispatcher.showWriteExternalStorageWithCheck(WelcomeActivity.this);
     }
@@ -71,6 +88,24 @@ public class WelcomeActivity extends AppCompatActivity {
 
         //获取请求队列
         requestQueue = RequestQueueSingleton.getInstance(this).getRequestQueue();
+
+        //显示Logo的Bitmap
+        mLogoImage = (ImageView) findViewById(R.id.logo_image);
+
+        //视图加载完毕后，监听并获取ImageView的尺寸
+        final ViewTreeObserver viewTreeObserver = mLogoImage.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        mLogoImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        mBitmap = BitmapUtil.decodeSampledBitmapFromResource(getResources(),
+                                R.drawable.welcome_logo,
+                                mLogoImage.getWidth(),
+                                mLogoImage.getHeight());
+                        mLogoImage.setImageBitmap(mBitmap);
+                    }
+                });
 
         //如果用户曾经登录过，将自动登陆
         if (customApplication.getUserPhone() != null && customApplication.getPassword() != null) {
@@ -176,5 +211,21 @@ public class WelcomeActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == Activity.RESULT_CANCELED) {
             finish();
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && Build.VERSION.SDK_INT >= 19) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+
     }
 }

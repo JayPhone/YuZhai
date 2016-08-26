@@ -44,8 +44,14 @@ public class FileUploadRequest extends Request<String> {
      * @param file
      * @param params
      */
-    public FileUploadRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener,
-                             String filePartName, File file, Map<String, String> params, Map<String, String> headers) {
+    public FileUploadRequest(String url,
+                             Map<String, String> headers,
+                             Map<String, String> params,
+                             String filePartName,
+                             File file,
+                             Response.Listener<String> listener,
+                             Response.ErrorListener errorListener) {
+
         super(Method.POST, url, errorListener);
         mFileParts = new ArrayList<>();
         if (file != null && file.exists()) {
@@ -70,8 +76,14 @@ public class FileUploadRequest extends Request<String> {
      * @param files
      * @param params
      */
-    public FileUploadRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener,
-                             String filePartName, List<File> files, Map<String, String> params, Map<String, String> headers) {
+    public FileUploadRequest(String url,
+                             Map<String, String> headers,
+                             Map<String, String> params,
+                             String filePartName,
+                             List<File> files,
+                             Response.Listener<String> listener,
+                             Response.ErrorListener errorListener) {
+
         super(Method.POST, url, errorListener);
         mFilePartName = filePartName;
         mListener = listener;

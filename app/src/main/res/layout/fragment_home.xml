@@ -58,7 +58,7 @@
                 android:layout_height="200dp"
                 android:autoStart="true"
                 android:clickable="true"
-                android:flipInterval="3000">
+                android:flipInterval="6000">
 
                 <ImageView
                     android:id="@+id/image_1"

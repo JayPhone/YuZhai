@@ -14,7 +14,7 @@ public interface IPConfig {
     /**
      * 目标地址和端口
      */
-    String DesAddress = "192.168.191.3:8088";
+    String DesAddress = "192.168.135.1:8088";
 
     /**
      * 主机名称
@@ -54,7 +54,7 @@ public interface IPConfig {
     /**
      * 发布需求地址
      */
-    String publishAddress = addressPrefix + "/publish/save";
+    String publishOrderAddress = addressPrefix + "/publish/save";
 
     /**
      * 上传用户头像地址
@@ -69,12 +69,12 @@ public interface IPConfig {
     /**
      * 通过需求类型查看项目订单地址
      */
-    String ordersAddress = addressPrefix + "/selectOrderByType";
+    String ordersByTypeAddress = addressPrefix + "/selectOrderByType";
 
     /**
-     * 查看已接收订单地址
+     * 申请接收订单地址
      */
-    String applyAddress = addressPrefix + "/apply";
+    String applyOrderAddress = addressPrefix + "/apply";
 
     /**
      * 查看已发布订单地址
