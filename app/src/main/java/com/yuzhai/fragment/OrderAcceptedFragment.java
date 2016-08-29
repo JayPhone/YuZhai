@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.HashMap;
@@ -107,7 +108,7 @@ public class OrderAcceptedFragment extends Fragment implements AdapterView.OnIte
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-
+                        UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
                     }
                 });
 

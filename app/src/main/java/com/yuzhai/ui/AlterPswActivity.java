@@ -12,8 +12,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.config.RespParamsNameConfig;
-import com.yuzhai.entry.UserAlterPsw;
+import com.yuzhai.entry.requestBean.UserAlterPsw;
+import com.yuzhai.entry.responseBean.AlterPswRespBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
@@ -91,9 +91,11 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void onResponse(String resp) {
                             Log.i("alter_psw_resp", resp);
-                            String responseCode = JsonUtil.decodeJson(resp, RespParamsNameConfig.AlterPswParam.CODE);
+                            AlterPswRespBean alterPswRespBean = JsonUtil.decodeByGson(resp, AlterPswRespBean.class);
+                            String respCode = alterPswRespBean.getCode();
+                            Log.i("alter_resp_code", respCode);
 
-                            if (responseCode != null && responseCode.equals("1")) {
+                            if (respCode != null && respCode.equals("1")) {
                                 UnRepeatToast.showToast(AlterPswActivity.this, "密码修改成功,重新登陆");
 
                                 //设置为没登录
@@ -105,7 +107,7 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
                                 startActivity(main);
                             }
 
-                            if (responseCode != null && responseCode.equals("-1")) {
+                            if (respCode != null && respCode.equals("-1")) {
                                 UnRepeatToast.showToast(AlterPswActivity.this, "原密码错误");
                             }
                         }
@@ -113,7 +115,7 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            UnRepeatToast.showToast(AlterPswActivity.this, "服务器睡着了");
+                            UnRepeatToast.showToast(AlterPswActivity.this, "服务器不务正业中");
                         }
                     });
 

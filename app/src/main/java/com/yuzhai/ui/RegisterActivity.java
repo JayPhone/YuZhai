@@ -13,9 +13,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.config.RespParamsNameConfig;
-import com.yuzhai.entry.UserPhone;
-import com.yuzhai.entry.UserReg;
+import com.yuzhai.entry.requestBean.UserPhone;
+import com.yuzhai.entry.requestBean.UserReg;
+import com.yuzhai.entry.responseBean.RegisterRespBean;
+import com.yuzhai.entry.responseBean.VerifyRespBean;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
@@ -138,26 +139,30 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      *
      * @param regPhone 获取验证码的号码
      */
-    public void sendVerifyRequest(String regPhone) {
+    public void sendVerifyRequest(final String regPhone) {
         if (checkRegPhone(regPhone)) {
             //生成获取验证码请求参数
             Map<String, String> params = ParamsGenerateUtil.generateVerifyParams(userPhone.getUserPhone());
 
             //创建获取验证码请求
-            CommonRequest verifyRequest = new CommonRequest(IPConfig.verifyAddress,
+            final CommonRequest verifyRequest = new CommonRequest(IPConfig.verifyAddress,
                     null,
                     params,
                     new Response.Listener<String>() {
                         @Override
-                        public void onResponse(String s) {
-                            Log.i("response", s);
-                            String responseCode = JsonUtil.decodeJson(s, RespParamsNameConfig.VerifyResParam.CODE);
+                        public void onResponse(String resp) {
+                            Log.i("verify_resp", resp);
+                            VerifyRespBean verifyRespBean = JsonUtil.decodeByGson(resp, VerifyRespBean.class);
 
-                            if (responseCode != null && responseCode.equals("1")) {
+                            //返回的响应码
+                            String respCode = verifyRespBean.getCode();
+                            Log.i("verify_resp_code", respCode);
+
+                            if (respCode != null && respCode.equals("1")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码发射成功,请注意捕获");
                             }
 
-                            if (responseCode != null && responseCode.equals("-1")) {
+                            if (respCode != null && respCode.equals("-1")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码发射失败,请稍后再来");
                             }
                         }
@@ -165,7 +170,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            UnRepeatToast.showToast(RegisterActivity.this, "服务器睡着了");
+                            UnRepeatToast.showToast(RegisterActivity.this, "服务器不务正业中");
                         }
                     });
 
@@ -203,23 +208,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String resp) {
-                            Log.i("response", resp);
-                            String responseCode = JsonUtil.decodeJson(resp, RespParamsNameConfig.RegisterParam.CODE);
+                            Log.i("register_resp", resp);
 
-                            if (responseCode != null && responseCode.equals("-1")) {
+                            //获取返回码
+                            RegisterRespBean registerRespBean = JsonUtil.decodeByGson(resp, RegisterRespBean.class);
+                            String respCode = registerRespBean.getCode();
+                            Log.i("register_resp_code", respCode);
+
+                            if (respCode != null && respCode.equals("-1")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "用户已存在");
                             }
 
-                            if (responseCode != null && responseCode.equals("0")) {
+                            if (respCode != null && respCode.equals("0")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码错误");
                             }
 
-                            if (responseCode != null && responseCode.equals("1")) {
-                                Log.i("reg-success", "register success");
+                            if (respCode != null && respCode.equals("1")) {
+                                Log.i("register_resp", "register success");
                                 finish();
                             }
 
-                            if (responseCode != null && responseCode.equals("2")) {
+                            if (respCode != null && respCode.equals("2")) {
                                 UnRepeatToast.showToast(RegisterActivity.this, "验证码已过期，请重新获取");
                             }
                         }
@@ -227,7 +236,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            UnRepeatToast.showToast(RegisterActivity.this, "服务器睡着了");
+                            UnRepeatToast.showToast(RegisterActivity.this, "服务器不务正业中");
                         }
                     });
 

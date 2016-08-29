@@ -13,8 +13,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.config.RespParamsNameConfig;
-import com.yuzhai.entry.UserLogin;
+import com.yuzhai.entry.responseBean.LoginRespBean;
+import com.yuzhai.entry.requestBean.UserLogin;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
@@ -28,9 +28,8 @@ import java.util.Map;
 /**
  * 账户登录界面
  */
-public class LoginActivity extends AppCompatActivity implements
-        Response.Listener<String>,
-        View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener,
+        Response.Listener<String> {
 
     /**
      * 账号输入框
@@ -149,7 +148,7 @@ public class LoginActivity extends AppCompatActivity implements
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            UnRepeatToast.showToast(LoginActivity.this, "服务器睡着了");
+                            UnRepeatToast.showToast(LoginActivity.this, "服务器不务正业中");
                         }
                     });
 
@@ -187,26 +186,32 @@ public class LoginActivity extends AppCompatActivity implements
     /**
      * 对服务器响应的数据进行处理
      *
-     * @param response 响应数据
+     * @param resp 响应数据
      */
     @Override
-    public void onResponse(String response) {
-        Log.i("response", response);
-        String responseCode = JsonUtil.decodeJson(response, RespParamsNameConfig.LoginRespParam.CODE);
+    public void onResponse(String resp) {
+        Log.i("login_resp", resp);
+        LoginRespBean loginRespBean = JsonUtil.decodeByGson(resp, LoginRespBean.class);
 
-        if (responseCode != null && responseCode.equals("-1")) {
+        //返回的响应码
+        String respCode = loginRespBean.getCode();
+        Log.i("login_resp_code", loginRespBean.getCode());
+
+        if (respCode != null && respCode.equals("-1")) {
             UnRepeatToast.showToast(this, "账号或密码错误");
         }
 
-        if (responseCode != null && responseCode.equals("0")) {
+        if (respCode != null && respCode.equals("0")) {
             UnRepeatToast.showToast(this, "账号不存在");
         }
 
-        if (responseCode != null && responseCode.equals("1")) {
+        if (respCode != null && respCode.equals("1")) {
             //用户头像路径
-            String userHead = JsonUtil.decodeJson(response, RespParamsNameConfig.LoginRespParam.USERHEAD);
+            String userHead = loginRespBean.getUserHead();
+            Log.i("userHead", loginRespBean.getUserHead());
             //用户名
-            String userName = JsonUtil.decodeJson(response, RespParamsNameConfig.LoginRespParam.USERNAME);
+            String userName = loginRespBean.getUserName();
+            Log.i("userName", loginRespBean.getUserName());
             //保存登陆成功的手机号和密码
             customApplication.addUserInfo(userLogin.getUserPhone(), userLogin.getUserPsw());
             //保存登陆成功的账号的cookie

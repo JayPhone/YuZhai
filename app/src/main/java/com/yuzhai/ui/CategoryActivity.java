@@ -15,9 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yuzhai.adapter.CategoryViewPagerAdapter;
+import com.yuzhai.fragment.HomeFragment;
 import com.yuzhai.fragment.InformationFragment;
 import com.yuzhai.fragment.ResumeFragment;
 import com.yuzhai.fragment.WorkFragment;
+import com.yuzhai.util.TypeUtil;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;
@@ -47,16 +49,13 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     private Matrix matrix;
 
     private int mProjectType;
-    private final String TITLE = "title";
-
-    private String[] typeArray = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
         //获取项目的类型
-        mProjectType = getIntent().getIntExtra(TITLE, -1);
+        mProjectType = getIntent().getIntExtra(HomeFragment.TITLE, -1);
         //初始化组件
         initViews();
         //初始化ViewPager
@@ -76,7 +75,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         titleInfo = (TextView) findViewById(R.id.title_info);
         titleResume = (TextView) findViewById(R.id.title_resume);
         categoryTitle = (TextView) findViewById(R.id.category_title);
-        categoryTitle.setText(typeArray[mProjectType]);
+        categoryTitle.setText(TypeUtil.getTypeText(mProjectType));
 
         titleWork.setOnClickListener(this);
         titleInfo.setOnClickListener(this);

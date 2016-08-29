@@ -13,18 +13,17 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
+import com.yuzhai.entry.responseBean.LoginRespBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
@@ -65,7 +64,6 @@ public class WelcomeActivity extends AppCompatActivity {
      */
     private Bitmap mBitmap;
 
-    private final String CODE = "code";
     private final String USERHEAD = "userHead";
     private final String USERNAME = "userName";
 
@@ -93,19 +91,19 @@ public class WelcomeActivity extends AppCompatActivity {
         mLogoImage = (ImageView) findViewById(R.id.logo_image);
 
         //视图加载完毕后，监听并获取ImageView的尺寸
-        final ViewTreeObserver viewTreeObserver = mLogoImage.getViewTreeObserver();
-        viewTreeObserver.addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        mLogoImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        mBitmap = BitmapUtil.decodeSampledBitmapFromResource(getResources(),
-                                R.drawable.welcome_logo,
-                                mLogoImage.getWidth(),
-                                mLogoImage.getHeight());
-                        mLogoImage.setImageBitmap(mBitmap);
-                    }
-                });
+//        final ViewTreeObserver viewTreeObserver = mLogoImage.getViewTreeObserver();
+//        viewTreeObserver.addOnGlobalLayoutListener(
+//                new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        mLogoImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                        mBitmap = BitmapUtil.decodeSampledBitmapFromResource(getResources(),
+//                                R.drawable.welcome_logo,
+//                                mLogoImage.getWidth(),
+//                                mLogoImage.getHeight());
+//                        mLogoImage.setImageBitmap(mBitmap);
+//                    }
+//                });
 
         //如果用户曾经登录过，将自动登陆
         if (customApplication.getUserPhone() != null && customApplication.getPassword() != null) {
@@ -139,12 +137,20 @@ public class WelcomeActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        String responseCode = JsonUtil.decodeJson(resp, CODE);
-                        if (responseCode != null && responseCode.equals("1")) {
+                        Log.i("welcome_resp", resp);
+
+                        //获取返回码
+                        LoginRespBean loginRespBean = JsonUtil.decodeByGson(resp, LoginRespBean.class);
+                        String respCode = loginRespBean.getCode();
+                        Log.i("welcome_resp_code", respCode);
+
+                        if (respCode != null && respCode.equals("1")) {
                             //用户头像路径
-                            String userHead = JsonUtil.decodeJson(resp, USERHEAD);
+                            String userHead = loginRespBean.getUserHead();
+                            Log.i("welcome_resp_userHead", userHead);
                             //用户名
-                            String userName = JsonUtil.decodeJson(resp, USERNAME);
+                            String userName = loginRespBean.getUserName();
+                            Log.i("welcome_resp_userName", userName);
                             //设置为登录状态
                             customApplication.setLoginState(true);
                             //保存登陆成功的账号的cookie
@@ -166,7 +172,11 @@ public class WelcomeActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(WelcomeActivity.this, "服务器睡着了");
+                        UnRepeatToast.showToast(WelcomeActivity.this, "服务器不务正业中");
+                        Log.i("auto_login", "fail");
+                        Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(main);
+                        finish();
                     }
                 });
 

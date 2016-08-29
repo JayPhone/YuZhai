@@ -17,7 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.adapter.PublishedListViewAdapter;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.config.RespParamsNameConfig;
+import com.yuzhai.entry.responseBean.OrderPublishedBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
@@ -25,9 +25,6 @@ import com.yuzhai.ui.DetailWorkActivity;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,11 +42,9 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
 
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
-    private String mOrdersJson;
-    private List<Map<String, Object>> mOrders;
+    private List<OrderPublishedBean.OrderBean> mOrders;
     private final String COOKIE = "cookie";
-    private final String DATA = "data";
-    private final String TYPE = "type";
+    public final static String DATA = "data";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,20 +100,14 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
             case R.id.published_listview:
-                try {
-                    //获取订单数据
-                    JSONArray jsonArray = JsonUtil.decodeToJsonArray(mOrdersJson, RespParamsNameConfig.PublishedOrdersParam.ORDER);
-                    String order = jsonArray.get(position).toString();
-                    Log.i("publish_order", order);
+                //获取当前项订单数据
+                String orderJson = JsonUtil.codeByGson(mOrders.get(position));
+                Log.i("publish_order", orderJson);
 
-                    //跳转到订单详情界面并传递订单数据
-                    Intent detailWork = new Intent(mMainActivity, DetailWorkActivity.class);
-                    detailWork.putExtra(DATA, order);
-                    detailWork.putExtra(TYPE, (int) mOrders.get(position).get(RespParamsNameConfig.PublishedOrdersParam.IMAGE));
-                    startActivity(detailWork);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                //跳转到订单详情界面并传递订单数据
+                Intent detailWork = new Intent(mMainActivity, DetailWorkActivity.class);
+                detailWork.putExtra(DATA, orderJson);
+                startActivity(detailWork);
                 break;
         }
     }
@@ -134,9 +123,9 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        mOrdersJson = resp;
+                        Log.i("order_publish_resp", resp);
                         //解析获取到的订单数据
-                        mOrders = JsonUtil.decodeResponseForPublished(resp);
+                        mOrders = JsonUtil.decodeByGson(resp, OrderPublishedBean.class).getOrder();
                         //设置数据到ListView
                         mPublishedLv.setAdapter(new PublishedListViewAdapter(mMainActivity, mOrders));
                         //关闭刷新
@@ -146,7 +135,8 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(mMainActivity, "服务器睡着了");
+                        UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
+                        Log.i("error", volleyError.getMessage(), volleyError);
                     }
                 });
 

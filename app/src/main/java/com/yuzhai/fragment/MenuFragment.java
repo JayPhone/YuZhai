@@ -22,6 +22,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
+import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.ui.IdentityAuthenActivity;
 import com.yuzhai.ui.LoginActivity;
 import com.yuzhai.ui.SetUpActivity;
@@ -81,7 +82,7 @@ public class MenuFragment extends Fragment {
         //获取fragment的宿主Activity
         mainActivity = getActivity();
         customApplication = (CustomApplication) mainActivity.getApplication();
-        requestQueue = customApplication.getRequestQueue();
+        requestQueue = RequestQueueSingleton.getInstance(mainActivity).getRequestQueue();
         if (customApplication.isLogin()) {
             if (getArguments() != null) {
                 if (getArguments().getString("userHead") != null) {
@@ -257,7 +258,7 @@ public class MenuFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String headPath = intent.getStringExtra("userHead");
             Log.i("path", headPath);
-            ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
+            ImageLoader imageLoader = RequestQueueSingleton.getInstance(mainActivity).getmImageLoader();
             ImageLoader.ImageListener listener = ImageLoader.getImageListener(userHeader, R.drawable.head_default, R.drawable.head_default);
             imageLoader.get(IPConfig.addressPrefix + headPath, listener, 200, 200);
             userHeadURL = headPath;

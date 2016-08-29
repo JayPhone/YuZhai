@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.util.TypeUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -40,8 +41,6 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private int mType;
     private final static String TYPE = "type";
     private final String COOKIE = "cookie";
-
-    private String[] typeArray = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
 
     /**
      * 获取ResumeFragment实例
@@ -96,7 +95,7 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
      */
     public void initData() {
         setRefreshState(true);
-        sendResumeByTypeRequest(typeArray[mType]);
+        sendResumeByTypeRequest(TypeUtil.getTypeText(mType));
     }
 
     @Override

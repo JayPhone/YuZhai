@@ -12,9 +12,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.config.RespParamsNameConfig;
-import com.yuzhai.entry.UserForgetPsw;
-import com.yuzhai.entry.UserPhone;
+import com.yuzhai.entry.requestBean.UserForgetPsw;
+import com.yuzhai.entry.requestBean.UserPhone;
+import com.yuzhai.entry.responseBean.ForgetPswRespBean;
+import com.yuzhai.entry.responseBean.VerifyRespBean;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
@@ -107,14 +108,16 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String resp) {
-                            Log.i("response", resp);
-                            String responseCode = JsonUtil.decodeJson(resp, RespParamsNameConfig.VerifyResParam.CODE);
+                            Log.i("verify_resp", resp);
+                            VerifyRespBean verifyRespBean = JsonUtil.decodeByGson(resp, VerifyRespBean.class);
+                            String respCode = verifyRespBean.getCode();
+                            Log.i("verify_resp_code", respCode);
 
-                            if (responseCode != null && responseCode.equals("1")) {
+                            if (respCode != null && respCode.equals("1")) {
                                 UnRepeatToast.showToast(ForgetPswActivity.this, "验证码发射成功,请注意捕获");
                             }
 
-                            if (responseCode != null && responseCode.equals("-1")) {
+                            if (respCode != null && respCode.equals("-1")) {
                                 UnRepeatToast.showToast(ForgetPswActivity.this, "验证码发射失败,请稍后再来");
                             }
                         }
@@ -122,7 +125,7 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            UnRepeatToast.showToast(ForgetPswActivity.this, "服务器睡着了");
+                            UnRepeatToast.showToast(ForgetPswActivity.this, "服务器不务正业中");
                         }
                     });
 
@@ -132,9 +135,9 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * 发送注册请求
+     * 发送忘记密码请求
      *
-     * @param userPhone 填写的注册号码
+     * @param userPhone 填写的忘记密码号码
      * @param checkCode 填写的验证码
      * @param psw       填写的密码
      * @param cfmPsw    重复密码
@@ -148,31 +151,33 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
                 psw,
                 cfmPsw)) {
 
-            //生成注册请求参数
+            //生成忘记密码请求参数
             Map<String, String> params = ParamsGenerateUtil.generateForgetPswParams(mUserForget.getUserPhone(),
                     mUserForget.getTemVerify(),
                     mUserForget.getUserPsw());
 
-            //创建注册请求
+            //创建忘记密码请求
             CommonRequest forgetPswRequest = new CommonRequest(IPConfig.forgetPswAddress,
                     null,
                     params,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String resp) {
-                            Log.i("response", resp);
-                            String responseCode = JsonUtil.decodeJson(resp, RespParamsNameConfig.ForgetPswParam.CODE);
+                            Log.i("forget_resp", resp);
+                            ForgetPswRespBean forgetPswRespBean = JsonUtil.decodeByGson(resp, ForgetPswRespBean.class);
+                            String respCode = forgetPswRespBean.getCode();
+                            Log.i("forget_resp_code", respCode);
 
-                            if (responseCode != null && responseCode.equals("0")) {
+                            if (respCode != null && respCode.equals("0")) {
                                 UnRepeatToast.showToast(ForgetPswActivity.this, "验证码错误");
                             }
 
-                            if (responseCode != null && responseCode.equals("1")) {
+                            if (respCode != null && respCode.equals("1")) {
                                 UnRepeatToast.showToast(ForgetPswActivity.this, "修改成功");
                                 finish();
                             }
 
-                            if (responseCode != null && responseCode.equals("2")) {
+                            if (respCode != null && respCode.equals("2")) {
                                 UnRepeatToast.showToast(ForgetPswActivity.this, "验证码已过期，请重新获取");
                             }
                         }
@@ -180,11 +185,11 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
-                            UnRepeatToast.showToast(ForgetPswActivity.this, "服务器睡着了");
+                            UnRepeatToast.showToast(ForgetPswActivity.this, "服务器不务正业中");
                         }
                     });
 
-            //添加注册请求到请求队列
+            //添加忘记密码请求到请求队列
             mRequestQueue.add(forgetPswRequest);
         }
     }

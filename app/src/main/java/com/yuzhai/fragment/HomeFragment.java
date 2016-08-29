@@ -57,6 +57,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     //类别面板分类标题
     private String[] categoryTexts = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
 
+    public static final String TITLE = "title";
+
     public HomeFragment() {
     }
 
@@ -155,7 +157,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent_category = new Intent(getActivity(), CategoryActivity.class);
-                intent_category.putExtra("title", position);
+                intent_category.putExtra(TITLE, position);
                 startActivity(intent_category);
             }
         });

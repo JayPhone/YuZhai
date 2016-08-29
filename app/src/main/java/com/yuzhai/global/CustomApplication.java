@@ -2,8 +2,6 @@ package com.yuzhai.global;
 
 import android.app.Application;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.yuzhai.dao.CookieOperate;
 import com.yuzhai.dao.UserInfoOperate;
 
@@ -11,7 +9,6 @@ import com.yuzhai.dao.UserInfoOperate;
  * Created by Administrator on 2016/7/9.
  */
 public class CustomApplication extends Application {
-    private RequestQueue mRequestQueue;
     private UserInfoOperate userInfoOperate;
     private CookieOperate cookieOperate;
     private boolean login = false;
@@ -51,14 +48,6 @@ public class CustomApplication extends Application {
 
     public void clearCookie() {
         cookieOperate.clearCookie();
-    }
-
-    //获取请求队列
-    public RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-        }
-        return mRequestQueue;
     }
 
     //登录操作

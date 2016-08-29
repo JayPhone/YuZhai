@@ -89,7 +89,6 @@ public class CommonRequest extends StringRequest {
         if (headers != null) {
             return headers;
         }
-
         return super.getHeaders();
     }
 
@@ -99,7 +98,6 @@ public class CommonRequest extends StringRequest {
         if (params != null) {
             return params;
         }
-
         return super.getParams();
     }
 
@@ -109,8 +107,8 @@ public class CommonRequest extends StringRequest {
     }
 
     //设置请求头参数
-    public void setRequestHeaders(Map<String, String> mHeaders) {
-        this.mHeaders = mHeaders;
+    public void setRequestHeaders(Map<String, String> headers) {
+        this.mHeaders = headers;
     }
 
     //设置请求参数

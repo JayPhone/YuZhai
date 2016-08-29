@@ -30,7 +30,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.entry.PublishEntry;
+import com.yuzhai.entry.requestBean.PublishEntry;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.http.ParamsGenerateUtil;

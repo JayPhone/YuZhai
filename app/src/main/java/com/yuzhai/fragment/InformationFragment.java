@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.util.TypeUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -40,8 +41,6 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
     private int mType;
     private final static String TYPE = "type";
     private final String COOKIE = "cookie";
-
-    private String[] typeArray = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
 
     /**
      * 获取InformationFragment实例
@@ -96,7 +95,7 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
      */
     public void initData() {
         setRefreshState(true);
-        sendInfoByTypeRequest(typeArray[mType]);
+        sendInfoByTypeRequest(TypeUtil.getTypeText(mType));
     }
 
     @Override
@@ -123,7 +122,7 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(mMainActivity, "服务器睡着了");
+                        UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
                     }
                 });
 

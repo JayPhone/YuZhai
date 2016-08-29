@@ -7,7 +7,7 @@ import android.widget.TextView;
 /**
  * Created by Administrator on 2016/7/27.
  */
-public final class ViewHolder {
+public final class PublishedViewHolder {
     TextView statusText;
     TextView orderIdText;
     TextView dateText;

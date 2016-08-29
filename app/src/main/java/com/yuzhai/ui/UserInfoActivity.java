@@ -30,7 +30,6 @@ import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.util.BitmapCache;
 import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.FileUtil;
 import com.yuzhai.util.GetPathUtil;
@@ -182,7 +181,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      */
     public void initData() {
         if (userHeadUrl != null) {
-            ImageLoader imageLoader = new ImageLoader(requestQueue, new BitmapCache());
+            ImageLoader imageLoader = RequestQueueSingleton.getInstance(this).getmImageLoader();
             ImageLoader.ImageListener listener = ImageLoader.getImageListener(headerImage, R.drawable.head_default, R.drawable.head_default);
             imageLoader.get(userHeadUrl, listener, 200, 200);
         }
@@ -294,8 +293,9 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 param,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String resq) {
-                        Log.i("response", resq);
+                    public void onResponse(String resp) {
+                        Log.i("response", resp);
+                        //TODO resp只有1,没有key
                         //设置新用户名
                         userName.setText(newName);
                         //替换侧滑菜单用户名
@@ -306,7 +306,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(UserInfoActivity.this, "服务器睡着了");
+                        UnRepeatToast.showToast(UserInfoActivity.this, "服务器不务正业中");
                     }
                 });
 
@@ -373,6 +373,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onResponse(String resp) {
                         Log.i("response", resp);
+                        //TODO 只有路径，没有key
                         //替换侧滑菜单头像
                         replaceHeader(resp);
                         UnRepeatToast.showToast(UserInfoActivity.this, "头像上传成功");

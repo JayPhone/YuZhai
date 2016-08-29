@@ -16,12 +16,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.yuzhai.config.IPConfig;
+import com.yuzhai.entry.responseBean.OrderPublishedBean;
+import com.yuzhai.fragment.OrderPublishedFragment;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.util.BitmapCache;
 import com.yuzhai.util.JsonUtil;
+import com.yuzhai.util.TypeUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -45,13 +47,11 @@ public class DetailWorkActivity extends AppCompatActivity implements View.OnClic
     private LinearLayout pictureLayout;
     private Button acceptButton;
 
-    private int[] defaultImage = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
-    private String dataString;
-    private int type;
-    private Map<String, Object> data;
-    private List<String> picturesPath;
+    private String mJsonData;
+    private OrderPublishedBean.OrderBean mOrderData;
+    private List<OrderPublishedBean.OrderBean.PicturesBean> mPicPaths;
     private final String COOKIE = "cookie";
 
     @Override
@@ -60,43 +60,41 @@ public class DetailWorkActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_work_detail);
         mCustomApplication = (CustomApplication) getApplication();
         mRequestQueue = RequestQueueSingleton.getInstance(this).getRequestQueue();
-        dataString = getIntent().getStringExtra("data");
-        type = getIntent().getIntExtra("type", -1);
-        data = JsonUtil.decodeResponseForJobDetail(dataString);
-        picturesPath = (List<String>) data.get("pictures");
-        Log.i("pictures", picturesPath.toString());
-        Log.i("datas", data.toString());
+
+        //获取订单数据
+        mJsonData = getIntent().getStringExtra(OrderPublishedFragment.DATA);
+        mOrderData = JsonUtil.decodeByGson(mJsonData, OrderPublishedBean.OrderBean.class);
         initViews();
     }
 
     public void initViews() {
         backImage = (ImageView) findViewById(R.id.back_image);
         title = (TextView) findViewById(R.id.title);
-        title.setText((String) data.get("name"));
+        title.setText(mOrderData.getPublish().getTitle());
         money = (TextView) findViewById(R.id.money);
-        money.setText((String) data.get("price"));
+        money.setText(mOrderData.getPublish().getMoney());
         orderId = (TextView) findViewById(R.id.order_id);
-        orderId.setText((String) data.get("publishId"));
+        orderId.setText(mOrderData.getPublish().getPublishId());
         status = (TextView) findViewById(R.id.status);
-        status.setText((String) data.get("currentstatu"));
+        status.setText(mOrderData.getPublish().getCurrentstatus());
         date = (TextView) findViewById(R.id.date);
-        date.setText((String) data.get("date"));
+        date.setText(mOrderData.getPublish().getDate());
         limit = (TextView) findViewById(R.id.limit);
-        limit.setText((String) data.get("limit"));
+        limit.setText(mOrderData.getPublish().getDeadline());
         tel = (TextView) findViewById(R.id.tel);
-        tel.setText((String) data.get("tel"));
+        tel.setText(mOrderData.getPublish().getTel());
         detailContent = (TextView) findViewById(R.id.detail_content);
-        detailContent.setText((String) data.get("descript"));
+        detailContent.setText(mOrderData.getPublish().getDescript());
         pictureLayout = (LinearLayout) findViewById(R.id.pictures_layout);
         acceptButton = (Button) findViewById(R.id.accept_button);
 
-        if (picturesPath.size() != 0) {
-            addImages(pictureLayout, picturesPath);
-
-        }
-
         backImage.setOnClickListener(this);
         acceptButton.setOnClickListener(this);
+
+        mPicPaths = mOrderData.getPictures();
+        if (mPicPaths.size() != 0) {
+            addImages(pictureLayout, mPicPaths);
+        }
     }
 
     @Override
@@ -109,7 +107,7 @@ public class DetailWorkActivity extends AppCompatActivity implements View.OnClic
 
             //点击申请接收按钮
             case R.id.accept_button:
-                sendApplyOrderRequest((String) data.get("publishId"));
+                sendApplyOrderRequest(mOrderData.getPublish().getPublishId());
                 break;
         }
     }
@@ -136,7 +134,7 @@ public class DetailWorkActivity extends AppCompatActivity implements View.OnClic
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(DetailWorkActivity.this, "服务器睡着了");
+                        UnRepeatToast.showToast(DetailWorkActivity.this, "服务器不务正业中");
                     }
                 });
 
@@ -148,13 +146,14 @@ public class DetailWorkActivity extends AppCompatActivity implements View.OnClic
      * 动态添加图片到布局中
      *
      * @param picturesLayout 放置图片的布局
-     * @param picturesPath   图片路径集合
+     * @param picPaths       图片路径集合
      */
-    public void addImages(LinearLayout picturesLayout, List<String> picturesPath) {
+    public void addImages(LinearLayout picturesLayout,
+                          List<OrderPublishedBean.OrderBean.PicturesBean> picPaths) {
         Point p = new Point();
         WindowManager windowManager = getWindowManager();
         windowManager.getDefaultDisplay().getSize(p);
-        for (int i = 0; i < picturesPath.size(); i++) {
+        for (int i = 0; i < picPaths.size(); i++) {
             ImageView imageView = new ImageView(this);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((p.x - 30), 600);
@@ -165,7 +164,7 @@ public class DetailWorkActivity extends AppCompatActivity implements View.OnClic
             params.rightMargin = 15;
             imageView.setLayoutParams(params);
             picturesLayout.addView(imageView);
-            sendPictureRequest(imageView, picturesPath.get(i), p.x);
+            sendPictureRequest(imageView, picPaths.get(i).getPicturePath(), p.x);
         }
     }
 
@@ -177,8 +176,9 @@ public class DetailWorkActivity extends AppCompatActivity implements View.OnClic
      * @param width     图片宽度
      */
     public void sendPictureRequest(ImageView imageView, String path, int width) {
-        ImageLoader imageLoader = new ImageLoader(mRequestQueue, new BitmapCache());
-        ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView, type, type);
+        int typeImage = TypeUtil.getTypeImage(mOrderData.getPublish().getType());
+        ImageLoader imageLoader = RequestQueueSingleton.getInstance(this).getmImageLoader();
+        ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView, typeImage, typeImage);
         imageLoader.get(IPConfig.addressPrefix + path, listener, (width - 30), 600);
     }
 

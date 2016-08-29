@@ -1,4 +1,4 @@
-package com.yuzhai.entry;
+package com.yuzhai.entry.requestBean;
 
 /**
  * 创建时间：2016/5/14

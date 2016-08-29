@@ -17,12 +17,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.config.RespParamsNameConfig;
+import com.yuzhai.entry.responseBean.CancelPublishedRespBean;
+import com.yuzhai.entry.responseBean.OrderPublishedBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.util.JsonUtil;
+import com.yuzhai.util.TypeUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -38,26 +40,26 @@ public class PublishedListViewAdapter extends BaseAdapter implements View.OnClic
     private RequestQueue requestQueue;
     private Context context;
     private LayoutInflater layoutInflater;
-    private List<Map<String, Object>> data;
+    private List<OrderPublishedBean.OrderBean> mData;
     private final String COOKIE = "cookie";
     private int mPosition;
 
-    public PublishedListViewAdapter(Activity context, List<Map<String, Object>> data) {
+    public PublishedListViewAdapter(Activity context, List<OrderPublishedBean.OrderBean> data) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
-        this.data = data;
+        this.mData = data;
         this.customApplication = (CustomApplication) context.getApplication();
         this.requestQueue = RequestQueueSingleton.getInstance(context).getRequestQueue();
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return mData.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return data.get(position);
+        return mData.get(position);
     }
 
     @Override
@@ -67,32 +69,32 @@ public class PublishedListViewAdapter extends BaseAdapter implements View.OnClic
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        PublishedViewHolder publishedViewHolder;
         if (convertView == null) {
-            viewHolder = new ViewHolder();
+            publishedViewHolder = new PublishedViewHolder();
             convertView = layoutInflater.inflate(R.layout.order_published_item_layout, parent, false);
-            viewHolder.statusText = (TextView) convertView.findViewById(R.id.status);
-            viewHolder.orderIdText = (TextView) convertView.findViewById(R.id.order_id);
-            viewHolder.dateText = (TextView) convertView.findViewById(R.id.date);
-            viewHolder.titleText = (TextView) convertView.findViewById(R.id.name);
-            viewHolder.limitText = (TextView) convertView.findViewById(R.id.limit);
-            viewHolder.priceText = (TextView) convertView.findViewById(R.id.price);
-            viewHolder.typeImage = (ImageView) convertView.findViewById(R.id.type_image);
-            viewHolder.cancelButton = (Button) convertView.findViewById(R.id.cancel_order);
-            convertView.setTag(viewHolder);
+            publishedViewHolder.statusText = (TextView) convertView.findViewById(R.id.status);
+            publishedViewHolder.orderIdText = (TextView) convertView.findViewById(R.id.order_id);
+            publishedViewHolder.dateText = (TextView) convertView.findViewById(R.id.date);
+            publishedViewHolder.titleText = (TextView) convertView.findViewById(R.id.name);
+            publishedViewHolder.limitText = (TextView) convertView.findViewById(R.id.limit);
+            publishedViewHolder.priceText = (TextView) convertView.findViewById(R.id.price);
+            publishedViewHolder.typeImage = (ImageView) convertView.findViewById(R.id.type_image);
+            publishedViewHolder.cancelButton = (Button) convertView.findViewById(R.id.cancel_order);
+            convertView.setTag(publishedViewHolder);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            publishedViewHolder = (PublishedViewHolder) convertView.getTag();
         }
 
-        viewHolder.statusText.setText((String) data.get(position).get("currentstatu"));
-        viewHolder.orderIdText.setText((String) data.get(position).get("publishId"));
-        viewHolder.dateText.setText((String) data.get(position).get("date"));
-        viewHolder.titleText.setText((String) data.get(position).get("name"));
-        viewHolder.limitText.setText((String) data.get(position).get("limit"));
-        viewHolder.priceText.setText((String) data.get(position).get("price"));
-        viewHolder.typeImage.setImageResource((int) data.get(position).get("image"));
+        publishedViewHolder.statusText.setText(mData.get(position).getPublish().getCurrentstatus());
+        publishedViewHolder.orderIdText.setText(mData.get(position).getPublish().getPublishId());
+        publishedViewHolder.dateText.setText(mData.get(position).getPublish().getDate());
+        publishedViewHolder.titleText.setText(mData.get(position).getPublish().getTitle());
+        publishedViewHolder.limitText.setText(mData.get(position).getPublish().getDeadline());
+        publishedViewHolder.priceText.setText(mData.get(position).getPublish().getMoney());
+        publishedViewHolder.typeImage.setImageResource(TypeUtil.getTypeImage(mData.get(position).getPublish().getType()));
 
-        viewHolder.cancelButton.setOnClickListener(this);
+        publishedViewHolder.cancelButton.setOnClickListener(this);
         mPosition = position;
         return convertView;
     }
@@ -118,7 +120,7 @@ public class PublishedListViewAdapter extends BaseAdapter implements View.OnClic
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //发送取消已发布订单请求
-                sendCancelPublishedRequest((String) data.get(mPosition).get("publishId"));
+                sendCancelPublishedRequest(mData.get(mPosition).getPublish().getPublishId());
             }
         });
         builder.setNegativeButton("先不退", null);
@@ -140,13 +142,15 @@ public class PublishedListViewAdapter extends BaseAdapter implements View.OnClic
                     @Override
                     public void onResponse(String resp) {
                         Log.i("cancel_publish_resp", resp);
-                        String responseCode = JsonUtil.decodeJson(resp, RespParamsNameConfig.CancelPublishedOrdersParam.CODE);
 
-                        if (responseCode != null && responseCode.equals("1")) {
+                        CancelPublishedRespBean cancelPublishedRespBean = JsonUtil.decodeByGson(resp, CancelPublishedRespBean.class);
+                        String respCode = cancelPublishedRespBean.getCode();
+
+                        if (respCode != null && respCode.equals("1")) {
                             UnRepeatToast.showToast(context, "退单成功，请手动刷新");
                         }
 
-                        if (responseCode != null && responseCode.equals("-1")) {
+                        if (respCode != null && respCode.equals("-1")) {
                             UnRepeatToast.showToast(context, "退单失败,请稍后再试");
                         }
                     }

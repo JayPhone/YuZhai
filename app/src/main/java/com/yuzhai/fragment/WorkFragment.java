@@ -12,23 +12,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.yuzhai.adapter.WorkListViewAdapter;
 import com.yuzhai.config.IPConfig;
+import com.yuzhai.entry.responseBean.OrderByTypeBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.ui.DetailWorkActivity;
 import com.yuzhai.util.JsonUtil;
+import com.yuzhai.util.TypeUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,13 +45,10 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
-    private String mWorkResponse;
-    private List<Map<String, Object>> mOrders;
+    private List<OrderByTypeBean.OrderBean> mOrders;
     private int mType;
     private final static String TYPE = "type";
     private final String COOKIE = "cookie";
-
-    private String[] typeArray = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
 
     /**
      * 获取WorkFragment实例
@@ -106,33 +102,27 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     public void initData() {
         setRefreshState(true);
-        sendOrdersByTypeRequest(typeArray[mType]);
+        sendOrdersByTypeRequest(TypeUtil.getTypeText(mType));
     }
 
     @Override
     public void onRefresh() {
         setRefreshState(true);
-        sendOrdersByTypeRequest(typeArray[mType]);
+        sendOrdersByTypeRequest(TypeUtil.getTypeText(mType));
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
             case R.id.work_listview:
-                try {
-                    //解析出订单数据
-                    JSONArray jsonArray = JsonUtil.decodeToJsonArray(mWorkResponse, "order");
-                    String orders = jsonArray.get(position).toString();
-                    Log.i("work_orders", orders);
+                //解析出订单数据
+                String orderJson = JsonUtil.codeByGson(mOrders.get(position));
+                Log.i("work_orders", orderJson);
 
-                    //打开详细界面
-                    Intent detailActivity = new Intent(mMainActivity, DetailWorkActivity.class);
-                    detailActivity.putExtra("data", orders);
-                    detailActivity.putExtra("type", (int) mOrders.get(position).get("image"));
-                    startActivity(detailActivity);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                //打开详细界面
+                Intent detailActivity = new Intent(mMainActivity, DetailWorkActivity.class);
+                detailActivity.putExtra("data", orderJson);
+                startActivity(detailActivity);
                 break;
         }
     }
@@ -154,38 +144,20 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     @Override
                     public void onResponse(String resp) {
                         Log.i("work_fragment_resp", resp);
-                        mWorkResponse = resp;
-                        mOrders = JsonUtil.decodeResponseForJob(resp, mType);
-                        mWorkLv.setAdapter(createWorkAdapter(mOrders));
+                        mOrders = JsonUtil.decodeByGson(resp, OrderByTypeBean.class).getOrder();
+                        mWorkLv.setAdapter(new WorkListViewAdapter(mMainActivity, mOrders));
                         setRefreshState(false);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(mMainActivity, "服务器睡着了");
+                        UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
                     }
                 });
 
         //添加到请求队列
         mRequestQueue.add(ordersByTypeRequest);
-    }
-
-    /**
-     * 生成ListView的适配器
-     *
-     * @param orders 订单数据
-     * @return 返回ListView的适配器
-     */
-    public SimpleAdapter createWorkAdapter(List<Map<String, Object>> orders) {
-        SimpleAdapter adapter = new SimpleAdapter(
-                mMainActivity,
-                orders,
-                R.layout.category_work_listview_item_layout,
-                new String[]{"date", "image", "name", "price", "limit"},
-                new int[]{R.id.date, R.id.type_image, R.id.name, R.id.price, R.id.limit}
-        );
-        return adapter;
     }
 
     /**
