@@ -50,7 +50,7 @@ public class WorkListViewAdapter extends BaseAdapter {
             workViewHolder = new WorkViewHolder();
             convertView = mLayoutInflater.inflate(R.layout.category_work_listview_item_layout, parent, false);
             workViewHolder.typeImage = (ImageView) convertView.findViewById(R.id.type_image);
-            workViewHolder.title = (TextView) convertView.findViewById(R.id.name);
+            workViewHolder.title = (TextView) convertView.findViewById(R.id.title);
             workViewHolder.price = (TextView) convertView.findViewById(R.id.price);
             workViewHolder.date = (TextView) convertView.findViewById(R.id.date);
             workViewHolder.limit = (TextView) convertView.findViewById(R.id.limit);

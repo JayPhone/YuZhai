@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="需求详情"
-            android:textColor="@color/colorwhite"
+            android:textColor="@color/color_white"
             android:textSize="20sp" />
 
     </RelativeLayout>
@@ -252,6 +252,6 @@
         android:layout_alignParentBottom="true"
         android:background="@color/mainColor"
         android:text="申请接单"
-        android:textColor="@color/colorwhite"
+        android:textColor="@color/color_white"
         android:textSize="20sp" />
 </RelativeLayout>

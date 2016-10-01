@@ -46,19 +46,40 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
     private List<OrderByTypeBean.OrderBean> mOrders;
-    private int mType;
+    private int mType = 0;
     private final static String TYPE = "type";
     private final String COOKIE = "cookie";
 
     /**
+     * 测试数据
+     */
+    //订单图标类型
+    private int[] typeImages = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
+    //订单日期
+    private String[] dates = new String[]{"2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14"};
+    //订单名称
+    private String[] names = new String[]{
+            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
+            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
+            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
+            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
+            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
+            "【LOGO设计】千树设计主管标志设计商标设计/设计名称",
+            "【LOGO设计】千树设计主管标志设计商标设计/设计名称"
+    };
+    //订单金额
+    private String[] prices = new String[]{"100", "150", "200", "250", "300", "350", "400"};
+    private String[] limit = new String[]{"5天", "10天", "15天", "20天", "25天", "30天", "35天"};
+    private List<Map<String, Object>> works;
+
+    /**
      * 获取WorkFragment实例
      *
-     * @param type 项目类型
      * @return WorkFragment实例
      */
-    public static WorkFragment newInstance(int type) {
+    public static WorkFragment newInstance() {
         Bundle data = new Bundle();
-        data.putInt(TYPE, type);
+//        data.putInt(TYPE, type);
         WorkFragment workFragment = new WorkFragment();
         workFragment.setArguments(data);
         return workFragment;
@@ -75,7 +96,7 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mMainActivity = getActivity();
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
         mRequestQueue = RequestQueueSingleton.getInstance(mMainActivity).getRequestQueue();
-        mType = getArguments().getInt(TYPE);
+//        mType = getArguments().getInt(TYPE);
         //初始化控件
         initViews();
         //初始化数据
@@ -101,13 +122,27 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * 初始化数据
      */
     public void initData() {
-        setRefreshState(true);
         sendOrdersByTypeRequest(TypeUtil.getTypeText(mType));
+//        works = new ArrayList<>();
+//        for (int i = 0; i < typeImages.length; i++) {
+//            Map<String, Object> item = new HashMap<>();
+//            item.put("typeImage", typeImages[i]);
+//            item.put("title", names[i]);
+//            item.put("price", prices[i]);
+//            item.put("date", dates[i]);
+//            item.put("limit", limit[i]);
+//            works.add(item);
+//        }
+//        SimpleAdapter simpleAdapter = new SimpleAdapter(mMainActivity,
+//                works,
+//                R.layout.category_work_listview_item_layout,
+//                new String[]{"typeImage", "title", "price", "date", "limit"},
+//                new int[]{R.id.type_image, R.id.title, R.id.price, R.id.date, R.id.limit});
+//        mWorkLv.setAdapter(simpleAdapter);
     }
 
     @Override
     public void onRefresh() {
-        setRefreshState(true);
         sendOrdersByTypeRequest(TypeUtil.getTypeText(mType));
     }
 
@@ -153,6 +188,7 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
+                        setRefreshState(false);
                     }
                 });
 

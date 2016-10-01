@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.ui.LoginActivity;
 import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.FileUtil;
 import com.yuzhai.util.GetPathUtil;
@@ -307,7 +309,14 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
             //点击发布按钮
             case R.id.publish_button:
                 if (!mCustomApplication.isLogin()) {
-                    UnRepeatToast.showToast(mMainActivity, "您尚未登陆，请登录后再发布需求");
+                    Snackbar sb = Snackbar.make(v, "您尚未登陆，请登录后再发布需求", Snackbar.LENGTH_INDEFINITE);
+                    sb.setAction("登录", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent login = new Intent(mMainActivity, LoginActivity.class);
+                            startActivity(login);
+                        }
+                    }).show();
                 } else {
                     //选择的项目类型
                     String type = typeSpinner.getSelectedItem().toString();

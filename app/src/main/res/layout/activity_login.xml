@@ -8,18 +8,21 @@
     <ImageView
         android:id="@+id/imageview"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="200dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
         android:scaleType="centerInside"
-        android:src="@drawable/title" />
+        android:src="@drawable/title_logo" />
 
     <RelativeLayout
-        android:layout_marginTop="5dp"
         android:id="@+id/relayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageview"
         android:layout_marginLeft="@dimen/login_relativeLayout_marginLeftR"
-        android:layout_marginRight="@dimen/login_relativeLayout_marginLeftR">
+        android:layout_marginRight="@dimen/login_relativeLayout_marginLeftR"
+        android:layout_marginTop="10dp">
 
         <RelativeLayout
             android:id="@+id/user_name_layout"
@@ -100,7 +103,7 @@
         android:layout_marginTop="@dimen/login_button_marginT"
         android:background="@drawable/button_style"
         android:text="@string/login"
-        android:textColor="@color/colorwhite"
+        android:textColor="@color/color_white"
         android:textSize="@dimen/login_button_login_textsize" />
 
 

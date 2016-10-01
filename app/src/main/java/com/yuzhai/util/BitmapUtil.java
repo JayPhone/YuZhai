@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by Administrator on 2016/7/17.
@@ -35,6 +36,7 @@ public class BitmapUtil {
                 inSampleSize *= 2;
             }
         }
+        Log.i("inSampleSize", inSampleSize + "");
         return inSampleSize;
     }
 
@@ -57,7 +59,11 @@ public class BitmapUtil {
 
         // 使用获取到的inSampleSize值再次解析图片
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path, options);
+
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        Log.i("bitmap_width", bitmap.getWidth() + "");
+        Log.i("bitmap_height", bitmap.getHeight() + "");
+        return bitmap;
     }
 
     /**
@@ -79,7 +85,11 @@ public class BitmapUtil {
 
         // 使用获取到的inSampleSize值再次解析图片
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(uri.getPath(), options);
+
+        Bitmap bitmap = BitmapFactory.decodeFile(uri.getPath(), options);
+        Log.i("bitmap_width", bitmap.getWidth() + "");
+        Log.i("bitmap_height", bitmap.getHeight() + "");
+        return bitmap;
     }
 
     /**
@@ -102,6 +112,10 @@ public class BitmapUtil {
 
         // 使用获取到的inSampleSize值再次解析图片
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(res, resId, options);
+        Log.i("bitmap_width", bitmap.getWidth() + "");
+        Log.i("bitmap_height", bitmap.getHeight() + "");
+        return bitmap;
     }
 }

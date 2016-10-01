@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AlterPswActivity extends AppCompatActivity implements View.OnClickListener {
+    private ImageView mBackImage;
     private EditText mOldPswEdit;
     private EditText mNewPswEdit;
     private EditText mCfmPswEdit;
@@ -46,17 +48,24 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void initViews() {
+        mBackImage = (ImageView) findViewById(R.id.back_image);
         mAlterBtn = (Button) findViewById(R.id.change_button);
         mOldPswEdit = (EditText) findViewById(R.id.password);
         mNewPswEdit = (EditText) findViewById(R.id.new_password);
         mCfmPswEdit = (EditText) findViewById(R.id.confirm_password);
 
+        mBackImage.setOnClickListener(this);
         mAlterBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            //返回
+            case R.id.back_image:
+                finish();
+                break;
+
             //点击修改按钮
             case R.id.change_button:
                 //发送修改密码请求

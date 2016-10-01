@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:textColor="@color/colorwhite"
+            android:textColor="@color/color_white"
             android:textSize="20sp" />
     </RelativeLayout>
 
@@ -50,7 +50,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="工作"
-                android:textColor="@color/colorwhite"
+                android:textColor="@color/color_white"
                 android:textSize="16sp" />
 
             <TextView
@@ -61,7 +61,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="资讯"
-                android:textColor="@color/colorwhite"
+                android:textColor="@color/color_white"
                 android:textSize="16sp" />
 
             <TextView
@@ -72,7 +72,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="人才 "
-                android:textColor="@color/colorwhite"
+                android:textColor="@color/color_white"
                 android:textSize="16sp" />
         </LinearLayout>
 

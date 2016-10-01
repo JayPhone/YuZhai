@@ -15,11 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yuzhai.adapter.CategoryViewPagerAdapter;
-import com.yuzhai.fragment.HomeFragment;
 import com.yuzhai.fragment.InformationFragment;
 import com.yuzhai.fragment.ResumeFragment;
 import com.yuzhai.fragment.WorkFragment;
-import com.yuzhai.util.TypeUtil;
+import com.yuzhai.recyclerview.RecyclerViewAdapter;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;
@@ -48,14 +47,14 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     private int cursorWidth;
     private Matrix matrix;
 
-    private int mProjectType;
+    private String mProjectType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
         //获取项目的类型
-        mProjectType = getIntent().getIntExtra(HomeFragment.TITLE, -1);
+        mProjectType = getIntent().getStringExtra(RecyclerViewAdapter.TITLE);
         //初始化组件
         initViews();
         //初始化ViewPager
@@ -75,7 +74,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         titleInfo = (TextView) findViewById(R.id.title_info);
         titleResume = (TextView) findViewById(R.id.title_resume);
         categoryTitle = (TextView) findViewById(R.id.category_title);
-        categoryTitle.setText(TypeUtil.getTypeText(mProjectType));
+        categoryTitle.setText(mProjectType);
 
         titleWork.setOnClickListener(this);
         titleInfo.setOnClickListener(this);
@@ -104,11 +103,11 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     //添加viewPager的页面,工作Fragment、资讯Fragment和简历Fragment
     public void initViewPagerView() {
         //工作Fragment
-        WorkFragment workFragment = WorkFragment.newInstance(mProjectType);
+        WorkFragment workFragment = WorkFragment.newInstance();
         //资讯Fragment
-        InformationFragment informationFragment = InformationFragment.newInstance(mProjectType);
+        InformationFragment informationFragment = InformationFragment.newInstance();
         //简历Fragment
-        ResumeFragment resumeFragment = ResumeFragment.newInstance(mProjectType);
+        ResumeFragment resumeFragment = ResumeFragment.newInstance();
 
         //添加viewPager的页面布局到List<View>里
         List<Fragment> fragmentList = new ArrayList<>();

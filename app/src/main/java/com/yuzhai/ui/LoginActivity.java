@@ -13,8 +13,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.entry.responseBean.LoginRespBean;
 import com.yuzhai.entry.requestBean.UserLogin;
+import com.yuzhai.entry.responseBean.LoginRespBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
@@ -80,6 +80,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+//        View decorView = getWindow().getDecorView();
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            //让主体内容占用上方状态栏和下方导航栏的位置，同时设置状态栏和导航栏为透明色
+//            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+//                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+//            decorView.setSystemUiVisibility(option);
+//            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorgary));
+//        }
         //初始化控件
         initViews();
         //获取全局的Applicant对象

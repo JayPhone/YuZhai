@@ -5,27 +5,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.yuzhai.recyclerview.DividerGridItemDecoration;
+import com.yuzhai.recyclerview.ItemTouchHelperCallback;
+import com.yuzhai.recyclerview.RecyclerViewAdapter;
 import com.yuzhai.ui.AdvertiseActivity;
-import com.yuzhai.ui.CategoryActivity;
 import com.yuzhai.ui.MainActivity;
 import com.yuzhai.ui.SearchActivity;
-import com.yuzhai.view.CategoryGridView;
+import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.view.PointViewFlipper;
 import com.yuzhai.yuzhaiwork.R;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2016/6/10.
@@ -47,17 +48,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     //滚动面板
     private PointViewFlipper picturePanel;
     //类别面板
-    private CategoryGridView category;
+    private RecyclerView category;
     //类别面板设配器
-    private SimpleAdapter categoryAdapter;
-    //类别面板数据容器
-    private List<Map<String, Object>> categoryData;
-    //类别面板分类图片
-    private int[] imageId = new int[]{R.drawable.it, R.drawable.music, R.drawable.design, R.drawable.movie, R.drawable.game, R.drawable.write, R.drawable.calculate};
-    //类别面板分类标题
-    private String[] categoryTexts = new String[]{"软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
+    private RecyclerViewAdapter categoryAdapter;
+    private ItemTouchHelper mItemTouchHelper;
+    private ItemTouchHelperCallback mItemTouchHelperCallback;
 
-    public static final String TITLE = "title";
+    private int imageWidth;
+    private int imageHeight;
 
     public HomeFragment() {
     }
@@ -120,17 +118,33 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         picturePanel.setInAnimation(getActivity(), android.R.anim.fade_in);
         picturePanel.setOutAnimation(getActivity(), android.R.anim.fade_out);
         picturePanel.setOnFlipListener(flipListener);
+        picturePanel.getViewTreeObserver().
+                addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                picturePanel.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                imageWidth = picturePanel.getWidth();
+                                imageHeight = picturePanel.getHeight();
+                                Log.i("width", imageWidth + "");
+                                Log.i("height", imageHeight + "");
+
+                                image_1.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
+                                        getResources(), R.drawable.test1, imageWidth, imageHeight));
+                                image_2.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
+                                        getResources(), R.drawable.test2, imageWidth, imageHeight));
+                                image_3.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
+                                        getResources(), R.drawable.test3, imageWidth, imageHeight));
+                                image_4.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
+                                        getResources(), R.drawable.test4, imageWidth, imageHeight));
+                            }
+                        });
 
         //初始化图片内容
         image_1 = (ImageView) mainActivity.findViewById(R.id.image_1);
         image_2 = (ImageView) mainActivity.findViewById(R.id.image_2);
         image_3 = (ImageView) mainActivity.findViewById(R.id.image_3);
         image_4 = (ImageView) mainActivity.findViewById(R.id.image_4);
-
-        image_1.setImageResource(R.drawable.test1);
-        image_2.setImageResource(R.drawable.test2);
-        image_3.setImageResource(R.drawable.test3);
-        image_4.setImageResource(R.drawable.test4);
 
         image_1.setOnClickListener(this);
         image_2.setOnClickListener(this);
@@ -141,26 +155,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     //初始化分类面板
-    public void initCategory(Activity mainActivity) {
-        category = (CategoryGridView) mainActivity.findViewById(R.id.category);
-        category.setFocusable(false);
-        categoryData = new ArrayList<>();
-        for (int i = 0; i < imageId.length; i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("image", imageId[i]);
-            map.put("text", categoryTexts[i]);
-            categoryData.add(map);
-        }
-        categoryAdapter = new SimpleAdapter(getActivity(), categoryData, R.layout.home_category_cell_layout, new String[]{"image", "text"}, new int[]{R.id.category_image, R.id.category_text});
+    public void initCategory(Activity mMainActivity) {
+        categoryAdapter = new RecyclerViewAdapter(mMainActivity);
+        category = (RecyclerView) mMainActivity.findViewById(R.id.category);
+        category.setLayoutManager(new GridLayoutManager(mMainActivity, 3));
         category.setAdapter(categoryAdapter);
-        category.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent_category = new Intent(getActivity(), CategoryActivity.class);
-                intent_category.putExtra(TITLE, position);
-                startActivity(intent_category);
-            }
-        });
+        category.setItemAnimator(new DefaultItemAnimator());
+        category.addItemDecoration(new DividerGridItemDecoration(mMainActivity));
+        mItemTouchHelperCallback = new ItemTouchHelperCallback(categoryAdapter);
+        mItemTouchHelper = new ItemTouchHelper(mItemTouchHelperCallback);
+        mItemTouchHelper.attachToRecyclerView(category);
     }
 
     @Override

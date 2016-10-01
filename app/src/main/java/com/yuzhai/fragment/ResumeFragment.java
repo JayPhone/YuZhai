@@ -45,12 +45,11 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
     /**
      * 获取ResumeFragment实例
      *
-     * @param type 项目类型
      * @return ResumeFragment实例
      */
-    public static ResumeFragment newInstance(int type) {
+    public static ResumeFragment newInstance() {
         Bundle data = new Bundle();
-        data.putInt(TYPE, type);
+//        data.putInt(TYPE, type);
         ResumeFragment fragment = new ResumeFragment();
         fragment.setArguments(data);
         return fragment;

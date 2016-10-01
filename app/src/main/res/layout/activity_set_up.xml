@@ -21,7 +21,6 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:clickable="true"
-            android:scaleType="centerInside"
             android:src="@drawable/back" />
 
         <TextView
@@ -29,7 +28,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="设置"
-            android:textColor="@color/colorwhite"
+            android:textColor="@color/color_white"
             android:textSize="20dp" />
 
     </RelativeLayout>
@@ -40,7 +39,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/set_up_toolbar"
         android:layout_marginTop="5dp"
-        android:background="@color/colorwhite"
+        android:background="@color/color_white"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
         android:text="  账户安全"
@@ -53,7 +52,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/account_safe"
         android:layout_marginTop="10dp"
-        android:background="@color/colorwhite"
+        android:background="@color/color_white"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
         android:text="  意见反馈"
@@ -65,7 +64,7 @@
         android:layout_height="50dp"
         android:layout_below="@id/feed_back"
         android:layout_marginTop="1dp"
-        android:background="@color/colorwhite"
+        android:background="@color/color_white"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
         android:text="  清除缓存"
@@ -76,7 +75,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/clear_cache"
         android:layout_marginTop="1dp"
-        android:background="@color/colorwhite"
+        android:background="@color/color_white"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
         android:text="  关于版本"

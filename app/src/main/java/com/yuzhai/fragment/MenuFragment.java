@@ -59,12 +59,12 @@ public class MenuFragment extends Fragment {
 
     //数据
     int[] imageID = new int[]{
-            R.drawable.it,
-            R.drawable.music,
-            R.drawable.design,
-            R.drawable.movie,
-            R.drawable.game,
-            R.drawable.write
+            R.drawable.collection,
+            R.drawable.resume,
+            R.drawable.real,
+            R.drawable.setting,
+            R.drawable.about,
+            R.drawable.exit
     };
 
     String[] itemName = new String[]{
@@ -200,6 +200,7 @@ public class MenuFragment extends Fragment {
                         case 4:
                             break;
                         case 5:
+                            android.os.Process.killProcess(android.os.Process.myPid());
                             break;
                     }
                 }

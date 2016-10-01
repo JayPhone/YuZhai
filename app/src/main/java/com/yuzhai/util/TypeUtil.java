@@ -34,13 +34,13 @@ public class TypeUtil {
      */
     public static Map<Integer, String> getIndexTextMap() {
         Map<Integer, String> typeMap = new HashMap<>();
-        typeMap.put(1, "软件IT");
-        typeMap.put(2, "音乐制作");
-        typeMap.put(3, "平面设计");
-        typeMap.put(4, "视频拍摄");
-        typeMap.put(5, "游戏研发");
-        typeMap.put(6, "文案撰写");
-        typeMap.put(7, "金融会计");
+        typeMap.put(0, "软件IT");
+        typeMap.put(1, "音乐制作");
+        typeMap.put(2, "平面设计");
+        typeMap.put(3, "视频拍摄");
+        typeMap.put(4, "游戏研发");
+        typeMap.put(5, "文案撰写");
+        typeMap.put(6, "金融会计");
         return typeMap;
     }
 

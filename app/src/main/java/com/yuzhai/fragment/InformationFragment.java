@@ -45,12 +45,11 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
     /**
      * 获取InformationFragment实例
      *
-     * @param type 项目类型
      * @return InformationFragment实例
      */
-    public static InformationFragment newInstance(int type) {
+    public static InformationFragment newInstance() {
         Bundle data = new Bundle();
-        data.putInt(TYPE, type);
+//        data.putInt(TYPE, type);
         InformationFragment fragment = new InformationFragment();
         fragment.setArguments(data);
         return fragment;

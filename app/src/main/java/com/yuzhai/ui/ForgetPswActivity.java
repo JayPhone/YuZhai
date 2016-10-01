@@ -1,5 +1,6 @@
 package com.yuzhai.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -37,6 +39,7 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
     private EditText mCheckCodeEdit;
     private Button mCheckCodeButton;
     private Button mAlterBtn;
+    private TextView mLoginTextView;
 
     private RequestQueue mRequestQueue;
     private UserForgetPsw mUserForget;
@@ -61,11 +64,13 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
         mPswEdit = (EditText) findViewById(R.id.password);
         mCfmPswEdit = (EditText) findViewById(R.id.confirm_password);
         mAlterBtn = (Button) findViewById(R.id.change_button);
+        mLoginTextView = (TextView) findViewById(R.id.login_nav);
 
         //设置点击监听器
         mBackImage.setOnClickListener(this);
         mCheckCodeButton.setOnClickListener(this);
         mAlterBtn.setOnClickListener(this);
+        mLoginTextView.setOnClickListener(this);
     }
 
     @Override
@@ -89,6 +94,13 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
                         mCheckCodeEdit.getText().toString(),
                         mPswEdit.getText().toString(),
                         mCfmPswEdit.getText().toString());
+                break;
+
+            //点击登录导航文本
+            case R.id.login_nav:
+                Intent login = new Intent(this, LoginActivity.class);
+                startActivity(login);
+                finish();
                 break;
         }
     }

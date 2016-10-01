@@ -30,7 +30,7 @@
             android:background="@drawable/home_title_search_style"
             android:gravity="center_vertical"
             android:text="    输入搜索内容"
-            android:textColor="@color/colorwhite" />
+            android:textColor="@color/color_white" />
 
         <ImageView
             android:layout_width="30dp"
@@ -38,7 +38,6 @@
             android:layout_alignRight="@+id/search_view"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:scaleType="centerInside"
             android:src="@drawable/search" />
     </RelativeLayout>
 
@@ -63,25 +62,25 @@
                 <ImageView
                     android:id="@+id/image_1"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:scaleType="fitXY" />
 
                 <ImageView
                     android:id="@+id/image_2"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:scaleType="fitXY" />
 
                 <ImageView
                     android:id="@+id/image_3"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:scaleType="fitXY" />
 
                 <ImageView
                     android:id="@+id/image_4"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:scaleType="fitXY" />
             </com.yuzhai.view.PointViewFlipper>
 
@@ -92,12 +91,12 @@
                 android:layout_height="14dp"
                 android:layout_alignBottom="@id/fli" />
 
-            <com.yuzhai.view.CategoryGridView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/fli"
-                android:numColumns="3" />
+                android:layout_below="@+id/fli"
+                android:background="@color/color_white" />
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

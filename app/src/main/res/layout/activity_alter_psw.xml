@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.yuzhai.ui.AlterPswActivity">
 
     <RelativeLayout
+        android:id="@+id/alter_psw_toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/mainColor">
@@ -24,63 +24,129 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="修改密码"
-            android:textColor="@color/colorwhite"
+            android:textColor="@color/color_white"
             android:textSize="20sp" />
     </RelativeLayout>
 
-
-    <EditText
-        android:id="@+id/password"
+    <RelativeLayout
+        android:id="@+id/warp_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorgary"
-        android:hint="旧密码"
-        android:inputType="textPassword"
-        android:maxLength="11"
-        android:padding="10dp"
-        android:singleLine="true" />
+        android:layout_below="@+id/alter_psw_toolbar"
+        android:layout_marginLeft="@dimen/register_relativeLayout_marginLeftR"
+        android:layout_marginRight="@dimen/register_relativeLayout_marginLeftR"
+        android:layout_marginTop="5dp">
 
-    <EditText
-        android:id="@+id/new_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorgary"
-        android:hint="新密码"
-        android:inputType="textPassword"
-        android:maxLength="16"
-        android:padding="10dp"
-        android:singleLine="true" />
+        <RelativeLayout
+            android:id="@+id/pswd_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/register_editable_middle_marginT"
+            android:background="@drawable/edit_text_bg"
+            android:gravity="center_vertical"
+            android:padding="@dimen/register_editable_middle_padding">
 
-    <EditText
-        android:id="@+id/confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorgary"
-        android:hint="重复输入一次"
-        android:inputType="textPassword"
-        android:maxLength="16"
-        android:padding="10dp"
-        android:singleLine="true" />
+            <ImageView
+                android:id="@+id/pswd_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/password" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/pswd_image"
+                android:background="@null"
+                android:hint="请输入旧密码"
+                android:inputType="textPassword"
+                android:lines="1"
+                android:maxLength="16"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/color_8c8c8c"
+                android:textColorHint="@color/color_cecece" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/new_pswd_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pswd_layout"
+            android:layout_marginTop="@dimen/register_editable_middle_marginT"
+            android:background="@drawable/edit_text_bg"
+            android:gravity="center_vertical"
+            android:padding="@dimen/register_editable_middle_padding">
+
+            <ImageView
+                android:id="@+id/new_pswd_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/password" />
+
+            <EditText
+                android:id="@+id/new_password"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/new_pswd_image"
+                android:background="@null"
+                android:hint="请输入新密码"
+                android:inputType="textPassword"
+                android:lines="1"
+                android:maxLength="16"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/color_8c8c8c"
+                android:textColorHint="@color/color_cecece" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/confirm_pswd_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/new_pswd_layout"
+            android:layout_marginTop="@dimen/register_editable_middle_marginT"
+            android:background="@drawable/edit_text_bg"
+            android:gravity="center_vertical"
+            android:padding="@dimen/register_editable_middle_padding">
+
+            <ImageView
+                android:id="@+id/confirm_pswd_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/password" />
+
+            <EditText
+                android:id="@+id/confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/confirm_pswd_image"
+                android:background="@null"
+                android:hint="请重复输入新密码"
+                android:inputType="textPassword"
+                android:lines="1"
+                android:maxLength="16"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/color_8c8c8c"
+                android:textColorHint="@color/color_cecece" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <Button
         android:id="@+id/change_button"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_below="@+id/warp_layout"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/button_style"
-        android:text="确 认 修 改"
-        android:textColor="@color/colorwhite"
-        android:textSize="18sp" />
-
-</LinearLayout>
+        android:text="确认修改"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/register_button_register_textsize" />
+</RelativeLayout>

@@ -84,6 +84,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+//        View decorView = getWindow().getDecorView();
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            //让主体内容占用上方状态栏和下方导航栏的位置，同时设置状态栏和导航栏为透明色
+//            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+//                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+//            decorView.setSystemUiVisibility(option);
+//            getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        }
         //初始化控件
         initViews();
         //获取请求队列

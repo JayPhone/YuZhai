@@ -55,7 +55,7 @@
             android:layout_weight="1.2"
             android:background="@drawable/search_button"
             android:text="搜索"
-            android:textColor="@color/colorwhite" />
+            android:textColor="@color/color_white" />
 
     </LinearLayout>
 
@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/history_record_listview"
-        android:background="@color/colorgary"
+        android:background="@color/color_gary_e9e9e2"
         android:text="消除历史纪录"
         android:textColor="@color/colorBlack" />
 

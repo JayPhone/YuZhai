@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
@@ -24,6 +25,7 @@ import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
@@ -91,19 +93,19 @@ public class WelcomeActivity extends AppCompatActivity {
         mLogoImage = (ImageView) findViewById(R.id.logo_image);
 
         //视图加载完毕后，监听并获取ImageView的尺寸
-//        final ViewTreeObserver viewTreeObserver = mLogoImage.getViewTreeObserver();
-//        viewTreeObserver.addOnGlobalLayoutListener(
-//                new ViewTreeObserver.OnGlobalLayoutListener() {
-//                    @Override
-//                    public void onGlobalLayout() {
-//                        mLogoImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//                        mBitmap = BitmapUtil.decodeSampledBitmapFromResource(getResources(),
-//                                R.drawable.welcome_logo,
-//                                mLogoImage.getWidth(),
-//                                mLogoImage.getHeight());
-//                        mLogoImage.setImageBitmap(mBitmap);
-//                    }
-//                });
+        final ViewTreeObserver viewTreeObserver = mLogoImage.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        mLogoImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        mBitmap = BitmapUtil.decodeSampledBitmapFromResource(getResources(),
+                                R.drawable.welcome_logo,
+                                mLogoImage.getWidth(),
+                                mLogoImage.getHeight());
+                        mLogoImage.setImageBitmap(mBitmap);
+                    }
+                });
 
         //如果用户曾经登录过，将自动登陆
         if (customApplication.getUserPhone() != null && customApplication.getPassword() != null) {
@@ -112,9 +114,19 @@ public class WelcomeActivity extends AppCompatActivity {
 
         } else {
             Log.i("auto_login", "fail");
-            Intent main = new Intent(this, MainActivity.class);
-            startActivity(main);
-            finish();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(3000);
+                        Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(main);
+                        finish();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
 

@@ -30,7 +30,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="手机认证"
-                android:textColor="@color/colorwhite"
+                android:textColor="@color/color_white"
                 android:textSize="14sp" />
 
             <TextView
@@ -40,7 +40,7 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:paddingTop="10dp"
-                android:textColor="@color/colorwhite"
+                android:textColor="@color/color_white"
                 android:textSize="16sp" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="实名认证"
-                android:textColor="@color/colorwhite"
+                android:textColor="@color/color_white"
                 android:textSize="14sp" />
         </LinearLayout>
     </RelativeLayout>

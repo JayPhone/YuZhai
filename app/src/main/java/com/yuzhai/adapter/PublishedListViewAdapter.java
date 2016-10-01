@@ -76,7 +76,7 @@ public class PublishedListViewAdapter extends BaseAdapter implements View.OnClic
             publishedViewHolder.statusText = (TextView) convertView.findViewById(R.id.status);
             publishedViewHolder.orderIdText = (TextView) convertView.findViewById(R.id.order_id);
             publishedViewHolder.dateText = (TextView) convertView.findViewById(R.id.date);
-            publishedViewHolder.titleText = (TextView) convertView.findViewById(R.id.name);
+            publishedViewHolder.titleText = (TextView) convertView.findViewById(R.id.title);
             publishedViewHolder.limitText = (TextView) convertView.findViewById(R.id.limit);
             publishedViewHolder.priceText = (TextView) convertView.findViewById(R.id.price);
             publishedViewHolder.typeImage = (ImageView) convertView.findViewById(R.id.type_image);
