@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class OrderViewPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> mFragmentList;
+    private String[] titles = new String[]{"发布", "接收"};
 
     public OrderViewPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
         super(fm);
@@ -25,5 +26,10 @@ public class OrderViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return mFragmentList.size();
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return titles[position];
     }
 }

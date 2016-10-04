@@ -17,7 +17,6 @@ import com.android.volley.VolleyError;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.util.TypeUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -94,7 +93,7 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
      */
     public void initData() {
         setRefreshState(true);
-        sendResumeByTypeRequest(TypeUtil.getTypeText(mType));
+//        sendResumeByTypeRequest(TypeUtil.getTypeText(mType));
     }
 
     @Override
@@ -121,7 +120,7 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(mMainActivity, "服务器睡着了");
+                        UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
                     }
                 });
 

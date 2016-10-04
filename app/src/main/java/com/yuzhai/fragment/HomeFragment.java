@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.yuzhai.recyclerview.DividerGridItemDecoration;
 import com.yuzhai.recyclerview.ItemTouchHelperCallback;
-import com.yuzhai.recyclerview.RecyclerViewAdapter;
+import com.yuzhai.adapter.CategoryRecyclerViewAdapter;
 import com.yuzhai.ui.AdvertiseActivity;
 import com.yuzhai.ui.MainActivity;
 import com.yuzhai.ui.SearchActivity;
@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     //类别面板
     private RecyclerView category;
     //类别面板设配器
-    private RecyclerViewAdapter categoryAdapter;
+    private CategoryRecyclerViewAdapter categoryAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private ItemTouchHelperCallback mItemTouchHelperCallback;
 
@@ -156,7 +156,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     //初始化分类面板
     public void initCategory(Activity mMainActivity) {
-        categoryAdapter = new RecyclerViewAdapter(mMainActivity);
+        categoryAdapter = new CategoryRecyclerViewAdapter(mMainActivity);
         category = (RecyclerView) mMainActivity.findViewById(R.id.category);
         category.setLayoutManager(new GridLayoutManager(mMainActivity, 3));
         category.setAdapter(categoryAdapter);

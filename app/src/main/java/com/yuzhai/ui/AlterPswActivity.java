@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 public class AlterPswActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView mBackImage;
+    private TextView mTitleText;
     private EditText mOldPswEdit;
     private EditText mNewPswEdit;
     private EditText mCfmPswEdit;
@@ -49,6 +51,14 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
 
     public void initViews() {
         mBackImage = (ImageView) findViewById(R.id.back_image);
+        if (mBackImage != null) {
+            mBackImage.setImageResource(R.drawable.back);
+        }
+
+        mTitleText = (TextView) findViewById(R.id.title_text);
+        if (mTitleText != null) {
+            mTitleText.setText("修改密码");
+        }
         mAlterBtn = (Button) findViewById(R.id.change_button);
         mOldPswEdit = (EditText) findViewById(R.id.password);
         mNewPswEdit = (EditText) findViewById(R.id.new_password);

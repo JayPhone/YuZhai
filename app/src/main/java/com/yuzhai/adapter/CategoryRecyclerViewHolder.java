@@ -1,4 +1,4 @@
-package com.yuzhai.recyclerview;
+package com.yuzhai.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -6,17 +6,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yuzhai.recyclerview.OnItemStateChangeListener;
 import com.yuzhai.yuzhaiwork.R;
 
 /**
  * Created by Administrator on 2016/9/29.
  */
-public class RecyclerViewHolder extends RecyclerView.ViewHolder implements OnItemStateChangeListener {
+public class CategoryRecyclerViewHolder extends RecyclerView.ViewHolder implements OnItemStateChangeListener {
     LinearLayout mFrameLayout;
     ImageView mImageView;
     TextView mTextView;
 
-    public RecyclerViewHolder(View itemView) {
+    public CategoryRecyclerViewHolder(View itemView) {
         super(itemView);
         mFrameLayout = (LinearLayout) itemView.findViewById(R.id.warp_layout);
         mImageView = (ImageView) itemView.findViewById(R.id.category_image);

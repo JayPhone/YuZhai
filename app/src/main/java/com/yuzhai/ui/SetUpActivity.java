@@ -11,23 +11,32 @@ import com.yuzhai.yuzhaiwork.R;
 
 public class SetUpActivity extends AppCompatActivity {
 
-    private ImageView backImage;
-    private TextView feedBack;
+    private ImageView mBackImage;
+    private TextView mTitleText;
+    private TextView mFeedBackText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up);
-        backImage = (ImageView) findViewById(R.id.back_image);
-        backImage.setOnClickListener(new View.OnClickListener() {
+        mBackImage = (ImageView) findViewById(R.id.back_image);
+        if (mBackImage != null) {
+            mBackImage.setImageResource(R.drawable.back);
+        }
+        mBackImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        feedBack = (TextView) findViewById(R.id.feed_back);
-        feedBack.setOnClickListener(new View.OnClickListener() {
+        mTitleText = (TextView) findViewById(R.id.title_text);
+        if (mTitleText != null) {
+            mTitleText.setText("设置");
+        }
+
+        mFeedBackText = (TextView) findViewById(R.id.feed_back);
+        mFeedBackText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent_feedBack = new Intent();

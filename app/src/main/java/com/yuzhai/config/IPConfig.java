@@ -14,7 +14,7 @@ public interface IPConfig {
     /**
      * 目标地址和端口
      */
-    String DesAddress = "172.16.178.51:8088";
+    String DesAddress = "172.16.178.119:8080";
 
     /**
      * 主机名称

@@ -4,14 +4,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 
+import com.yuzhai.adapter.CategoryRecyclerViewAdapter;
+
 /**
  * Created by Administrator on 2016/9/27.
  */
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
-    private RecyclerViewAdapter mAdapter;
+    private CategoryRecyclerViewAdapter mAdapter;
 
-    public ItemTouchHelperCallback(RecyclerViewAdapter adapter) {
+    public ItemTouchHelperCallback(CategoryRecyclerViewAdapter adapter) {
         this.mAdapter = adapter;
     }
 

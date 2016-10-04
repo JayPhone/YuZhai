@@ -33,6 +33,7 @@ import java.util.Map;
 public class ForgetPswActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView mBackImage;
+    private TextView mTitleText;
     private EditText mUserPhoneEdit;
     private EditText mPswEdit;
     private EditText mCfmPswEdit;
@@ -58,6 +59,13 @@ public class ForgetPswActivity extends AppCompatActivity implements View.OnClick
     public void initViews() {
         //获取组件
         mBackImage = (ImageView) findViewById(R.id.back_image);
+        if (mBackImage != null) {
+            mBackImage.setImageResource(R.drawable.back);
+        }
+        mTitleText = (TextView) findViewById(R.id.title_text);
+        if (mTitleText != null) {
+            mTitleText.setText("忘记密码");
+        }
         mUserPhoneEdit = (EditText) findViewById(R.id.phone_num);
         mCheckCodeEdit = (EditText) findViewById(R.id.code_field);
         mCheckCodeButton = (Button) findViewById(R.id.code_button);

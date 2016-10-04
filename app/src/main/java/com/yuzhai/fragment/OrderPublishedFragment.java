@@ -1,27 +1,29 @@
 package com.yuzhai.fragment;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.yuzhai.adapter.PublishedListViewAdapter;
+import com.yuzhai.adapter.PublishedRecyclerViewAdapter;
 import com.yuzhai.config.IPConfig;
 import com.yuzhai.entry.responseBean.OrderPublishedBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.ui.DetailWorkActivity;
+import com.yuzhai.recyclerview.DividerItemDecoration;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
@@ -33,12 +35,13 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/8/21.
  */
-public class OrderPublishedFragment extends Fragment implements AdapterView.OnItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mPublishedSrl;
-    private ListView mPublishedLv;
+    private RecyclerView mPublishedRv;
+    private PublishedRecyclerViewAdapter mAdapter;
     private Activity mMainActivity;
+    private Drawable mDivider;
 
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
@@ -54,10 +57,10 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         mMainActivity = getActivity();
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
         mRequestQueue = RequestQueueSingleton.getInstance(mMainActivity).getRequestQueue();
+        mDivider = ContextCompat.getDrawable(mMainActivity, R.drawable.order_recyclerview_divider);
         //初始化控件
         initViews();
         //初始化数据
@@ -69,23 +72,29 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
      */
     public void initViews() {
         mPublishedSrl = (SwipeRefreshLayout) mMainActivity.findViewById(R.id.published_order_refresh);
-        mPublishedLv = (ListView) mMainActivity.findViewById(R.id.published_listview);
-
         //设置下拉刷新监听
         mPublishedSrl.setOnRefreshListener(this);
         //设置刷新样式
         mPublishedSrl.setColorSchemeResources(R.color.mainColor);
-        //设置ListView的子项点击监听
-        mPublishedLv.setOnItemClickListener(this);
+
+        mPublishedRv = (RecyclerView) mMainActivity.findViewById(R.id.published_recyclerView);
+        mPublishedRv.setLayoutManager(new LinearLayoutManager(mMainActivity));
+        mPublishedRv.addItemDecoration(new DividerItemDecoration(mMainActivity, DividerItemDecoration.VERTICAL_LIST,mDivider));
+        mPublishedRv.setItemAnimator(new DefaultItemAnimator());
+        mAdapter = new PublishedRecyclerViewAdapter(mMainActivity);
     }
 
     /**
      * 初始化数据
      */
     public void initData() {
+        //测试代码
+        mPublishedRv.setAdapter(mAdapter);
+
+        //正常代码
         //初始化时默认显示刷新状态
-        mPublishedSrl.setRefreshing(true);
-        sendPublishedOrderRequest();
+//        mPublishedSrl.setRefreshing(true);
+//        sendPublishedOrderRequest();
     }
 
     @Override
@@ -96,21 +105,6 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
         sendPublishedOrderRequest();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case R.id.published_listview:
-                //获取当前项订单数据
-                String orderJson = JsonUtil.codeByGson(mOrders.get(position));
-                Log.i("publish_order", orderJson);
-
-                //跳转到订单详情界面并传递订单数据
-                Intent detailWork = new Intent(mMainActivity, DetailWorkActivity.class);
-                detailWork.putExtra(DATA, orderJson);
-                startActivity(detailWork);
-                break;
-        }
-    }
 
     /**
      * 发送查看已发布订单请求
@@ -127,7 +121,7 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
                         //解析获取到的订单数据
                         mOrders = JsonUtil.decodeByGson(resp, OrderPublishedBean.class).getOrder();
                         //设置数据到ListView
-                        mPublishedLv.setAdapter(new PublishedListViewAdapter(mMainActivity, mOrders));
+//                        mPublishedRv.setAdapter(new PublishedListViewAdapter(mMainActivity, mOrders));
                         //关闭刷新
                         setRefreshState(false);
                     }
@@ -137,6 +131,7 @@ public class OrderPublishedFragment extends Fragment implements AdapterView.OnIt
                     public void onErrorResponse(VolleyError volleyError) {
                         UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
                         Log.i("error", volleyError.getMessage(), volleyError);
+                        setRefreshState(false);
                     }
                 });
 

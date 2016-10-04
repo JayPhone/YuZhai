@@ -17,7 +17,6 @@ import com.android.volley.VolleyError;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.util.TypeUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -94,7 +93,7 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
      */
     public void initData() {
         setRefreshState(true);
-        sendInfoByTypeRequest(TypeUtil.getTypeText(mType));
+//        sendInfoByTypeRequest(TypeUtil.getTypeText(mType));
     }
 
     @Override

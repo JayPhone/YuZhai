@@ -5,28 +5,9 @@
     android:layout_height="match_parent"
     tools:context="com.yuzhai.ui.AlterPswActivity">
 
-    <RelativeLayout
+    <include
         android:id="@+id/alter_psw_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/mainColor">
-
-        <ImageView
-            android:id="@+id/back_image"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/back" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="修改密码"
-            android:textColor="@color/color_white"
-            android:textSize="20sp" />
-    </RelativeLayout>
+        layout="@layout/toolbar_layout" />
 
     <RelativeLayout
         android:id="@+id/warp_layout"
@@ -148,5 +129,5 @@
         android:background="@drawable/button_style"
         android:text="确认修改"
         android:textColor="#FFFFFF"
-        android:textSize="@dimen/register_button_register_textsize" />
+        android:textSize="18sp" />
 </RelativeLayout>

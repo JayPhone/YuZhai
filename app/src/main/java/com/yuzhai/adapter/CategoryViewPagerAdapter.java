@@ -10,7 +10,8 @@ import java.util.List;
  * Created by Administrator on 2016/7/14.
  */
 public class CategoryViewPagerAdapter extends FragmentPagerAdapter {
-    List<Fragment> mFragmentList;
+    private List<Fragment> mFragmentList;
+    private String[] titles = new String[]{"工作", "资讯", "人才"};
 
     public CategoryViewPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
         super(fm);
@@ -25,5 +26,10 @@ public class CategoryViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return mFragmentList.size();
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return titles[position];
     }
 }

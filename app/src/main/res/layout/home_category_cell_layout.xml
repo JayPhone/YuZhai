@@ -3,7 +3,7 @@
     android:id="@+id/warp_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/category_item_pressed"
+    android:background="@drawable/recyclerview_item_pressed"
     android:orientation="vertical">
 
     <ImageView

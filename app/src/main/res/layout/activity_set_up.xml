@@ -7,31 +7,9 @@
     android:orientation="vertical"
     tools:context="com.yuzhai.ui.SetUpActivity">
 
-    <RelativeLayout
+    <include
         android:id="@+id/set_up_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/mainColor">
-
-        <ImageView
-            android:id="@+id/back_image"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:clickable="true"
-            android:src="@drawable/back" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="设置"
-            android:textColor="@color/color_white"
-            android:textSize="20dp" />
-
-    </RelativeLayout>
+        layout="@layout/toolbar_layout" />
 
     <TextView
         android:id="@+id/account_safe"

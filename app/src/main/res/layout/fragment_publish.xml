@@ -1,25 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_f1f0f0"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/publish_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/mainColor">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="发布需求"
-            android:textColor="@color/color_white"
-            android:textSize="20sp" />
-    </LinearLayout>
+    <include layout="@layout/toolbar_layout" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -27,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/color_f1f0f0"
             android:orientation="vertical">
 
@@ -59,19 +45,23 @@
                 android:layout_height="wrap_content"
                 android:background="@color/color_white"
                 android:orientation="horizontal"
-                android:padding="5dp" />
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="1dp"
                 android:background="@color/color_white"
-                android:padding="5dp">
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
                 <ImageView
                     android:id="@+id/upload_image"
                     android:layout_width="50dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:clickable="true"
                     android:src="@drawable/camera" />
 
@@ -90,12 +80,15 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/publish_textview_style"
-                android:padding="5dp">
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
                 <ImageView
                     android:id="@+id/type_icon"
                     android:layout_width="50dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/type" />
 
                 <TextView
@@ -121,12 +114,15 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="1dp"
                 android:background="@drawable/publish_textview_style"
-                android:padding="5dp">
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
                 <ImageView
                     android:id="@+id/date_icon"
                     android:layout_width="50dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/time" />
 
                 <TextView
@@ -152,12 +148,15 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="1dp"
                 android:background="@drawable/publish_textview_style"
-                android:padding="5dp">
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
                 <ImageView
                     android:id="@+id/phone_icon"
                     android:layout_width="50dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/tel" />
 
                 <TextView
@@ -186,13 +185,16 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="1dp"
                 android:background="@drawable/publish_textview_style"
-                android:padding="5dp">
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp">
 
                 <ImageView
                     android:id="@+id/money_icon"
                     android:layout_width="50dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/corn" />
+                    android:layout_height="30dp"
+                    android:src="@drawable/money" />
 
                 <TextView
                     android:id="@+id/money_title"
@@ -230,7 +232,7 @@
                 android:background="@drawable/button_style"
                 android:text="发  布"
                 android:textColor="@color/color_white"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
         </LinearLayout>
     </ScrollView>

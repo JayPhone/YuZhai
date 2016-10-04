@@ -1,15 +1,15 @@
-package com.yuzhai.recyclerview;
+package com.yuzhai.adapter;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.yuzhai.db.CategoryMode;
 import com.yuzhai.db.OnCategoryDataChanged;
+import com.yuzhai.recyclerview.OnItemTouchListener;
 import com.yuzhai.ui.CategoryActivity;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/9/26.
  */
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> implements OnItemTouchListener,
+public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRecyclerViewHolder> implements OnItemTouchListener,
         OnCategoryDataChanged {
 
     private Context mContext;
@@ -29,7 +29,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     public static final String TITLE = "title";
 
-    public RecyclerViewAdapter(Context context) {
+    public CategoryRecyclerViewAdapter(Context context) {
         this.mContext = context;
         initCategoryData();
     }
@@ -53,14 +53,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     }
 
     @Override
-    public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerViewHolder holder = new RecyclerViewHolder(LayoutInflater.from(
+    public CategoryRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        CategoryRecyclerViewHolder holder = new CategoryRecyclerViewHolder(LayoutInflater.from(
                 mContext).inflate(R.layout.home_category_cell_layout, parent, false));
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(final CategoryRecyclerViewHolder holder, int position) {
         holder.mImageView.setBackgroundResource((Integer) mCategory.get(position).get(CategoryMode.CATEGORY_IMAGE));
         holder.mTextView.setText((String) mCategory.get(position).get(CategoryMode.CATEGORY_TEXT));
         holder.mFrameLayout.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +68,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             public void onClick(View v) {
                 if (holder.mTextView.getText() != mCategory.get(mCategory.size() - 1).get(CategoryMode.CATEGORY_TEXT)) {
                     Intent category = new Intent(mContext, CategoryActivity.class);
-                    category.putExtra(RecyclerViewAdapter.TITLE, holder.mTextView.getText());
+                    category.putExtra(CategoryRecyclerViewAdapter.TITLE, holder.mTextView.getText());
                     mContext.startActivity(category);
                 } else {
 //                    UnRepeatToast.showToast(mContext, "敬请期待");
@@ -87,8 +87,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
     public void onCategoryDataInserted(List<Map<String, Object>> categoryData) {
         mCategory = categoryData;
         notifyItemInserted(mCategory.size() - 2);
-        Log.i("change", mCategory.toString());
-        Log.i("size", mCategory.size() + "");
     }
 
     @Override

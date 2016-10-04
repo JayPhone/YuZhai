@@ -49,12 +49,13 @@ import permissions.dispatcher.RuntimePermissions;
  */
 @RuntimePermissions
 public class UserInfoActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView changePswd;
+    private TextView changePsw;
     private TextView userName;
     private TextView userPhone;
+    private TextView titleText;
     private Button loginExit;
     private ImageView headerImage;
-    private ImageView back;
+    private ImageView backImage;
     private RelativeLayout changeHeaderImage;
     private RelativeLayout changeUserName;
 
@@ -107,20 +108,27 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      * 初始化组件
      */
     public void initViews() {
-        back = (ImageView) findViewById(R.id.back_image);
+        backImage = (ImageView) findViewById(R.id.back_image);
+        if (backImage != null) {
+            backImage.setImageResource(R.drawable.back);
+        }
+        titleText = (TextView) findViewById(R.id.title_text);
+        if (titleText != null) {
+            titleText.setText("账户管理");
+        }
         changeHeaderImage = (RelativeLayout) findViewById(R.id.change_image_layout);
         headerImage = (ImageView) findViewById(R.id.header_image);
-        changePswd = (TextView) findViewById(R.id.change_pswd);
+        changePsw = (TextView) findViewById(R.id.change_pswd);
         changeUserName = (RelativeLayout) findViewById(R.id.change_user_name_layout);
         userName = (TextView) findViewById(R.id.user_name);
         userPhone = (TextView) findViewById(R.id.phone_num);
         loginExit = (Button) findViewById(R.id.exit_login);
 
         //设置监听器
-        back.setOnClickListener(this);
+        backImage.setOnClickListener(this);
         changeHeaderImage.setOnClickListener(this);
         headerImage.setOnClickListener(this);
-        changePswd.setOnClickListener(this);
+        changePsw.setOnClickListener(this);
         changeUserName.setOnClickListener(this);
         loginExit.setOnClickListener(this);
     }

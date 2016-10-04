@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -64,6 +64,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     private RequestQueue mRequestQueue;
 
     //组件引用
+    private TextView titleText;
     private EditText needTitleEdit;
     private EditText needContentEdit;
     private LinearLayout imagesPreviewLayout;
@@ -73,6 +74,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     private EditText contactEdit;
     private EditText moneyEdit;
     private Button publishButton;
+    private int imageMargin = 15;
 
     //数据引用
     private String[] typeTexts = new String[]{"请选择项目类型", "软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
@@ -109,6 +111,8 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
     public void initViews() {
         //查找引用
+        titleText = (TextView) mMainActivity.findViewById(R.id.title_text);
+        titleText.setText("发布需求");
         needTitleEdit = (EditText) mMainActivity.findViewById(R.id.need_title);
         needContentEdit = (EditText) mMainActivity.findViewById(R.id.need_content);
         imagesPreviewLayout = (LinearLayout) mMainActivity.findViewById(R.id.images_preview);
@@ -144,7 +148,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                                     Log.i("count", imagePathsList.size() + "");
                                     PublishFragmentPermissionsDispatcher.showCameraWithCheck(PublishFragment.this);
                                 } else {
-                                    Toast.makeText(mMainActivity, "一次最多只能上传5张图片", Toast.LENGTH_SHORT).show();
+                                    UnRepeatToast.showToast(mMainActivity, "一次最多只能上传5张图片");
                                 }
                                 break;
 
@@ -153,7 +157,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                                     Log.i("count", imagePathsList.size() + "");
                                     showImagePick();
                                 } else {
-                                    Toast.makeText(mMainActivity, "一次最多只能上传5张图片", Toast.LENGTH_SHORT).show();
+                                    UnRepeatToast.showToast(mMainActivity, "一次最多只能上传5张图片");
                                 }
                                 break;
                         }
@@ -207,12 +211,16 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         switch (requestCode) {
             case CAMERA_PEQUEST:
                 if (resultCode == Activity.RESULT_OK) {
+                    int imageLayoutWidth = imagesPreviewLayout.getMeasuredWidth();
+                    int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
+                    int imageHeight = imageWidth;
                     ImageView needImage = new ImageView(mMainActivity);
                     needImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(180, 180);
-                    params.rightMargin = 10;
-                    needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 150, 150));
-                    imagesPreviewLayout.addView(needImage, params);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
+                    params.setMargins(imageMargin, 0, 0, 0);
+                    needImage.setLayoutParams(params);
+                    imagesPreviewLayout.addView(needImage);
+                    needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, imageWidth, imageHeight));
                     //添加当前图片路径到List
                     imagePathsList.add(imagePath);
                     //添加当前图片到List
@@ -222,14 +230,18 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 break;
             case IMAGEPICK_PEQUEST:
                 if (resultCode == Activity.RESULT_OK) {
+                    int imageLayoutWidth = imagesPreviewLayout.getMeasuredWidth();
+                    int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
+                    int imageHeight = imageWidth;
                     ImageView needImage = new ImageView(mMainActivity);
                     needImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(180, 180);
-                    params.rightMargin = 10;
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
+                    params.setMargins(imageMargin, 0, 0, 0);
+                    needImage.setLayoutParams(params);
+                    imagesPreviewLayout.addView(needImage);
                     Uri uri = data.getData();
                     imagePath = GetPathUtil.getImageAbsolutePath(mMainActivity, uri);
-                    needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, 150, 150));
-                    imagesPreviewLayout.addView(needImage, params);
+                    needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, imageWidth, imageHeight));
                     //添加当前图片路径到List
                     imagePathsList.add(imagePath);
                     //添加当前图片到List
