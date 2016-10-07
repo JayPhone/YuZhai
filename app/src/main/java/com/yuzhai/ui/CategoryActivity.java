@@ -9,11 +9,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yuzhai.adapter.CategoryRecyclerViewAdapter;
 import com.yuzhai.adapter.CategoryViewPagerAdapter;
 import com.yuzhai.fragment.InformationFragment;
 import com.yuzhai.fragment.ResumeFragment;
 import com.yuzhai.fragment.WorkFragment;
-import com.yuzhai.adapter.CategoryRecyclerViewAdapter;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;

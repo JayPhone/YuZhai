@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yuzhai.recyclerview.DividerGridItemDecoration;
@@ -26,6 +27,7 @@ import com.yuzhai.ui.MainActivity;
 import com.yuzhai.ui.SearchActivity;
 import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.view.PointViewFlipper;
+import com.yuzhai.view.TranslucentScrollView;
 import com.yuzhai.yuzhaiwork.R;
 
 /**
@@ -57,6 +59,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private int imageWidth;
     private int imageHeight;
 
+    private RelativeLayout relativeLayout;
+    private TranslucentScrollView translucentScrollView;
+
     public HomeFragment() {
     }
 
@@ -85,6 +90,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     //初始化标题栏
     public void initToolbar(final Activity mainActivity) {
+//        relativeLayout = (RelativeLayout) mainActivity.findViewById(R.id.home_toolbar);
+//        relativeLayout.setAlpha(0);
         personImage = (ImageView) mainActivity.findViewById(R.id.person_image);
         personImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +108,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(search_intent);
             }
         });
+//        translucentScrollView = (TranslucentScrollView) mainActivity.findViewById(R.id.home_scroll);
+//        translucentScrollView.setOnScrollingListener(new TranslucentScrollView.OnScrollingListener() {
+//            @Override
+//            public void onTranslucent(int h, int v, int oldH, int oldV) {
+//                float scrollY = v;
+//                relativeLayout.setAlpha(scrollY / 300);
+//            }
+//        });
     }
 
     //初始化焦点图

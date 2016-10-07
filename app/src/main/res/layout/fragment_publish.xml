@@ -54,8 +54,8 @@
                 android:layout_marginTop="1dp"
                 android:background="@color/color_white"
                 android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:paddingTop="10dp">
 
                 <ImageView
@@ -81,8 +81,8 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/publish_textview_style"
                 android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:paddingTop="10dp">
 
                 <ImageView
@@ -115,8 +115,8 @@
                 android:layout_marginTop="1dp"
                 android:background="@drawable/publish_textview_style"
                 android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:paddingTop="10dp">
 
                 <ImageView
@@ -149,8 +149,8 @@
                 android:layout_marginTop="1dp"
                 android:background="@drawable/publish_textview_style"
                 android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:paddingTop="10dp">
 
                 <ImageView
@@ -186,8 +186,8 @@
                 android:layout_marginTop="1dp"
                 android:background="@drawable/publish_textview_style"
                 android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:paddingTop="10dp">
 
                 <ImageView
