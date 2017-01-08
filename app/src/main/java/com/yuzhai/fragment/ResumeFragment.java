@@ -20,7 +20,6 @@ import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,18 +36,17 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private RequestQueue mRequestQueue;
     private String mResumeResponse;
     private List<Map<String, Object>> mOrders;
-    private int mType;
+    private String mType = "";
     private final static String TYPE = "type";
-    private final String COOKIE = "cookie";
 
     /**
      * 获取ResumeFragment实例
      *
      * @return ResumeFragment实例
      */
-    public static ResumeFragment newInstance() {
+    public static ResumeFragment newInstance(String type) {
         Bundle data = new Bundle();
-//        data.putInt(TYPE, type);
+        data.putString(TYPE, type);
         ResumeFragment fragment = new ResumeFragment();
         fragment.setArguments(data);
         return fragment;
@@ -65,8 +63,8 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
         super.onActivityCreated(savedInstanceState);
         mMainActivity = getActivity();
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
-        mRequestQueue = RequestQueueSingleton.getInstance(mMainActivity).getRequestQueue();
-        mType = getArguments().getInt(TYPE);
+        mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
+        mType = getArguments().getString(TYPE);
         //初始化控件
         initViews();
         //初始化数据
@@ -77,8 +75,8 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
      * 初始化组件
      */
     public void initViews() {
-        mResumeSrl = (SwipeRefreshLayout) mMainActivity.findViewById(R.id.resume_refresh);
-        mResumeLv = (ListView) mMainActivity.findViewById(R.id.resume_listview);
+        mResumeSrl = (SwipeRefreshLayout) getView().findViewById(R.id.resume_refresh);
+        mResumeLv = (ListView) getView().findViewById(R.id.resume_listview);
 
         //设置下拉刷新监听
         mResumeSrl.setOnRefreshListener(this);
@@ -135,16 +133,5 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
      */
     public void setRefreshState(Boolean state) {
         mResumeSrl.setRefreshing(state);
-    }
-
-    /**
-     * 生成请求头参数集
-     *
-     * @return 返回请求头参数集
-     */
-    public Map<String, String> generateHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(COOKIE, mCustomApplication.getCookie());
-        return headers;
     }
 }

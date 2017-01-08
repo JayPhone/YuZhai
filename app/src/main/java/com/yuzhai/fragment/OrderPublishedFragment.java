@@ -1,6 +1,7 @@
 package com.yuzhai.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,25 +18,23 @@ import android.view.ViewGroup;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.yuzhai.activity.OrdersPublishedActivity;
 import com.yuzhai.adapter.PublishedRecyclerViewAdapter;
+import com.yuzhai.bean.responseBean.OrderPublishedBean;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.entry.responseBean.OrderPublishedBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.recyclerview.DividerItemDecoration;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2016/8/21.
  */
-public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, PublishedRecyclerViewAdapter.OnPublishedItemClickListener {
 
     private SwipeRefreshLayout mPublishedSrl;
     private RecyclerView mPublishedRv;
@@ -46,7 +45,6 @@ public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayo
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
     private List<OrderPublishedBean.OrderBean> mOrders;
-    private final String COOKIE = "cookie";
     public final static String DATA = "data";
 
     @Override
@@ -59,7 +57,7 @@ public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayo
         super.onActivityCreated(savedInstanceState);
         mMainActivity = getActivity();
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
-        mRequestQueue = RequestQueueSingleton.getInstance(mMainActivity).getRequestQueue();
+        mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
         mDivider = ContextCompat.getDrawable(mMainActivity, R.drawable.order_recyclerview_divider);
         //初始化控件
         initViews();
@@ -71,17 +69,17 @@ public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayo
      * 初始化控件
      */
     public void initViews() {
-        mPublishedSrl = (SwipeRefreshLayout) mMainActivity.findViewById(R.id.published_order_refresh);
+        mPublishedSrl = (SwipeRefreshLayout) getView().findViewById(R.id.published_order_refresh);
         //设置下拉刷新监听
         mPublishedSrl.setOnRefreshListener(this);
         //设置刷新样式
         mPublishedSrl.setColorSchemeResources(R.color.mainColor);
 
-        mPublishedRv = (RecyclerView) mMainActivity.findViewById(R.id.published_recyclerView);
+        mPublishedRv = (RecyclerView) getView().findViewById(R.id.published_recyclerView);
         mPublishedRv.setLayoutManager(new LinearLayoutManager(mMainActivity));
-        mPublishedRv.addItemDecoration(new DividerItemDecoration(mMainActivity, DividerItemDecoration.VERTICAL_LIST,mDivider));
         mPublishedRv.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new PublishedRecyclerViewAdapter(mMainActivity);
+        mAdapter.setOnPublishedItemClickListener(this);
     }
 
     /**
@@ -112,7 +110,7 @@ public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayo
     public void sendPublishedOrderRequest() {
         //创建查看已发布订单请求
         CommonRequest publishedOrderRequest = new CommonRequest(IPConfig.orderPublishedAddress,
-                generateHeaders(),
+                null,
                 null,
                 new Response.Listener<String>() {
                     @Override
@@ -148,14 +146,9 @@ public class OrderPublishedFragment extends Fragment implements SwipeRefreshLayo
         mPublishedSrl.setRefreshing(state);
     }
 
-    /**
-     * 生成请求头参数集
-     *
-     * @return 返回请求头参数集
-     */
-    public Map<String, String> generateHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(COOKIE, mCustomApplication.getCookie());
-        return headers;
+    @Override
+    public void onPublishedItemClick(int position) {
+        Intent orderPublishedDetail = new Intent(mMainActivity, OrdersPublishedActivity.class);
+        mMainActivity.startActivity(orderPublishedDetail);
     }
 }

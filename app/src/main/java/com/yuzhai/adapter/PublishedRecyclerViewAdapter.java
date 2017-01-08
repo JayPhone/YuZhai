@@ -13,7 +13,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.entry.responseBean.CancelPublishedRespBean;
+import com.yuzhai.bean.responseBean.CancelPublishedRespBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
@@ -30,12 +30,11 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/10/3.
  */
-public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<PublishedRecyclerViewHolder> implements
-        View.OnClickListener {
+public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<PublishedRecyclerViewHolder> {
     private Activity mContext;
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
-    private final String COOKIE = "cookie";
+    private OnPublishedItemClickListener mOnPublishedItemClickListener;
 
     //测试代码
     private List<Map<String, Object>> testData;
@@ -47,13 +46,13 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
     private String[] dates = new String[]{"2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14", "2016-07-14"};
     //订单名称
     private String[] names = new String[]{
-            "帮我做一个很厉害的毕业设计，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的毕业设计，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的毕业设计，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的毕业设计，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的毕业设计，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的毕业设计，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的毕业设计，记住，是很厉害的，普通厉害的不要!!"
+            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
+            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
+            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
+            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
+            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
+            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
+            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!"
     };
     //订单金额
     private String[] prices = new String[]{"100", "150", "200", "250", "300", "350", "400"};
@@ -63,8 +62,12 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
     public PublishedRecyclerViewAdapter(Activity context) {
         mContext = context;
         this.mCustomApplication = (CustomApplication) mContext.getApplication();
-        this.mRequestQueue = RequestQueueSingleton.getInstance(context).getRequestQueue();
+        this.mRequestQueue = RequestQueueSingleton.getRequestQueue(context);
         initData();
+    }
+
+    public void setOnPublishedItemClickListener(OnPublishedItemClickListener onPublishedItemClickListener) {
+        mOnPublishedItemClickListener = onPublishedItemClickListener;
     }
 
     private void initData() {
@@ -98,9 +101,15 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
         holder.mLimitText.setText((String) testData.get(position).get("limit"));
         holder.mPriceText.setText((String) testData.get(position).get("price"));
         holder.mTypeImage.setImageResource((int) testData.get(position).get("typeImage"));
-        holder.mCancelButton.setOnClickListener(this);
-        holder.mWarpLayout.setOnClickListener(this);
-        holder.mWarpLayout.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.mCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mOnPublishedItemClickListener) {
+                    mOnPublishedItemClickListener.onPublishedItemClick(position);
+                }
+            }
+        });
+        holder.mCardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 showDeleteOrderDialog(position);
@@ -112,19 +121,6 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
     @Override
     public int getItemCount() {
         return testData.size();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.cancel_order:
-                //显示取消订单对话框
-                showCancelDialog();
-                break;
-            case R.id.wrap_layout:
-                UnRepeatToast.showToast(mContext, "被点击了");
-                break;
-        }
     }
 
     /**
@@ -164,13 +160,13 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
     /**
      * 发送取消已发布订单请求
      */
-    public void sendCancelPublishedRequest(String publishId) {
+    public void sendCancelPublishedRequest(String publishId, String token) {
         //获取取消已发布订单请求的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateCancelPublishedOrderParams(publishId);
+        Map<String, String> params = ParamsGenerateUtil.generateCancelPublishedOrderParams(publishId, token);
 
         //创建取消已发布订单请求
         CommonRequest cancelPublishedRequest = new CommonRequest(IPConfig.cancelPublishedOrderAddress,
-                generateHeaders(),
+                null,
                 params,
                 new Response.Listener<String>() {
                     @Override
@@ -200,10 +196,7 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
         mRequestQueue.add(cancelPublishedRequest);
     }
 
-    public Map<String, String> generateHeaders() {
-        //设置报头参数
-        Map<String, String> headers = new HashMap<>();
-        headers.put(COOKIE, mCustomApplication.getCookie());
-        return headers;
+    public interface OnPublishedItemClickListener {
+        void onPublishedItemClick(int position);
     }
 }

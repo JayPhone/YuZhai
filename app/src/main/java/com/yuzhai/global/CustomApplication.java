@@ -1,53 +1,73 @@
 package com.yuzhai.global;
 
 import android.app.Application;
+import android.content.Context;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.yuzhai.dao.CookieOperate;
 import com.yuzhai.dao.UserInfoOperate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/7/9.
  */
 public class CustomApplication extends Application {
-    private UserInfoOperate userInfoOperate;
-    private CookieOperate cookieOperate;
+    private UserInfoOperate mUserInfoOperate;
+    private CookieOperate mCookieOperate;
     private boolean login = false;
+    public static boolean isConnect = true;
+    private final String COOKIE = "cookie";
+    private final String IMEI = "IMEI";
 
     @Override
     public void onCreate() {
         super.onCreate();
-        userInfoOperate = new UserInfoOperate(this);
-        cookieOperate = new CookieOperate(this);
+        mUserInfoOperate = new UserInfoOperate(this);
+        mCookieOperate = new CookieOperate(this);
     }
 
     //用户信息操作
     public String getUserPhone() {
-        return userInfoOperate.getUserPhone();
+        return mUserInfoOperate.getUserPhone();
     }
 
     public String getPassword() {
-        return userInfoOperate.getPassword();
+        return mUserInfoOperate.getPassword();
     }
 
     public void addUserInfo(String userPhone, String password) {
-        userInfoOperate.addUserInfo(userPhone, password);
+        mUserInfoOperate.addUserInfo(userPhone, password);
     }
 
     public void clearUserInfo() {
-        userInfoOperate.clearUserInfo();
+        mUserInfoOperate.clearUserInfo();
     }
 
-    //Cookie信息操作
+    public void setCookie(String cookie) {
+        mCookieOperate.setCookie(cookie);
+    }
+
     public String getCookie() {
-        return cookieOperate.getCookie();
-    }
-
-    public void addCookie(String cookie) {
-        cookieOperate.addCookie(cookie);
+        return mCookieOperate.getCookie();
     }
 
     public void clearCookie() {
-        cookieOperate.clearCookie();
+        mCookieOperate.clearCookie();
+    }
+
+    public Map<String, String> generateCookieMap() {
+        Map<String, String> cookie = new HashMap<>();
+        cookie.put(COOKIE, getCookie());
+        return cookie;
+    }
+
+    public String getToken() {
+        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        Log.i(IMEI, telephonyManager.getDeviceId());
+        return telephonyManager.getDeviceId();
     }
 
     //登录操作

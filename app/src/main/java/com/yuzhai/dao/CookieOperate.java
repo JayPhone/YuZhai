@@ -17,7 +17,7 @@ public class CookieOperate {
     }
 
     //添加cookie到本地
-    public void addCookie(String cookie) {
+    public void setCookie(String cookie) {
         cookieEdit = cookiePreferences.edit();
         cookieEdit.putString(COOKIE, cookie);
         cookieEdit.commit();

@@ -1,6 +1,6 @@
 package com.yuzhai.http;
 
-import com.yuzhai.config.ParamsNameConfig;
+import com.yuzhai.config.RequestParamsNameConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,26 +14,32 @@ public class ParamsGenerateUtil {
      * 生成登录请求的参数集
      *
      * @param userPhone 登录的用户名
-     * @param userPawd  登录的密码
+     * @param userPsw   登录的密码
+     * @param token     标识
      * @return 返回登陆的请求参数集
      */
     public static Map<String, String> generateLoginParams(String userPhone,
-                                                          String userPawd) {
+                                                          String userPsw,
+                                                          String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.LoginParam.USERPHONE, userPhone);
-        params.put(ParamsNameConfig.LoginParam.USERPSWD, userPawd);
+        params.put(RequestParamsNameConfig.LoginParam.USERPHONE, userPhone);
+        params.put(RequestParamsNameConfig.LoginParam.USERPSWD, userPsw);
+        params.put(RequestParamsNameConfig.LoginParam.TOKEN, token);
         return params;
     }
 
     /**
      * 生成获取验证码请求的参数集
      *
-     * @param phoneNum 获取验证码的手机号
+     * @param userPhone 获取验证码的手机号
+     * @param token     标识
      * @return 返回获取验证码的请求参数集
      */
-    public static Map<String, String> generateVerifyParams(String phoneNum) {
+    public static Map<String, String> generateVerifyParams(String userPhone,
+                                                           String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.VerifyParam.USERPHONE, phoneNum);
+        params.put(RequestParamsNameConfig.VerifyParam.USERPHONE, userPhone);
+        params.put(RequestParamsNameConfig.VerifyParam.TOKEN, token);
         return params;
     }
 
@@ -43,15 +49,18 @@ public class ParamsGenerateUtil {
      * @param regPhone  注册号码
      * @param checkCode 验证码
      * @param regPsw    注册密码
+     * @param token     标识
      * @return 返回注册请求的参数集
      */
     public static Map<String, String> generateRegisterParams(String regPhone,
                                                              String checkCode,
-                                                             String regPsw) {
+                                                             String regPsw,
+                                                             String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.RegisterParam.USERPHONE, regPhone);
-        params.put(ParamsNameConfig.RegisterParam.TEMVERIFY, checkCode);
-        params.put(ParamsNameConfig.RegisterParam.USERPSW, regPsw);
+        params.put(RequestParamsNameConfig.RegisterParam.USERPHONE, regPhone);
+        params.put(RequestParamsNameConfig.RegisterParam.TEMVERIFY, checkCode);
+        params.put(RequestParamsNameConfig.RegisterParam.USERPSW, regPsw);
+        params.put(RequestParamsNameConfig.RegisterParam.TOKEN, token);
         return params;
     }
 
@@ -59,11 +68,14 @@ public class ParamsGenerateUtil {
      * 生成重命名用户名的参数集
      *
      * @param newName 新用户名
+     * @param token   标识
      * @return 返回重命名用户名请求的参数集
      */
-    public static Map<String, String> generateReNameParam(String newName) {
+    public static Map<String, String> generateReNameParam(String newName,
+                                                          String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.ReNameParam.NEWNAME, newName);
+        params.put(RequestParamsNameConfig.ReNameParam.NEWNAME, newName);
+        params.put(RequestParamsNameConfig.ReNameParam.TOKEN, token);
         return params;
     }
 
@@ -73,15 +85,18 @@ public class ParamsGenerateUtil {
      * @param regPhone  用户手机号码
      * @param checkCode 验证码
      * @param regPsw    新密码
+     * @param token     标识
      * @return 返回忘记密码请求的参数集
      */
     public static Map<String, String> generateForgetPswParams(String regPhone,
                                                               String checkCode,
-                                                              String regPsw) {
+                                                              String regPsw,
+                                                              String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.ForgetPswParam.USERPHONE, regPhone);
-        params.put(ParamsNameConfig.ForgetPswParam.TEMVERIFY, checkCode);
-        params.put(ParamsNameConfig.ForgetPswParam.USERPSW, regPsw);
+        params.put(RequestParamsNameConfig.ForgetPswParam.USERPHONE, regPhone);
+        params.put(RequestParamsNameConfig.ForgetPswParam.TEMVERIFY, checkCode);
+        params.put(RequestParamsNameConfig.ForgetPswParam.USERPSW, regPsw);
+        params.put(RequestParamsNameConfig.ForgetPswParam.TOKEN, token);
         return params;
     }
 
@@ -90,13 +105,16 @@ public class ParamsGenerateUtil {
      *
      * @param oldPsw 新密码
      * @param newPsw 旧密码
+     * @param token  标识
      * @return 返回修改密码请求的参数集
      */
     public static Map<String, String> generateAlterPswParams(String oldPsw,
-                                                             String newPsw) {
+                                                             String newPsw,
+                                                             String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.AlterPswParam.OLDPSW, oldPsw);
-        params.put(ParamsNameConfig.AlterPswParam.USERPSW, newPsw);
+        params.put(RequestParamsNameConfig.AlterPswParam.OLDPSW, oldPsw);
+        params.put(RequestParamsNameConfig.AlterPswParam.USERPSW, newPsw);
+        params.put(RequestParamsNameConfig.AlterPswParam.TOKEN, token);
         return params;
     }
 
@@ -104,11 +122,14 @@ public class ParamsGenerateUtil {
      * 生成取消已发布订单请求的参数集
      *
      * @param publishId 已发布的订单号
+     * @param token     标识
      * @return 返回取消已发布订单请求的参数集
      */
-    public static Map<String, String> generateCancelPublishedOrderParams(String publishId) {
+    public static Map<String, String> generateCancelPublishedOrderParams(String publishId,
+                                                                         String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.CancelPublishedOrderParam.PUBLISHID, publishId);
+        params.put(RequestParamsNameConfig.CancelPublishedOrderParam.PUBLISHID, publishId);
+        params.put(RequestParamsNameConfig.CancelPublishedOrderParam.TOKEN, token);
         return params;
     }
 
@@ -116,11 +137,14 @@ public class ParamsGenerateUtil {
      * 生成通过类型查询订单请求的参数集
      *
      * @param itemType 需求类型
+     * @param token    标识
      * @return 返回通过类型查询订单请求的参数集
      */
-    public static Map<String, String> generateOrdersByTypeParams(String itemType) {
+    public static Map<String, String> generateOrdersByTypeParams(String itemType,
+                                                                 String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.OrdersByTypeParam.ITEMTYPE, itemType);
+        params.put(RequestParamsNameConfig.OrdersByTypeParam.ITEMTYPE, itemType);
+        params.put(RequestParamsNameConfig.OrdersByTypeParam.TOKEN, token);
         return params;
     }
 
@@ -128,11 +152,14 @@ public class ParamsGenerateUtil {
      * 生成申请接收订单请求的参数集
      *
      * @param orderId 订单ID
+     * @param token   标识
      * @return 返回申请接收订单请求的参数集
      */
-    public static Map<String, String> generateApplyOrderParams(String orderId) {
+    public static Map<String, String> generateApplyOrderParams(String orderId,
+                                                               String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.ApplyOrderParam.ORDERID, orderId);
+        params.put(RequestParamsNameConfig.ApplyOrderParam.ORDERID, orderId);
+        params.put(RequestParamsNameConfig.ApplyOrderParam.TOKEN, token);
         return params;
     }
 
@@ -154,12 +181,38 @@ public class ParamsGenerateUtil {
                                                                  String contact,
                                                                  String money) {
         Map<String, String> params = new HashMap<>();
-        params.put(ParamsNameConfig.PublishOrderParam.TITLE, title);
-        params.put(ParamsNameConfig.PublishOrderParam.DESCRIPT, content);
-        params.put(ParamsNameConfig.PublishOrderParam.TYPE, type);
-        params.put(ParamsNameConfig.PublishOrderParam.DEADLINE, date);
-        params.put(ParamsNameConfig.PublishOrderParam.TEL, contact);
-        params.put(ParamsNameConfig.PublishOrderParam.MONEY, money);
+        params.put(RequestParamsNameConfig.PublishOrderParam.TITLE, title);
+        params.put(RequestParamsNameConfig.PublishOrderParam.DESCRIPTION, content);
+        params.put(RequestParamsNameConfig.PublishOrderParam.TYPE, type);
+        params.put(RequestParamsNameConfig.PublishOrderParam.DEADLINE, date);
+        params.put(RequestParamsNameConfig.PublishOrderParam.TEL, contact);
+        params.put(RequestParamsNameConfig.PublishOrderParam.REWARD, money);
+        return params;
+    }
+
+    /**
+     * 生成查看详细订单请求的参数集
+     *
+     * @param orderId
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generateOrderDetailParam(String orderId, String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.OrderDetailParam.ORDERID, orderId);
+        params.put(RequestParamsNameConfig.OrderDetailParam.TOKEN, token);
+        return params;
+    }
+
+    /**
+     * 生成退出登录请求的参数集
+     *
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generateExitLoginParam(String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.OrderDetailParam.TOKEN, token);
         return params;
     }
 }

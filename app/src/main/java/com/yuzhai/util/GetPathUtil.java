@@ -52,7 +52,8 @@ public class GetPathUtil {
                 String[] selectionArgs = new String[]{split[1]};
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
-        } // MediaStore (and general)
+        }
+        // MediaStore (and general)
         else if ("content".equalsIgnoreCase(imageUri.getScheme())) {
             // Return the remote address
             if (isGooglePhotosUri(imageUri))

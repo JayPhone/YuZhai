@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yuzhai.ui.AlterPswActivity">
+    tools:context="com.yuzhai.activity.AlterPswActivity">
 
     <include
         android:id="@+id/alter_psw_toolbar"
@@ -19,7 +19,7 @@
         android:layout_marginTop="5dp">
 
         <RelativeLayout
-            android:id="@+id/pswd_layout"
+            android:id="@+id/psw_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/register_editable_middle_marginT"
@@ -54,7 +54,7 @@
             android:id="@+id/new_pswd_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/pswd_layout"
+            android:layout_below="@+id/psw_layout"
             android:layout_marginTop="@dimen/register_editable_middle_marginT"
             android:background="@drawable/edit_text_bg"
             android:gravity="center_vertical"

@@ -14,17 +14,27 @@ public interface IPConfig {
     /**
      * 目标地址和端口
      */
-    String DesAddress = "172.16.178.119:8080";
+    String DesAddress = "172.16.178.126:8080";
 
     /**
      * 主机名称
      */
-    String hostName = "jfinal_yzgz";
+    String hostName = "yzgz1.2mobile/servlet";
+
+    /**
+     * 图片主机名称
+     */
+    String image_hostName = "yzgz1.2mobile";
 
     /**
      * 地址前缀
      */
     String addressPrefix = protocol + "://" + DesAddress + "/" + hostName;
+
+    /**
+     * 图片地址前缀
+     */
+    String image_addressPrefix = protocol + "://" + DesAddress + "/" + image_hostName;
 
     /**
      * 获取验证码地址
@@ -34,7 +44,7 @@ public interface IPConfig {
     /**
      * 用户登录地址
      */
-    String loginAddress = addressPrefix + "/login/login";
+    String loginAddress = addressPrefix + "/login";
 
     /**
      * 用户注册地址
@@ -54,7 +64,7 @@ public interface IPConfig {
     /**
      * 发布需求地址
      */
-    String publishOrderAddress = addressPrefix + "/publish/save";
+    String publishOrderAddress = addressPrefix + "/publishtask";
 
     /**
      * 上传用户头像地址
@@ -69,7 +79,7 @@ public interface IPConfig {
     /**
      * 通过需求类型查看项目订单地址
      */
-    String ordersByTypeAddress = addressPrefix + "/selectOrderByType";
+    String ordersByTypeAddress = addressPrefix + "/lookupbytype";
 
     /**
      * 申请接收订单地址
@@ -85,4 +95,14 @@ public interface IPConfig {
      * 取消已发布订单地址
      */
     String cancelPublishedOrderAddress = addressPrefix + "/cancelPublish";
+
+    /**
+     * 查看详细订单地址
+     */
+    String orderDetailAddress = addressPrefix + "/detailedorder";
+
+    /**
+     * 退出登录地址
+     */
+    String exitLoginAddress = addressPrefix + "/quit";
 }

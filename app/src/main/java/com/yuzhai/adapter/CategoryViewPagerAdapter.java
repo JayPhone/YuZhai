@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class CategoryViewPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> mFragmentList;
-    private String[] titles = new String[]{"工作", "资讯", "人才"};
+    private String[] titles = new String[]{"工作", "人才"};
 
     public CategoryViewPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
         super(fm);

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#eeeeee"
     android:orientation="vertical"
-    tools:context="com.yuzhai.ui.UserInfoActivity">
+    tools:context="com.yuzhai.activity.UserInfoActivity">
 
     <include
         android:id="@+id/user_info_toolbar"
@@ -15,7 +15,7 @@
         android:id="@+id/change_image_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:background="@color/color_white">
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_marginLeft="15dp"
             android:gravity="center_vertical"
             android:text="头像"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/color_212121"
             android:textSize="16sp" />
 
         <ImageView
@@ -36,7 +36,7 @@
             android:layout_marginTop="5dp"
             android:gravity="center_vertical"
             android:scaleType="centerCrop"
-            android:src="@drawable/head_default" />
+            android:src="@drawable/default_image" />
 
     </RelativeLayout>
 
@@ -54,7 +54,7 @@
             android:layout_marginLeft="15dp"
             android:gravity="center_vertical"
             android:text="用户名"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/color_212121"
             android:textSize="16sp" />
 
         <TextView
@@ -65,15 +65,14 @@
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
             android:text="未设置"
-            android:textColor="@color/color_cecece"
+            android:textColor="@color/color_757575"
             android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:background="@color/color_white">
 
         <TextView
@@ -83,11 +82,12 @@
             android:layout_marginLeft="15dp"
             android:gravity="center_vertical"
             android:text="修改密码"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/color_212121"
             android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/color_white">
@@ -95,21 +95,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/phone_num"
+            android:layout_alignBottom="@+id/user_name"
             android:layout_marginLeft="15dp"
             android:gravity="center_vertical"
             android:text="认证手机"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/color_212121"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/phone_num"
+            android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
-            android:textColor="@color/color_cecece"
+            android:textColor="@color/color_757575"
             android:textSize="16sp" />
     </RelativeLayout>
 
@@ -126,7 +126,7 @@
             android:layout_marginLeft="15dp"
             android:gravity="center_vertical"
             android:text="实名认证"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/color_212121"
             android:textSize="16sp" />
 
         <TextView
@@ -137,7 +137,7 @@
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
             android:text="未认证"
-            android:textColor="@color/color_cecece"
+            android:textColor="@color/color_757575"
             android:textSize="16sp" />
     </RelativeLayout>
 

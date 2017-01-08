@@ -57,9 +57,23 @@ public class CategoryMode {
         mCategoryImages.add(R.drawable.game);
         mCategoryImages.add(R.drawable.write);
         mCategoryImages.add(R.drawable.calculate);
+        mCategoryImages.add(R.drawable.it);
+        mCategoryImages.add(R.drawable.music);
+        mCategoryImages.add(R.drawable.design);
+        mCategoryImages.add(R.drawable.movie);
+        mCategoryImages.add(R.drawable.game);
+        mCategoryImages.add(R.drawable.write);
+        mCategoryImages.add(R.drawable.calculate);
         mCategoryImages.add(R.drawable.plus);
 
         mCategoryTexts = new ArrayList<>();
+        mCategoryTexts.add(IT);
+        mCategoryTexts.add(MUSIC);
+        mCategoryTexts.add(DESIGN);
+        mCategoryTexts.add(MOVIE);
+        mCategoryTexts.add(GAME);
+        mCategoryTexts.add(WRITE);
+        mCategoryTexts.add(CALCULATE);
         mCategoryTexts.add(IT);
         mCategoryTexts.add(MUSIC);
         mCategoryTexts.add(DESIGN);

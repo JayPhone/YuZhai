@@ -124,7 +124,7 @@ public class FileUploadRequest extends Request<String> {
         return mHeaders;
     }
 
-    public void setmHeaders(Map<String, String> mHeaders) {
+    public void setHeaders(Map<String, String> mHeaders) {
         this.mHeaders = mHeaders;
     }
 

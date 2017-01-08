@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yuzhai.ui.ForgetPswActivity">
+    tools:context="com.yuzhai.activity.ForgetPswActivity">
 
     <include
         android:id="@+id/forget_psw_toolbar"
@@ -35,7 +35,7 @@
                 android:src="@drawable/user" />
 
             <EditText
-                android:id="@+id/phone_num"
+                android:id="@+id/user_name"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
@@ -74,7 +74,7 @@
                     android:src="@drawable/verify" />
 
                 <EditText
-                    android:id="@+id/code_field"
+                    android:id="@+id/verify_code"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
@@ -90,7 +90,7 @@
             </RelativeLayout>
 
             <Button
-                android:id="@+id/code_button"
+                android:id="@+id/verify_button"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -105,7 +105,7 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/pswd_layout"
+            android:id="@+id/psw_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/verify_layout"
@@ -140,7 +140,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/pswd_layout"
+            android:layout_below="@+id/psw_layout"
             android:layout_marginTop="@dimen/register_editable_middle_marginT"
             android:background="@drawable/edit_text_bg"
             android:gravity="center_vertical"

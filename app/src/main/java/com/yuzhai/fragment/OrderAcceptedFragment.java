@@ -1,42 +1,48 @@
 package com.yuzhai.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.yuzhai.activity.OrdersAcceptedActivity;
+import com.yuzhai.adapter.AcceptedRecyclerViewAdapter;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Administrator on 2016/8/21.
  */
-public class OrderAcceptedFragment extends Fragment implements AdapterView.OnItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+public class OrderAcceptedFragment extends Fragment implements
+        SwipeRefreshLayout.OnRefreshListener, AcceptedRecyclerViewAdapter.OnAcceptedItemClickListener {
     private SwipeRefreshLayout mAcceptedSrl;
-    private ListView mAcceptedLv;
+    private RecyclerView mAcceptedRv;
+    private AcceptedRecyclerViewAdapter mAdapter;
     private Activity mMainActivity;
+    private Drawable mDivider;
 
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
     private String mOrdersJson;
     private List<Map<String, Object>> mOrders;
-    private final String COOKIE = "cookie";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +55,8 @@ public class OrderAcceptedFragment extends Fragment implements AdapterView.OnIte
 
         mMainActivity = getActivity();
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
-        mRequestQueue = RequestQueueSingleton.getInstance(mMainActivity).getRequestQueue();
+        mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
+        mDivider = ContextCompat.getDrawable(mMainActivity, R.drawable.order_recyclerview_divider);
         //初始化控件
         initViews();
         //初始化数据
@@ -60,32 +67,29 @@ public class OrderAcceptedFragment extends Fragment implements AdapterView.OnIte
      * 初始化控件
      */
     public void initViews() {
-        mAcceptedSrl = (SwipeRefreshLayout) mMainActivity.findViewById(R.id.accepted_order_refresh);
-        mAcceptedLv = (ListView) mMainActivity.findViewById(R.id.accepted_listview);
-
+        mAcceptedSrl = (SwipeRefreshLayout) getView().findViewById(R.id.accepted_order_refresh);
         //设置下拉刷新监听
         mAcceptedSrl.setOnRefreshListener(this);
         //设置刷新样式
         mAcceptedSrl.setColorSchemeResources(R.color.mainColor);
-        //设置ListView的子项点击监听
-        mAcceptedLv.setOnItemClickListener(this);
+
+        mAcceptedRv = (RecyclerView) getView().findViewById(R.id.accepted_recyclerView);
+        mAcceptedRv.setLayoutManager(new LinearLayoutManager(mMainActivity));
+        mAcceptedRv.setItemAnimator(new DefaultItemAnimator());
+        mAdapter = new AcceptedRecyclerViewAdapter(mMainActivity);
+        mAdapter.setOnAcceptedItemClickListener(this);
     }
 
     /**
      * 初始化数据
      */
     public void initData() {
-        //初始化时默认显示刷新状态
-        mAcceptedSrl.setRefreshing(true);
-        sendAcceptedOrderRequest();
-    }
+        //测试代码
+        mAcceptedRv.setAdapter(mAdapter);
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (parent.getId()) {
-            case R.id.accepted_listview:
-                break;
-        }
+//        //初始化时默认显示刷新状态
+//        mAcceptedSrl.setRefreshing(true);
+//        sendAcceptedOrderRequest();
     }
 
     @Override
@@ -97,7 +101,7 @@ public class OrderAcceptedFragment extends Fragment implements AdapterView.OnIte
         //创建查看已接收订单请求
         //TODO URL和请求参数尚未填写
         CommonRequest acceptedOrderRequest = new CommonRequest(null,
-                generateHeaders(),
+                null,
                 null,
                 new Response.Listener<String>() {
                     @Override
@@ -109,6 +113,7 @@ public class OrderAcceptedFragment extends Fragment implements AdapterView.OnIte
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
+                        setRefreshState(false);
                     }
                 });
 
@@ -125,15 +130,9 @@ public class OrderAcceptedFragment extends Fragment implements AdapterView.OnIte
         mAcceptedSrl.setRefreshing(state);
     }
 
-    /**
-     * 生成请求头参数集
-     *
-     * @return 返回请求头参数集
-     */
-    public Map<String, String> generateHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(COOKIE, mCustomApplication.getCookie());
-        return headers;
+    @Override
+    public void onAcceptedItemClick(int position) {
+        Intent ordersAccepted = new Intent(mMainActivity, OrdersAcceptedActivity.class);
+        mMainActivity.startActivity(ordersAccepted);
     }
-
 }

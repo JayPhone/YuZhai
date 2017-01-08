@@ -20,7 +20,6 @@ import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,18 +36,17 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
     private RequestQueue mRequestQueue;
     private String mInfoResponse;
     private List<Map<String, Object>> mOrders;
-    private int mType;
+    private String mType = "";
     private final static String TYPE = "type";
-    private final String COOKIE = "cookie";
 
     /**
      * 获取InformationFragment实例
      *
      * @return InformationFragment实例
      */
-    public static InformationFragment newInstance() {
+    public static InformationFragment newInstance(String type) {
         Bundle data = new Bundle();
-//        data.putInt(TYPE, type);
+        data.putString(TYPE, type);
         InformationFragment fragment = new InformationFragment();
         fragment.setArguments(data);
         return fragment;
@@ -65,8 +63,8 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
         super.onActivityCreated(savedInstanceState);
         mMainActivity = getActivity();
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
-        mRequestQueue = RequestQueueSingleton.getInstance(mMainActivity).getRequestQueue();
-        mType = getArguments().getInt(TYPE);
+        mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
+        mType = getArguments().getString(TYPE);
         //初始化控件
         initViews();
         //初始化数据
@@ -77,8 +75,8 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
      * 初始化组件
      */
     public void initViews() {
-        mInfoSrl = (SwipeRefreshLayout) mMainActivity.findViewById(R.id.info_refresh);
-        mInfoLv = (ListView) mMainActivity.findViewById(R.id.info_listview);
+        mInfoSrl = (SwipeRefreshLayout) getView().findViewById(R.id.info_refresh);
+        mInfoLv = (ListView) getView().findViewById(R.id.info_listview);
 
         //设置下拉刷新监听
         mInfoSrl.setOnRefreshListener(this);
@@ -135,16 +133,5 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
      */
     public void setRefreshState(Boolean state) {
         mInfoSrl.setRefreshing(state);
-    }
-
-    /**
-     * 生成请求头参数集
-     *
-     * @return 返回请求头参数集
-     */
-    public Map<String, String> generateHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(COOKIE, mCustomApplication.getCookie());
-        return headers;
     }
 }

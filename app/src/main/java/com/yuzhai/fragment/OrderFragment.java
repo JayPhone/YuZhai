@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.yuzhai.adapter.OrderViewPagerAdapter;
-import com.yuzhai.view.OrderViewPager;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;
@@ -21,7 +22,8 @@ import java.util.List;
 public class OrderFragment extends Fragment {
     private Activity mMainActivity;
 
-    private OrderViewPager mViewPager;
+    private TextView mTitle;
+    private ViewPager mViewPager;
     private OrderViewPagerAdapter mPagerAdapter;
     private TabLayout mTabLayout;
 
@@ -35,19 +37,9 @@ public class OrderFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         //获取Activity的实例
         mMainActivity = getActivity();
-        //初始化组件
-        initViews();
         //初始化ViewPager
         initViewPager();
     }
-
-
-    /**
-     * 初始化组件
-     */
-    public void initViews() {
-    }
-
 
     /**
      * 添加viewPager的页面，已发布订单的界面和已接收订单的界面
@@ -63,11 +55,14 @@ public class OrderFragment extends Fragment {
         fragmentList.add(publishedFragment);
         fragmentList.add(acceptedFragment);
 
+        mTitle = (TextView) getView().findViewById(R.id.title_text);
+        mTitle.setText("我的订单");
+
         //创建viewPager的适配器并设置
-        mViewPager = (OrderViewPager) mMainActivity.findViewById(R.id.order_viewPager);
+        mViewPager = (ViewPager) getView().findViewById(R.id.order_viewPager);
         mPagerAdapter = new OrderViewPagerAdapter(getChildFragmentManager(), fragmentList);
         mViewPager.setAdapter(mPagerAdapter);
-        mTabLayout = (TabLayout) mMainActivity.findViewById(R.id.tab_layout);
+        mTabLayout = (TabLayout) getView().findViewById(R.id.tab_layout);
         if (mTabLayout != null) {
             mTabLayout.setupWithViewPager(mViewPager);
         }

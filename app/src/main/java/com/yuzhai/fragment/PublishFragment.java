@@ -14,6 +14,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,13 +31,13 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.yuzhai.activity.LoginActivity;
+import com.yuzhai.bean.requestBean.PublishBean;
 import com.yuzhai.config.IPConfig;
-import com.yuzhai.entry.requestBean.PublishEntry;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.ui.LoginActivity;
 import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.FileUtil;
 import com.yuzhai.util.GetPathUtil;
@@ -64,16 +65,17 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     private RequestQueue mRequestQueue;
 
     //组件引用
-    private TextView titleText;
-    private EditText needTitleEdit;
-    private EditText needContentEdit;
-    private LinearLayout imagesPreviewLayout;
-    private ImageView uploadImageView;
-    private Spinner typeSpinner;
-    private Spinner dateSpinner;
-    private EditText contactEdit;
-    private EditText moneyEdit;
-    private Button publishButton;
+    private Toolbar mToolbar;
+    private TextView mTitleText;
+    private EditText mTitleEdit;
+    private EditText mDescriptionEdit;
+    private LinearLayout mImagesPreviewLayout;
+    private ImageView mUploadImageView;
+    private Spinner mTypeSpinner;
+    private Spinner mDeadlineSpinner;
+    private EditText mTelEdit;
+    private EditText mRewardEdit;
+    private Button mPublishButton;
     private int imageMargin = 15;
 
     //数据引用
@@ -83,7 +85,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     private String imagePath;
     private List<String> imagePathsList;
     private List<ImageView> imageViewsList;
-    private PublishEntry publishEntry;
+    private PublishBean publishBean;
 
     //Activity请求码
     private final int CAMERA_PEQUEST = 1;
@@ -103,7 +105,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
-        mRequestQueue = RequestQueueSingleton.getInstance(mMainActivity).getRequestQueue();
+        mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
         imagePathsList = new ArrayList<>();
         imageViewsList = new ArrayList<>();
         initViews();
@@ -111,22 +113,25 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
     public void initViews() {
         //查找引用
-        titleText = (TextView) mMainActivity.findViewById(R.id.title_text);
-        titleText.setText("发布需求");
-        needTitleEdit = (EditText) mMainActivity.findViewById(R.id.need_title);
-        needContentEdit = (EditText) mMainActivity.findViewById(R.id.need_content);
-        imagesPreviewLayout = (LinearLayout) mMainActivity.findViewById(R.id.images_preview);
-        uploadImageView = (ImageView) mMainActivity.findViewById(R.id.upload_image);
-        contactEdit = (EditText) mMainActivity.findViewById(R.id.contact);
-        moneyEdit = (EditText) mMainActivity.findViewById(R.id.money);
-        publishButton = (Button) mMainActivity.findViewById(R.id.publish_button);
+        mToolbar = (Toolbar) getView().findViewById(R.id.publish_toolbar);
+        mToolbar.inflateMenu(R.menu.publish_menu);
+
+        mTitleText = (TextView) getView().findViewById(R.id.title_text);
+        mTitleText.setText("发布需求");
+        mTitleEdit = (EditText) getView().findViewById(R.id.need_title);
+        mDescriptionEdit = (EditText) getView().findViewById(R.id.need_content);
+        mImagesPreviewLayout = (LinearLayout) getView().findViewById(R.id.images_preview);
+        mUploadImageView = (ImageView) getView().findViewById(R.id.upload_image);
+        mTelEdit = (EditText) getView().findViewById(R.id.contact);
+        mRewardEdit = (EditText) getView().findViewById(R.id.reward);
+        mPublishButton = (Button) getView().findViewById(R.id.publish_button);
 
         //设置触摸监听器
-        needContentEdit.setOnTouchListener(this);
+        mDescriptionEdit.setOnTouchListener(this);
 
         //设置点击监听器
-        uploadImageView.setOnClickListener(this);
-        publishButton.setOnClickListener(this);
+        mUploadImageView.setOnClickListener(this);
+        mPublishButton.setOnClickListener(this);
 
         //初始化两个选择器
         initTypeSpinner();
@@ -211,7 +216,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         switch (requestCode) {
             case CAMERA_PEQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    int imageLayoutWidth = imagesPreviewLayout.getMeasuredWidth();
+                    int imageLayoutWidth = mImagesPreviewLayout.getMeasuredWidth();
                     int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
                     int imageHeight = imageWidth;
                     ImageView needImage = new ImageView(mMainActivity);
@@ -219,7 +224,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
                     params.setMargins(imageMargin, 0, 0, 0);
                     needImage.setLayoutParams(params);
-                    imagesPreviewLayout.addView(needImage);
+                    mImagesPreviewLayout.addView(needImage);
                     needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, imageWidth, imageHeight));
                     //添加当前图片路径到List
                     imagePathsList.add(imagePath);
@@ -230,7 +235,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 break;
             case IMAGEPICK_PEQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    int imageLayoutWidth = imagesPreviewLayout.getMeasuredWidth();
+                    int imageLayoutWidth = mImagesPreviewLayout.getMeasuredWidth();
                     int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
                     int imageHeight = imageWidth;
                     ImageView needImage = new ImageView(mMainActivity);
@@ -238,7 +243,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
                     params.setMargins(imageMargin, 0, 0, 0);
                     needImage.setLayoutParams(params);
-                    imagesPreviewLayout.addView(needImage);
+                    mImagesPreviewLayout.addView(needImage);
                     Uri uri = data.getData();
                     imagePath = GetPathUtil.getImageAbsolutePath(mMainActivity, uri);
                     needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, imageWidth, imageHeight));
@@ -254,7 +259,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
     //初始化类型选择器
     public void initTypeSpinner() {
-        typeSpinner = (Spinner) mMainActivity.findViewById(R.id.type_spinner);
+        mTypeSpinner = (Spinner) getView().findViewById(R.id.type_spinner);
         List<Map<String, String>> types = new ArrayList<>();
         Map<String, String> type;
 
@@ -271,12 +276,12 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 new String[]{"type"},
                 new int[]{R.id.type_item}
         );
-        typeSpinner.setAdapter(adapter);
+        mTypeSpinner.setAdapter(adapter);
     }
 
     //初始化期限选择器
     public void initDateSpinner() {
-        dateSpinner = (Spinner) mMainActivity.findViewById(R.id.date_spinner);
+        mDeadlineSpinner = (Spinner) getView().findViewById(R.id.date_spinner);
         List<Map<String, String>> types = new ArrayList<>();
         Map<String, String> type;
 
@@ -293,7 +298,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 new String[]{"type"},
                 new int[]{R.id.type_item}
         );
-        dateSpinner.setAdapter(adapter);
+        mDeadlineSpinner.setAdapter(adapter);
     }
 
     @Override
@@ -321,7 +326,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
             //点击发布按钮
             case R.id.publish_button:
                 if (!mCustomApplication.isLogin()) {
-                    Snackbar sb = Snackbar.make(v, "您尚未登陆，请登录后再发布需求", Snackbar.LENGTH_INDEFINITE);
+                    Snackbar sb = Snackbar.make(v, "您尚未登陆，请登录后再发布需求", Snackbar.LENGTH_LONG);
                     sb.setAction("登录", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -331,19 +336,20 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     }).show();
                 } else {
                     //选择的项目类型
-                    String type = typeSpinner.getSelectedItem().toString();
+                    String type = mTypeSpinner.getSelectedItem().toString();
                     type = type.substring(6, type.length() - 1);
                     //选择的项目期限
-                    String date = dateSpinner.getSelectedItem().toString();
-                    date = date.substring(6, date.length() - 1);
+                    String deadLine = mDeadlineSpinner.getSelectedItem().toString();
+                    deadLine = deadLine.substring(6, deadLine.length() - 1);
 
                     //发送发布订单请求
-                    sendPublishOrderRequest(needTitleEdit.getText().toString(),
-                            needContentEdit.getText().toString(),
+                    sendPublishOrderRequest(mTitleEdit.getText().toString(),
+                            mDescriptionEdit.getText().toString(),
                             type,
-                            date,
-                            contactEdit.getText().toString(),
-                            moneyEdit.getText().toString());
+                            deadLine,
+                            mTelEdit.getText().toString(),
+                            mRewardEdit.getText().toString(),
+                            mCustomApplication.getToken());
 
                     //显示正在发布对话框
                     showProgressDialog();
@@ -355,31 +361,34 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     /**
      * 发送发布订单请求
      *
-     * @param title   需求标题
-     * @param content 需求内容
-     * @param type    需求类型
-     * @param date    需求期限
-     * @param contact 联系电话
-     * @param money   项目金额
+     * @param title       需求标题
+     * @param description 需求内容
+     * @param type        需求类型
+     * @param deadline    需求期限
+     * @param tel         联系电话
+     * @param reward      项目金额
      */
     public void sendPublishOrderRequest(String title,
-                                        String content,
+                                        String description,
                                         String type,
-                                        String date,
-                                        String contact,
-                                        String money) {
+                                        String deadline,
+                                        String tel,
+                                        String reward,
+                                        String token) {
 
-        if (checkPublishData(title, content, type, date, contact, money)) {
+        if (checkPublishData(title, description, type, deadline, tel, reward)) {
             //获取请求参数
             Map<String, String> params = ParamsGenerateUtil.generatePublishOrderParams(title,
-                    content,
+                    description,
                     type,
-                    date,
-                    contact,
-                    money);
+                    deadline,
+                    tel,
+                    reward);
+
+            Log.i("publish_params", params.toString());
 
             //创建请求
-            FileUploadRequest publishOrderRequest = new FileUploadRequest(IPConfig.publishOrderAddress, generateHeaders(), params, "images", generateUploadFile(), new Response.Listener<String>() {
+            FileUploadRequest publishOrderRequest = new FileUploadRequest(IPConfig.publishOrderAddress + "?token=" + token, null, params, "images", generateUploadFile(), new Response.Listener<String>() {
                 @Override
                 public void onResponse(String resp) {
                     Log.i("publish_order_resp", resp);
@@ -389,6 +398,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
+                    dismissProgressDialog();
                     UnRepeatToast.showToast(mMainActivity, "服务器睡着了");
                 }
             });
@@ -424,27 +434,27 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     /**
      * 用于校验发布订单操作的数据
      *
-     * @param title   需求标题
-     * @param content 需求内容
-     * @param type    需求类型
-     * @param date    需求期限
-     * @param contact 联系电话
-     * @param money   项目金额
+     * @param title       需求标题
+     * @param description 需求内容
+     * @param type        需求类型
+     * @param deadline    需求期限
+     * @param tel         联系电话
+     * @param reward      项目金额
      * @return 如果填写的数据其中一项或全部不正确，返回false，否则返回true
      */
     public boolean checkPublishData(String title,
-                                    String content,
+                                    String description,
                                     String type,
-                                    String date,
-                                    String contact,
-                                    String money) {
+                                    String deadline,
+                                    String tel,
+                                    String reward) {
 
         if (title.equals("")) {
             UnRepeatToast.showToast(mMainActivity, "需求标题不能为空");
             return false;
         }
 
-        if (content.equals("")) {
+        if (description.equals("")) {
             UnRepeatToast.showToast(mMainActivity, "需求内容不能为空");
             return false;
         }
@@ -454,28 +464,28 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
             return false;
         }
 
-        if (date.equals("请选择预期时长")) {
+        if (deadline.equals("请选择预期时长")) {
             UnRepeatToast.showToast(mMainActivity, "请选择预期时长");
             return false;
         }
 
-        if (contact.equals("")) {
+        if (tel.equals("")) {
             UnRepeatToast.showToast(mMainActivity, "联系电话不能为空");
             return false;
         }
 
-        if (contact.length() != 11) {
+        if (tel.length() != 11) {
             UnRepeatToast.showToast(mMainActivity, "手机号码长度应为11位");
             return false;
         }
 
-        if (money.equals("")) {
+        if (reward.equals("")) {
             UnRepeatToast.showToast(mMainActivity, "项目金额不能为空");
             return false;
         }
 
         //校验成功后，保存填写的信息
-        publishEntry = new PublishEntry(title, content, type, date, contact, money);
+        publishBean = new PublishBean(title, description, type, deadline, tel, reward);
         return true;
     }
 
@@ -502,16 +512,5 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // NOTE: 将权限处理委托给生成的方法
         PublishFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-    }
-
-    /**
-     * 生成请求头参数集
-     *
-     * @return 返回请求头参数集
-     */
-    public Map<String, String> generateHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(COOKIE, mCustomApplication.getCookie());
-        return headers;
     }
 }

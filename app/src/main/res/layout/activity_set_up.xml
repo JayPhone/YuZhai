@@ -5,17 +5,17 @@
     android:layout_height="match_parent"
     android:background="@color/color_f1f0f0"
     android:orientation="vertical"
-    tools:context="com.yuzhai.ui.SetUpActivity">
+    tools:context="com.yuzhai.activity.SetUpActivity">
 
     <include
-        android:id="@+id/set_up_toolbar"
+        android:id="@+id/setup_toolbar"
         layout="@layout/toolbar_layout" />
 
     <TextView
         android:id="@+id/account_safe"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@+id/set_up_toolbar"
+        android:layout_below="@+id/setup_toolbar"
         android:layout_marginTop="5dp"
         android:background="@color/color_white"
         android:gravity="center_vertical"

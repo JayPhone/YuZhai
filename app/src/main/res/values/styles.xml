@@ -9,7 +9,23 @@
         <item name="android:listDivider">@drawable/category_item_divider</item>
     </style>
 
+    <style name="NavigationTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="TabLayoutTextAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Theme.ToolBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="actionOverflowButtonStyle">@style/ToolBar.OverflowButton</item>
+    </style>
+
+    <style name="ToolBar.OverflowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/menu</item>
     </style>
 </resources>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/pay_toolbar"
+        layout="@layout/toolbar_layout" />
+
+    <TextView
+        android:id="@+id/reward_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pay_toolbar"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="订单支付金额"
+        android:textColor="@color/color_616161"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/reward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reward_hint"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="￥500"
+        android:textColor="@color/mainColor"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/order_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reward"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="订单号:1315613646" />
+
+    <View
+        android:id="@+id/pay_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/order_id"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/color_EEEEEE" />
+
+    <RelativeLayout
+        android:id="@+id/receiver_layout"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/pay_divider"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/receiver"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:gravity="center_vertical"
+            android:text="收款方"
+            android:textColor="@color/color_424242"
+            android:textSize="16sp" />
+
+        <com.yuzhai.view.CircleImageView
+            android:id="@+id/user_header"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/user_name"
+            android:src="@drawable/test2"
+            app:border_color="@color/color_white" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:gravity="center_vertical"
+            android:text="JFJF"
+            android:textColor="@color/color_424242"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/choice_pay_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/receiver_layout"
+        android:layout_marginTop="10dp"
+        android:background="@color/color_EEEEEE"
+        android:gravity="center_vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:text="选择支付方式"
+        android:textSize="14sp" />
+
+    <RelativeLayout
+        android:id="@+id/alipay_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choice_pay_hint"
+        android:background="@drawable/recyclerview_item_pressed"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/alipay_image"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/alipay_icon" />
+
+        <TextView
+            android:id="@+id/alipay_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/alipay_image"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="1dp"
+            android:layout_toRightOf="@+id/alipay_image"
+            android:text="支付宝支付"
+            android:textColor="@color/color_212121"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/alipay_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/alipay_image"
+            android:layout_below="@+id/alipay_name"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@+id/alipay_image"
+            android:text="使用支付宝进行付款"
+            android:textColor="@color/color_757575"
+            android:textSize="12sp" />
+
+        <RadioButton
+            android:id="@+id/choice_alipay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:checked="true" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/alipay_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/alipay_layout"
+        android:background="@color/color_EEEEEE" />
+
+    <RelativeLayout
+        android:id="@+id/wxpay_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/alipay_divider"
+        android:background="@drawable/recyclerview_item_pressed"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/wxpay_image"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/wxpay_icon" />
+
+        <TextView
+            android:id="@+id/wxpay_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/wxpay_image"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="1dp"
+            android:layout_toRightOf="@+id/wxpay_image"
+            android:text="微信支付"
+            android:textColor="@color/color_212121"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/wxpay_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/wxpay_image"
+            android:layout_below="@+id/wxpay_name"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@+id/wxpay_image"
+            android:text="使用微信支付进行付款"
+            android:textColor="@color/color_757575"
+            android:textSize="12sp" />
+
+        <RadioButton
+            android:id="@+id/choice_wxpay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/wxpay_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/wxpay_layout"
+        android:background="@color/color_EEEEEE" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/wxpay_divider"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/button_style"
+        android:text="确认支付"
+        android:textColor="@color/color_white"
+        android:textSize="16sp" />
+</RelativeLayout>

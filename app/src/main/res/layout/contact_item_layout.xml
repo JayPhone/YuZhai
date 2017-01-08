@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/contact_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/recyclerview_item_pressed"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingTop="10dp">
+
+    <com.yuzhai.view.CircleImageView
+        android:id="@+id/user_header"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/test1"
+        app:border_color="@color/color_white" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/user_header"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@+id/user_header"
+        android:text="JF"
+        android:textColor="@color/color_212121"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/contact_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/user_header"
+        android:layout_below="@+id/user_name"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="3dp"
+        android:layout_toRightOf="@+id/user_header"
+        android:text="明天大家出来吃饭啊"
+        android:textColor="@color/color_757575"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/received_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/user_header"
+        android:layout_below="@+id/user_name"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:text="22:33"
+        android:textColor="@color/color_9E9E9E"
+        android:textSize="12sp" />
+</RelativeLayout>

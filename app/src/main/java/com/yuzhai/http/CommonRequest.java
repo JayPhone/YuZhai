@@ -30,7 +30,6 @@ public class CommonRequest extends StringRequest {
      */
     private String mResponseCookie;
 
-
     /**
      * 可添加请求参数和请求头参数的构造函数
      *

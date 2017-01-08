@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.yuzhai.db.CategoryMode;
 import com.yuzhai.db.OnCategoryDataChanged;
 import com.yuzhai.recyclerview.OnItemTouchListener;
-import com.yuzhai.ui.CategoryActivity;
+import com.yuzhai.activity.CategoryActivity;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
     @Override
     public CategoryRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         CategoryRecyclerViewHolder holder = new CategoryRecyclerViewHolder(LayoutInflater.from(
-                mContext).inflate(R.layout.home_category_cell_layout, parent, false));
+                mContext).inflate(R.layout.home_category_item_layout, parent, false));
         return holder;
     }
 
@@ -71,7 +71,6 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
                     category.putExtra(CategoryRecyclerViewAdapter.TITLE, holder.mTextView.getText());
                     mContext.startActivity(category);
                 } else {
-//                    UnRepeatToast.showToast(mContext, "敬请期待");
                     mCategoryMode.addCategory(R.drawable.it, CategoryMode.IT);
                 }
             }

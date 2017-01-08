@@ -5,7 +5,12 @@
     android:background="@color/color_f1f0f0"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar_layout" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <include android:id="@+id/publish_toolbar" layout="@layout/toolbar_layout" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,8 +29,8 @@
                 android:layout_marginTop="5dp"
                 android:background="@drawable/publish_textview_style"
                 android:hint="需求标题"
+                android:lines="1"
                 android:padding="5dp"
-                android:singleLine="true"
                 android:textSize="15sp" />
 
             <EditText
@@ -177,7 +182,7 @@
                     android:background="@drawable/publish_textview_style"
                     android:inputType="number"
                     android:maxLength="11"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -207,14 +212,14 @@
                     android:textSize="15sp" />
 
                 <EditText
-                    android:id="@+id/money"
+                    android:id="@+id/reward"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginRight="50dp"
                     android:layout_toRightOf="@+id/money_title"
                     android:background="@drawable/publish_textview_style"
                     android:inputType="number"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
                 <TextView
                     android:layout_width="50dp"

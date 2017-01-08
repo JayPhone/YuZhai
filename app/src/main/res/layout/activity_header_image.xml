@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.yuzhai.ui.headerImageActivity">
+    tools:context="com.yuzhai.activity.headerImageActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
 
 
     <LinearLayout
-        android:id="@+id/content"
+        android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_gary_e9e9e2"

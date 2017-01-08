@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.yuzhai.yuzhaiwork">
 
     <!-- 连网权限 -->
@@ -10,18 +11,21 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- 拍照权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!--查看系统状态-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name="com.yuzhai.global.CustomApplication"
         android:allowBackup="true"
-        android:icon="@drawable/logo"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_chinese_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:label">
 
         <!-- 欢迎界面 -->
         <activity
-            android:name="com.yuzhai.ui.WelcomeActivity"
+            android:name="com.yuzhai.activity.WelcomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,34 +35,34 @@
         </activity>
         <!-- 主界面 -->
         <activity
-            android:name="com.yuzhai.ui.MainActivity"
+            android:name="com.yuzhai.activity.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <!-- 登录界面 -->
         <activity
-            android:name="com.yuzhai.ui.LoginActivity"
+            android:name="com.yuzhai.activity.LoginActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <!-- 注册界面 -->
         <activity
-            android:name="com.yuzhai.ui.RegisterActivity"
+            android:name="com.yuzhai.activity.RegisterActivity"
             android:screenOrientation="portrait" />
         <!-- 忘记密码界面 -->
         <activity
-            android:name="com.yuzhai.ui.ForgetPswActivity"
+            android:name="com.yuzhai.activity.ForgetPswActivity"
             android:screenOrientation="portrait" />
         <!-- 类别界面 -->
         <activity
-            android:name="com.yuzhai.ui.CategoryActivity"
+            android:name="com.yuzhai.activity.CategoryActivity"
             android:screenOrientation="portrait" />
         <!-- 广告界面 -->
         <activity
-            android:name="com.yuzhai.ui.AdvertiseActivity"
+            android:name="com.yuzhai.activity.AdvertiseActivity"
             android:screenOrientation="portrait" />
         <!-- 个人信息界面 -->
         <activity
-            android:name="com.yuzhai.ui.UserInfoActivity"
+            android:name="com.yuzhai.activity.UserInfoActivity"
             android:screenOrientation="portrait">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->
@@ -68,31 +72,55 @@
         </activity>
         <!-- 搜索界面 -->
         <activity
-            android:name="com.yuzhai.ui.SearchActivity"
-            android:screenOrientation="portrait" />
-        <!-- 详细描述界面 -->
-        <activity
-            android:name="com.yuzhai.ui.DetailWorkActivity"
+            android:name="com.yuzhai.activity.SearchActivity"
             android:screenOrientation="portrait" />
         <!-- 修改密码界面 -->
         <activity
-            android:name="com.yuzhai.ui.AlterPswActivity"
+            android:name="com.yuzhai.activity.AlterPswActivity"
             android:screenOrientation="portrait" />
         <!--设置界面-->
         <activity
-            android:name="com.yuzhai.ui.SetUpActivity"
+            android:name="com.yuzhai.activity.SetUpActivity"
             android:screenOrientation="portrait" />
         <!--反馈界面-->
         <activity
-            android:name="com.yuzhai.ui.FeedBackActivity"
+            android:name="com.yuzhai.activity.FeedBackActivity"
             android:screenOrientation="portrait" />
         <!--头像界面-->
         <activity
-            android:name="com.yuzhai.ui.headerImageActivity"
+            android:name="com.yuzhai.activity.headerImageActivity"
             android:screenOrientation="portrait" />
         <!--实名认证界面-->
         <activity
-            android:name="com.yuzhai.ui.IdentityAuthenActivity"
+            android:name="com.yuzhai.activity.IdentityAuthenActivity"
+            android:screenOrientation="portrait" />
+        <!--详细订单界面-->
+        <activity
+            android:name="com.yuzhai.activity.WorkDetailActivity"
+            android:screenOrientation="portrait" />
+        <!--聊天界面-->
+        <activity
+            android:name="com.yuzhai.activity.ChatActivity"
+            android:screenOrientation="portrait" />
+        <!--收藏界面-->
+        <activity
+            android:name="com.yuzhai.activity.CollectionActivity"
+            android:screenOrientation="portrait" />
+        <!--已发布订单详细界面-->
+        <activity
+            android:name="com.yuzhai.activity.OrdersPublishedActivity"
+            android:screenOrientation="portrait" />
+        <!--已接收订单详细界面-->
+        <activity
+            android:name="com.yuzhai.activity.OrdersAcceptedActivity"
+            android:screenOrientation="portrait" />
+        <!--支付界面-->
+        <activity
+            android:name="com.yuzhai.activity.PayActivity"
+            android:screenOrientation="portrait" />
+        <!--查看用户信息界面-->
+        <activity
+            android:name="com.yuzhai.activity.UserDataActivity"
             android:screenOrientation="portrait" />
     </application>
 

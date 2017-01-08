@@ -4,65 +4,56 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.yuzhai.activity.SearchActivity;
+import com.yuzhai.adapter.CategoryRecyclerViewAdapter;
 import com.yuzhai.recyclerview.DividerGridItemDecoration;
 import com.yuzhai.recyclerview.ItemTouchHelperCallback;
-import com.yuzhai.adapter.CategoryRecyclerViewAdapter;
-import com.yuzhai.ui.AdvertiseActivity;
-import com.yuzhai.ui.MainActivity;
-import com.yuzhai.ui.SearchActivity;
-import com.yuzhai.util.BitmapUtil;
-import com.yuzhai.view.PointViewFlipper;
+import com.yuzhai.view.IndicatedViewFlipper;
 import com.yuzhai.view.TranslucentScrollView;
 import com.yuzhai.yuzhaiwork.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/6/10.
  */
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends Fragment {
     private Activity mainActivity;
-    //滚动面板下方的圆点面板
-    private LinearLayout pointPanel;
-    //滚动面板下方的圆点
-    private TextView point_1, point_2, point_3, point_4;
-    //圆点数组
-    private TextView[] points;
     //搜索框
     private TextView searchView;
-    //滚动面板的图片
-    private ImageView image_1, image_2, image_3, image_4;
     //用于弹出个人信息面板
-    private ImageView personImage;
+    private ImageView navigationImage;
     //滚动面板
-    private PointViewFlipper picturePanel;
+    private IndicatedViewFlipper indicatedFlipper;
     //类别面板
-    private RecyclerView category;
+    private RecyclerView categoryRecyclerView;
     //类别面板设配器
     private CategoryRecyclerViewAdapter categoryAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private ItemTouchHelperCallback mItemTouchHelperCallback;
 
-    private int imageWidth;
-    private int imageHeight;
-
-    private RelativeLayout relativeLayout;
+    private RelativeLayout toolbar;
     private TranslucentScrollView translucentScrollView;
 
-    public HomeFragment() {
+    public static HomeFragment newInstance() {
+//        Bundle args = new Bundle();
+        HomeFragment fragment = new HomeFragment();
+//        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -74,32 +65,33 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //初始化数据
-        initValues();
-        MainActivity.menu.addIgnoredView(picturePanel);
+        initViews();
     }
 
-    private void initValues() {
+    private void initViews() {
         mainActivity = getActivity();
         //初始化标题栏
-        initToolbar(mainActivity);
+        initToolbar();
         //初始化焦点图
-        initBanner(mainActivity);
+        initBanner();
         //初始化分类面板
-        initCategory(mainActivity);
+        initCategory();
     }
 
     //初始化标题栏
-    public void initToolbar(final Activity mainActivity) {
-//        relativeLayout = (RelativeLayout) mainActivity.findViewById(R.id.home_toolbar);
-//        relativeLayout.setAlpha(0);
-        personImage = (ImageView) mainActivity.findViewById(R.id.person_image);
-        personImage.setOnClickListener(new View.OnClickListener() {
+    public void initToolbar() {
+        toolbar = (RelativeLayout) getView().findViewById(R.id.home_toolbar);
+        toolbar.getBackground().mutate().setAlpha(0);
+        navigationImage = (ImageView) getView().findViewById(R.id.menu_image);
+        navigationImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.menu.showMenu();
+                DrawerLayout drawerLayout = (DrawerLayout) mainActivity.findViewById(R.id.drawer);
+                drawerLayout.openDrawer(Gravity.LEFT);
             }
         });
-        searchView = (TextView) mainActivity.findViewById(R.id.search_view);
+
+        searchView = (TextView) getView().findViewById(R.id.search_view);
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,130 +100,53 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(search_intent);
             }
         });
-//        translucentScrollView = (TranslucentScrollView) mainActivity.findViewById(R.id.home_scroll);
-//        translucentScrollView.setOnScrollingListener(new TranslucentScrollView.OnScrollingListener() {
-//            @Override
-//            public void onTranslucent(int h, int v, int oldH, int oldV) {
-//                float scrollY = v;
-//                relativeLayout.setAlpha(scrollY / 300);
-//            }
-//        });
+
+        translucentScrollView = (TranslucentScrollView) getView().findViewById(R.id.home_scroll);
+        translucentScrollView.setOnScrollingListener(new TranslucentScrollView.OnScrollingListener() {
+            @Override
+            public void onTranslucent(int h, int v, int oldH, int oldV) {
+                if ((float) v <= indicatedFlipper.getMeasuredHeight() - toolbar.getMeasuredHeight()) {
+                    toolbar.getBackground().mutate().setAlpha(
+                            (int) ((float) v / (indicatedFlipper.getMeasuredHeight() - toolbar.getMeasuredHeight()) * 255));
+                } else if (oldV > indicatedFlipper.getMeasuredHeight() - toolbar.getMeasuredHeight()) {
+                    toolbar.getBackground().mutate().setAlpha(255);
+                }
+            }
+        });
     }
 
     //初始化焦点图
-    public void initBanner(Activity mainActivity) {
-        //初始化下面的圆点面板
-        pointPanel = (LinearLayout) mainActivity.findViewById(R.id.point_panel);
-        point_1 = (TextView) pointPanel.findViewById(R.id.point_1);
-        point_2 = (TextView) pointPanel.findViewById(R.id.point_2);
-        point_3 = (TextView) pointPanel.findViewById(R.id.point_3);
-        point_4 = (TextView) pointPanel.findViewById(R.id.point_4);
-        points = new TextView[]{point_1, point_2, point_3, point_4};
-
+    public void initBanner() {
         //初始化焦点图面板
-        picturePanel = (PointViewFlipper) mainActivity.findViewById(R.id.fli);
-        picturePanel.setInAnimation(getActivity(), android.R.anim.fade_in);
-        picturePanel.setOutAnimation(getActivity(), android.R.anim.fade_out);
-        picturePanel.setOnFlipListener(flipListener);
-        picturePanel.getViewTreeObserver().
-                addOnGlobalLayoutListener(
-                        new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                picturePanel.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                imageWidth = picturePanel.getWidth();
-                                imageHeight = picturePanel.getHeight();
-                                Log.i("width", imageWidth + "");
-                                Log.i("height", imageHeight + "");
-
-                                image_1.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
-                                        getResources(), R.drawable.test1, imageWidth, imageHeight));
-                                image_2.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
-                                        getResources(), R.drawable.test2, imageWidth, imageHeight));
-                                image_3.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
-                                        getResources(), R.drawable.test3, imageWidth, imageHeight));
-                                image_4.setImageBitmap(BitmapUtil.decodeSampledBitmapFromResource(
-                                        getResources(), R.drawable.test4, imageWidth, imageHeight));
-                            }
-                        });
-
-        //初始化图片内容
-        image_1 = (ImageView) mainActivity.findViewById(R.id.image_1);
-        image_2 = (ImageView) mainActivity.findViewById(R.id.image_2);
-        image_3 = (ImageView) mainActivity.findViewById(R.id.image_3);
-        image_4 = (ImageView) mainActivity.findViewById(R.id.image_4);
-
-        image_1.setOnClickListener(this);
-        image_2.setOnClickListener(this);
-        image_3.setOnClickListener(this);
-        image_4.setOnClickListener(this);
-
-        point_1.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
+        List<Integer> list = new ArrayList<>();
+        list.add(R.drawable.test1);
+        list.add(R.drawable.test2);
+        list.add(R.drawable.test3);
+        list.add(R.drawable.test4);
+        list.add(R.drawable.test1);
+        list.add(R.drawable.test2);
+        list.add(R.drawable.test3);
+        list.add(R.drawable.test4);
+        indicatedFlipper = (IndicatedViewFlipper) mainActivity.findViewById(R.id.indicated_flipper);
+        indicatedFlipper.setDisallowInterceptViewGroup((ViewGroup) indicatedFlipper.getParent().getParent().getParent().getParent());
+        indicatedFlipper.setFlipperImageResources(list);
     }
 
     //初始化分类面板
-    public void initCategory(Activity mMainActivity) {
-        categoryAdapter = new CategoryRecyclerViewAdapter(mMainActivity);
-        category = (RecyclerView) mMainActivity.findViewById(R.id.category);
-        category.setLayoutManager(new GridLayoutManager(mMainActivity, 3));
-        category.setAdapter(categoryAdapter);
-        category.setItemAnimator(new DefaultItemAnimator());
-        category.addItemDecoration(new DividerGridItemDecoration(mMainActivity));
+    public void initCategory() {
+        categoryAdapter = new CategoryRecyclerViewAdapter(mainActivity);
+        categoryRecyclerView = (RecyclerView) getView().findViewById(R.id.category);
+        categoryRecyclerView.setLayoutManager(new GridLayoutManager(mainActivity, 3) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+        categoryRecyclerView.setAdapter(categoryAdapter);
+        categoryRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        categoryRecyclerView.addItemDecoration(new DividerGridItemDecoration(mainActivity));
         mItemTouchHelperCallback = new ItemTouchHelperCallback(categoryAdapter);
         mItemTouchHelper = new ItemTouchHelper(mItemTouchHelperCallback);
-        mItemTouchHelper.attachToRecyclerView(category);
+        mItemTouchHelper.attachToRecyclerView(categoryRecyclerView);
     }
-
-    @Override
-    public void onClick(View v) {
-        int viewID = v.getId();
-        switch (viewID) {
-            case R.id.image_1:
-                Intent intent_advertise1 = new Intent(getActivity(), AdvertiseActivity.class);
-                startActivity(intent_advertise1);
-                break;
-            case R.id.image_2:
-                Intent intent_advertise2 = new Intent(getActivity(), AdvertiseActivity.class);
-                startActivity(intent_advertise2);
-                break;
-            case R.id.image_3:
-                Intent intent_advertise3 = new Intent(getActivity(), AdvertiseActivity.class);
-                startActivity(intent_advertise3);
-                break;
-            case R.id.image_4:
-                Intent intent_advertise4 = new Intent(getActivity(), AdvertiseActivity.class);
-                startActivity(intent_advertise4);
-                break;
-        }
-    }
-
-    //图片切换监听器
-    private PointViewFlipper.OnFlipListener flipListener = new PointViewFlipper.OnFlipListener() {
-        //图片切换到下一张
-        @Override
-        public void onShowPrevious(PointViewFlipper flipper) {
-            int id = flipper.getDisplayedChild();
-            points[id].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
-            for (int i = 0; i < points.length; i++) {
-                if (id == i)
-                    continue;
-                else
-                    points[i].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style));
-            }
-        }
-
-        //图片切换到上一张
-        @Override
-        public void onShowNext(PointViewFlipper flipper) {
-            int id = flipper.getDisplayedChild();
-            points[id].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style_choose));
-            for (int i = 0; i < points.length; i++) {
-                if (id == i)
-                    continue;
-                else
-                    points[i].setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.buttom_style));
-            }
-        }
-    };
-
 }

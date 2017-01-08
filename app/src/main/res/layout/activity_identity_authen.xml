@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.yuzhai.ui.IdentityAuthenActivity">
+    tools:context="com.yuzhai.activity.IdentityAuthenActivity">
 
     <include
         android:id="@+id/identity_toolbar"
@@ -71,7 +71,7 @@
                     android:src="@drawable/verify" />
 
                 <EditText
-                    android:id="@+id/code_field"
+                    android:id="@+id/verify_code"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_marginLeft="10dp"
@@ -87,7 +87,7 @@
             </RelativeLayout>
 
             <Button
-                android:id="@+id/code_button"
+                android:id="@+id/verify_button"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
