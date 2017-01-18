@@ -6,51 +6,51 @@ import java.util.List;
  * Created by Administrator on 2016/8/28.
  */
 public class DetailOrderBean {
-    private OrderInfoBean order;
+    private OrderInfoBean DetailedOrder;
 
-    public OrderInfoBean getOrder() {
-        return order;
+    public OrderInfoBean getDetailedOrder() {
+        return DetailedOrder;
     }
 
-    public void setOrder(OrderInfoBean order) {
-        this.order = order;
+    public void setDetailedOrder(OrderInfoBean detailedOrder) {
+        this.DetailedOrder = detailedOrder;
     }
 
     @Override
     public String toString() {
         return "DetailOrderBean{" +
-                "order=" + order +
+                "DetailedOrder=" + DetailedOrder +
                 '}';
     }
 
     public class OrderInfoBean {
-        private PublisherBean Publisher;
+        private String Publisher;
         private String Description;
         private String Reward;
         private String Date;
         private String OrderID;
-        private String Type;
+        private String PublisherAvatar;
         private String Deadline;
         private String Title;
-        private String State;
+        private String Status;
         private String Tel;
-        private List<PicturesBean> Picture;
-        private List<ApplicantBean> Applicant;
+        private List<PicturesBean> Pictures;
+        private List<ApplicantAvatars> ApplicantAvatars;
 
-        public PublisherBean getPublisher() {
+        public String getPublisher() {
             return Publisher;
         }
 
-        public void setPublisher(PublisherBean publisher) {
+        public void setPublisher(String publisher) {
             Publisher = publisher;
         }
 
-        public String getState() {
-            return State;
+        public String getStatus() {
+            return Status;
         }
 
-        public void setState(String state) {
-            State = state;
+        public void setStatus(String status) {
+            Status = status;
         }
 
         public String getDescription() {
@@ -93,14 +93,6 @@ public class DetailOrderBean {
             OrderID = orderID;
         }
 
-        public String getType() {
-            return Type;
-        }
-
-        public void setType(String type) {
-            Type = type;
-        }
-
         public String getDeadline() {
             return Deadline;
         }
@@ -117,71 +109,47 @@ public class DetailOrderBean {
             Title = title;
         }
 
-        public List<PicturesBean> getPicture() {
-            return Picture;
+        public List<PicturesBean> getPictures() {
+            return Pictures;
         }
 
-        public void setPicture(List<PicturesBean> picture) {
-            Picture = picture;
+        public void setPictures(List<PicturesBean> pictures) {
+            Pictures = pictures;
         }
 
-        public List<ApplicantBean> getApplicant() {
-            return Applicant;
+        public String getPublisherAvatar() {
+            return PublisherAvatar;
         }
 
-        public void setApplicant(List<ApplicantBean> applicant) {
-            Applicant = applicant;
+        public void setPublisherAvatar(String publisherAvatar) {
+            PublisherAvatar = publisherAvatar;
+        }
+
+        public List<ApplicantAvatars> getApplicantAvatars() {
+            return ApplicantAvatars;
+        }
+
+        public void setApplicantAvatars(List<ApplicantAvatars> applicantAvatars) {
+            this.ApplicantAvatars = applicantAvatars;
         }
 
         @Override
         public String toString() {
             return "OrderInfoBean{" +
-                    "Publisher=" + Publisher +
+                    "Publisher='" + Publisher + '\'' +
                     ", Description='" + Description + '\'' +
                     ", Reward='" + Reward + '\'' +
                     ", Date='" + Date + '\'' +
                     ", OrderID='" + OrderID + '\'' +
-                    ", Type='" + Type + '\'' +
+                    ", PublisherAvatar='" + PublisherAvatar + '\'' +
                     ", Deadline='" + Deadline + '\'' +
                     ", Title='" + Title + '\'' +
-                    ", State='" + State + '\'' +
+                    ", Status='" + Status + '\'' +
                     ", Tel='" + Tel + '\'' +
-                    ", Picture=" + Picture +
-                    ", Applicant=" + Applicant +
+                    ", Pictures=" + Pictures +
+                    ", applicantAvatars=" + ApplicantAvatars +
                     '}';
         }
-
-        //发布用户信息
-        public class PublisherBean {
-            private String Avatar;
-            private String Name;
-
-            public String getAvatar() {
-                return Avatar;
-            }
-
-            public void setAvatar(String avatar) {
-                Avatar = avatar;
-            }
-
-            public String getName() {
-                return Name;
-            }
-
-            public void setName(String name) {
-                Name = name;
-            }
-
-            @Override
-            public String toString() {
-                return "PublisherBean{" +
-                        "Avatar='" + Avatar + '\'' +
-                        ", Name='" + Name + '\'' +
-                        '}';
-            }
-
-        }
-
 
         //图片信息
         public class PicturesBean {
@@ -204,31 +172,21 @@ public class DetailOrderBean {
         }
 
         //申请人信息
-        public class ApplicantBean {
-            private String applicantAvatar;
-            private String applicantId;
+        public class ApplicantAvatars {
+            private String ApplicantAvatar;
 
             public String getApplicantAvatar() {
-                return applicantAvatar;
+                return ApplicantAvatar;
             }
 
             public void setApplicantAvatar(String applicantAvatar) {
-                this.applicantAvatar = applicantAvatar;
-            }
-
-            public String getApplicantId() {
-                return applicantId;
-            }
-
-            public void setApplicantId(String applicantId) {
-                this.applicantId = applicantId;
+                ApplicantAvatar = applicantAvatar;
             }
 
             @Override
             public String toString() {
-                return "ApplicantBean{" +
-                        "applicantAvatar='" + applicantAvatar + '\'' +
-                        ", applicantId='" + applicantId + '\'' +
+                return "ApplicantAvatars{" +
+                        "ApplicantAvatar='" + ApplicantAvatar + '\'' +
                         '}';
             }
         }

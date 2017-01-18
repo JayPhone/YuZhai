@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_gray_f3f3f3">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="@color/colorPrimary"
+            app:expandedTitleGravity="center_horizontal"
+            app:expandedTitleMarginTop="150dp"
+            app:expandedTitleTextAppearance="@style/CollapsingTitleTextAppearance"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:statusBarScrim="@android:color/transparent"
+            app:title="13048119089">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:background="@drawable/bg"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="parallax">
+
+                <com.yuzhai.view.CircleImageView
+                    android:id="@+id/user_header"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="80dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test2"
+                    app:border_color="@color/color_white"
+                    app:border_width="2dp" />
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/Theme.ToolBar"
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll"
+                app:navigationIcon="@drawable/back"
+                app:titleTextColor="@color/color_white" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/info_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/color_white"
+                app:cardCornerRadius="5dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <!--个人信息导航-->
+                    <TextView
+                        android:id="@+id/person_info_nav"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:text="个人信息"
+                        android:textColor="@color/color_424242"
+                        android:textSize="18sp" />
+
+                    <View
+                        android:id="@+id/person_info_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/person_info_nav"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/color_EEEEEE" />
+
+                    <!--姓名-->
+                    <RelativeLayout
+                        android:id="@+id/name_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/person_info_divider"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp">
+
+                        <ImageView
+                            android:id="@+id/name_icon"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/time" />
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/name_icon"
+                            android:layout_marginLeft="20dp"
+                            android:layout_toRightOf="@+id/name_icon"
+                            android:text="黄坚凤"
+                            android:textColor="@color/color_424242"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/deadline_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/name"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toRightOf="@+id/name_icon"
+                            android:text="姓名"
+                            android:textColor="@color/color_757575"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+                    <!--姓别-->
+                    <RelativeLayout
+                        android:id="@+id/sex_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/name_layout"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp">
+
+                        <ImageView
+                            android:id="@+id/sex_icon"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/date" />
+
+                        <TextView
+                            android:id="@+id/sex"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/sex_icon"
+                            android:layout_marginLeft="20dp"
+                            android:layout_toRightOf="@+id/sex_icon"
+                            android:text="男性"
+                            android:textColor="@color/color_424242"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/sex_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/sex"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toRightOf="@+id/sex_icon"
+                            android:text="性别"
+                            android:textColor="@color/color_757575"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+                    <!--学历-->
+                    <RelativeLayout
+                        android:id="@+id/education_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/sex_layout"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp">
+
+                        <ImageView
+                            android:id="@+id/education_icon"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/money" />
+
+                        <TextView
+                            android:id="@+id/education"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/education_icon"
+                            android:layout_marginLeft="20dp"
+                            android:layout_toRightOf="@+id/education_icon"
+                            android:text="本科"
+                            android:textColor="@color/color_424242"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/education_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/education"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toRightOf="@+id/education_icon"
+                            android:text="学历"
+                            android:textColor="@color/color_757575"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+                    <!--联系电话-->
+                    <RelativeLayout
+                        android:id="@+id/tel_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/education_layout"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp">
+
+                        <ImageView
+                            android:id="@+id/tel_icon"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/money" />
+
+                        <TextView
+                            android:id="@+id/tel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/tel_icon"
+                            android:layout_marginLeft="20dp"
+                            android:layout_toRightOf="@+id/tel_icon"
+                            android:text="13048119089"
+                            android:textColor="@color/color_424242"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tel_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tel"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toRightOf="@+id/tel_icon"
+                            android:text="联系电话"
+                            android:textColor="@color/color_757575"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/educational_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/info_card"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/color_white"
+                app:cardCornerRadius="5dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <!--教育经历导航-->
+                    <TextView
+                        android:id="@+id/educational_nav"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:text="教育经历"
+                        android:textColor="@color/color_424242"
+                        android:textSize="18sp" />
+
+                    <View
+                        android:id="@+id/educational_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/educational_nav"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/color_EEEEEE" />
+
+                    <TextView
+                        android:id="@+id/education_experience"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/educational_divider"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院广州大学华软软件学院"
+                        android:textColor="@color/color_616161"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/skill_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/educational_card"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/color_white"
+                app:cardCornerRadius="5dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <!--专业技能导航-->
+                    <TextView
+                        android:id="@+id/skill_nav"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:text="专业技能"
+                        android:textColor="@color/color_424242"
+                        android:textSize="18sp" />
+
+                    <View
+                        android:id="@+id/skill_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/skill_nav"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/color_EEEEEE" />
+
+                    <TextView
+                        android:id="@+id/skill"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/skill_divider"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码打代码撸代码"
+                        android:textColor="@color/color_616161"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/work_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/skill_card"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/color_white"
+                app:cardCornerRadius="5dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <!--工作经验导航-->
+                    <TextView
+                        android:id="@+id/work_nav"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:text="工作经验"
+                        android:textColor="@color/color_424242"
+                        android:textSize="18sp" />
+
+                    <View
+                        android:id="@+id/work_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/work_nav"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/color_EEEEEE" />
+
+                    <TextView
+                        android:id="@+id/work_experience"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/work_divider"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作御宅工作"
+                        android:textColor="@color/color_616161"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/evaluation_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/work_card"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/color_white"
+                app:cardCornerRadius="5dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <!--自我评价导航-->
+                    <TextView
+                        android:id="@+id/evaluation_nav"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:text="自我评价"
+                        android:textColor="@color/color_424242"
+                        android:textSize="18sp" />
+
+                    <View
+                        android:id="@+id/evaluation_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/evaluation_nav"
+                        android:layout_marginTop="15dp"
+                        android:background="@color/color_EEEEEE" />
+
+                    <TextView
+                        android:id="@+id/evaluation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/evaluation_divider"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="15dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood非常好很棒VeryGood"
+                        android:textColor="@color/color_616161"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

@@ -2,14 +2,13 @@ package com.yuzhai.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.activity.OrdersAcceptedActivity;
 import com.yuzhai.adapter.AcceptedRecyclerViewAdapter;
+import com.yuzhai.bean.innerBean.LoginToOrderBean;
+import com.yuzhai.bean.responseBean.OrderAcceptedBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
+import com.yuzhai.http.IPConfig;
+import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,17 +40,18 @@ import java.util.Map;
  * Created by Administrator on 2016/8/21.
  */
 public class OrderAcceptedFragment extends Fragment implements
-        SwipeRefreshLayout.OnRefreshListener, AcceptedRecyclerViewAdapter.OnAcceptedItemClickListener {
+        SwipeRefreshLayout.OnRefreshListener,
+        AcceptedRecyclerViewAdapter.OnAcceptedItemClickListener {
+
     private SwipeRefreshLayout mAcceptedSrl;
     private RecyclerView mAcceptedRv;
     private AcceptedRecyclerViewAdapter mAdapter;
     private Activity mMainActivity;
-    private Drawable mDivider;
 
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
-    private String mOrdersJson;
-    private List<Map<String, Object>> mOrders;
+    private List<OrderAcceptedBean.OrderBean> mInitOrders = new ArrayList<>();
+    public final static String ORDER_ID = "order_id";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,15 +61,11 @@ public class OrderAcceptedFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         mMainActivity = getActivity();
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
         mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
-        mDivider = ContextCompat.getDrawable(mMainActivity, R.drawable.order_recyclerview_divider);
-        //初始化控件
         initViews();
-        //初始化数据
-        initData();
+        intData();
     }
 
     /**
@@ -76,36 +81,74 @@ public class OrderAcceptedFragment extends Fragment implements
         mAcceptedRv = (RecyclerView) getView().findViewById(R.id.accepted_recyclerView);
         mAcceptedRv.setLayoutManager(new LinearLayoutManager(mMainActivity));
         mAcceptedRv.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new AcceptedRecyclerViewAdapter(mMainActivity);
+        mAdapter = new AcceptedRecyclerViewAdapter(this, mInitOrders);
         mAdapter.setOnAcceptedItemClickListener(this);
+        mAcceptedRv.setAdapter(mAdapter);
     }
 
     /**
      * 初始化数据
      */
-    public void initData() {
-        //测试代码
-        mAcceptedRv.setAdapter(mAdapter);
-
-//        //初始化时默认显示刷新状态
-//        mAcceptedSrl.setRefreshing(true);
-//        sendAcceptedOrderRequest();
+    private void intData() {
+        if (CustomApplication.isConnect) {
+            setRefreshState(true);
+            sendAcceptedOrderRequest(mCustomApplication.getToken());
+        }
     }
 
     @Override
     public void onRefresh() {
-        sendAcceptedOrderRequest();
+        if (CustomApplication.isConnect) {
+            sendAcceptedOrderRequest(mCustomApplication.getToken());
+        } else {
+            setRefreshState(false);
+        }
     }
 
-    public void sendAcceptedOrderRequest() {
+    /**
+     * 更新订单数据
+     *
+     * @param newOrders 新获取的订单数据集
+     */
+    public void updateData(List<OrderAcceptedBean.OrderBean> newOrders) {
+        for (OrderAcceptedBean.OrderBean order : newOrders) {
+            //将获取的新数据插入到数据集
+            mInitOrders.add(order);
+        }
+        //通知recyclerView插入数据
+        mAdapter.notifyItemRangeInserted(0, newOrders.size());
+        //recyclerView滚动到顶部
+        mAcceptedRv.smoothScrollToPosition(0);
+
+    }
+
+    /**
+     * 清空所有数据
+     */
+    public void deleteAll() {
+        mAdapter.notifyItemRangeRemoved(0, mInitOrders.size());
+        mInitOrders.clear();
+    }
+
+    public void sendAcceptedOrderRequest(String token) {
+        //获取查看个人已发布订单请求的参数集
+        Map<String, String> params = ParamsGenerateUtil.generateAcceptedOrderParam(token);
+
         //创建查看已接收订单请求
-        //TODO URL和请求参数尚未填写
-        CommonRequest acceptedOrderRequest = new CommonRequest(null,
-                null,
-                null,
+        CommonRequest acceptedOrderRequest = new CommonRequest(IPConfig.orderAcceptedAddress,
+                mCustomApplication.generateCookieMap(),
+                params,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String s) {
+                    public void onResponse(String resp) {
+                        Log.i("order_accept_resp", resp);
+                        if (!JsonUtil.decodeByJsonObject(resp, "code").equals("overdue")) {
+                            //解析获取到的订单数据
+                            updateData(JsonUtil.decodeByGson(resp, OrderAcceptedBean.class).getOrders());
+                        } else {
+                            deleteAll();
+                        }
+                        //关闭刷新
                         setRefreshState(false);
                     }
                 },
@@ -128,6 +171,24 @@ public class OrderAcceptedFragment extends Fragment implements
      */
     public void setRefreshState(Boolean state) {
         mAcceptedSrl.setRefreshing(state);
+    }
+
+    /**
+     * 通过EventBus传递的数据判断消息并作出回应
+     */
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void onEventUserLogin(LoginToOrderBean loginToOrderBean) {
+        if (loginToOrderBean.isLogin()) {
+            deleteAll();
+            sendAcceptedOrderRequest(mCustomApplication.getToken());
+        } else if (!loginToOrderBean.isLogin()) {
+            deleteAll();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

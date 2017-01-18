@@ -100,7 +100,7 @@ public class SimpleOrderByTypeBean {
 
         @Override
         public String toString() {
-            return "SimpleOrderBean{" +
+            return "OrderBean{" +
                     "Publisher='" + Publisher + '\'' +
                     ", Reward='" + Reward + '\'' +
                     ", Date='" + Date + '\'' +

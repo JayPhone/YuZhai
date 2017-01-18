@@ -15,11 +15,14 @@
             android:id="@+id/accepted_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:subtitle="HJF"
             app:subtitleTextColor="@color/color_EEEEEE"
+            app:title="发布者"
             app:titleTextAppearance="@style/ToolbarTitleTextAppearance"
             app:titleTextColor="@color/color_white">
 
             <com.yuzhai.view.CircleImageView
+                android:id="@+id/publisher_header"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginLeft="10dp"
@@ -36,7 +39,6 @@
             app:tabIndicatorColor="@color/color_white"
             app:tabMode="fixed"
             app:tabSelectedTextColor="@color/color_white"
-            app:tabTextAppearance="@style/TabLayoutTextAppearance"
             app:tabTextColor="@color/color_E0E0E0" />
     </android.support.design.widget.AppBarLayout>
 

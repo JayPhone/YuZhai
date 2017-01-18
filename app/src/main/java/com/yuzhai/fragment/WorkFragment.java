@@ -20,9 +20,9 @@ import com.android.volley.VolleyError;
 import com.yuzhai.activity.WorkDetailActivity;
 import com.yuzhai.adapter.WorkRecyclerViewAdapter;
 import com.yuzhai.bean.responseBean.SimpleOrderByTypeBean;
-import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.util.JsonUtil;
@@ -36,7 +36,8 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/8/22.
  */
-public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, WorkRecyclerViewAdapter.OnWorkItemClickListener {
+public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+        WorkRecyclerViewAdapter.OnWorkItemClickListener {
     private SwipeRefreshLayout mWorkSrl;
     private RecyclerView mWorkRv;
     private WorkRecyclerViewAdapter mAdapter;
@@ -44,26 +45,14 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
-    private List<SimpleOrderByTypeBean.SimpleOrderBean> mInitOrders;
+    private List<SimpleOrderByTypeBean.SimpleOrderBean> mInitOrders = new ArrayList<>();
     private List<SimpleOrderByTypeBean.SimpleOrderBean> mNewOrders;
 
     private String mType = "";
     private final static String TYPE = "type";
     public final static String ORDER_ID = "order_id";
 
-    /**
-     * 测试数据
-     */
-    private List<Map<String, Object>> mData;
-    private String[] titles = new String[]{
-            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!",
-            "帮我做一个很厉害的APP，记住，是很厉害的，普通厉害的不要!!"};
-    private String[] dates = new String[]{"16-10-02", "16-10-03", "16-10-04", "16-10-05"};
-    private String[] limits = new String[]{"5天", "15天", "20天", "50天"};
-    private String[] prices = new String[]{"200", "300", "50", "100"};
-    private int[] images = new int[]{R.drawable.test1, R.drawable.test2, R.drawable.test3, R.drawable.test4};
+
     /**
      * 测试数据
      */
@@ -93,9 +82,9 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mCustomApplication = (CustomApplication) getActivity().getApplication();
         mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
         mType = getArguments().getString(TYPE);
-        //初始化控件
-        intData();
+
         initViews();
+        intData();
     }
 
 
@@ -112,56 +101,29 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mWorkRv = (RecyclerView) getView().findViewById(R.id.work_recycler_view);
         mWorkRv.setLayoutManager(new LinearLayoutManager(mMainActivity));
         mWorkRv.setItemAnimator(new DefaultItemAnimator());
-//        mAdapter = new WorkRecyclerViewAdapter(mMainActivity, mData);
+        mAdapter = new WorkRecyclerViewAdapter(this, mInitOrders);
+        mAdapter.setOnWorkItemClickListener(WorkFragment.this);
+        mWorkRv.setAdapter(mAdapter);
     }
 
+    /**
+     * 初始化数据
+     */
     private void intData() {
-        /*正常代码*/
-        //初始化订单数据集
-        mInitOrders = new ArrayList<>();
-        sendOrdersByTypeRequest(mType, mCustomApplication.getToken());
-        /*正常代码*/
-
-        /*测试代码*/
-//        if (!CustomApplication.isConnect) {
-//            /*测试代码*/
-//            mData = new ArrayList<>();
-//            for (int i = 0; i < titles.length; i++) {
-//                Map<String, Object> map = new HashMap<>();
-//                map.put("title", titles[i]);
-//                map.put("date", dates[i]);
-//                map.put("limit", limits[i]);
-//                map.put("price", prices[i]);
-//                map.put("image", images[i]);
-//                mData.add(map);
-//            }
-//        }
-        /*测试代码*/
+        if (CustomApplication.isConnect) {
+            setRefreshState(true);
+            sendOrdersByTypeRequest(mType, mCustomApplication.getToken());
+        }
     }
 
     @Override
     public void onRefresh() {
         /*正常代码*/
-        if (mCustomApplication.isConnect) {
+        if (CustomApplication.isConnect) {
             sendOrdersByTypeRequest(mType, mCustomApplication.getToken());
+        } else {
+            setRefreshState(false);
         }
-
-        /*测试代码*/
-//        if (!mCustomApplication.isConnect) {
-//            for (int i = 0; i < titles.length; i++) {
-//                Map<String, Object> map = new HashMap<>();
-//                map.put("title", titles[i]);
-//                map.put("date", dates[i]);
-//                map.put("limit", limits[i]);
-//                map.put("price", prices[i]);
-//                map.put("image", images[i]);
-//                mData.add(map);
-//            }
-//            mAdapter.notifyItemRangeInserted(0, titles.length);
-//            mWorkRv.smoothScrollToPosition(0);
-//            setRefreshState(false);
-//        }
-        /*测试代码*/
     }
 
     /**
@@ -170,20 +132,23 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param newOrders 新获取的订单数据集
      */
     public void updateData(List<SimpleOrderByTypeBean.SimpleOrderBean> newOrders) {
-        if (null == mAdapter) {
-            mAdapter = new WorkRecyclerViewAdapter(this, newOrders);
-            mAdapter.setOnWorkItemClickListener(WorkFragment.this);
-            mWorkRv.setAdapter(mAdapter);
-        } else {
-            for (SimpleOrderByTypeBean.SimpleOrderBean order : newOrders) {
-                //将获取的新数据插入到数据集
-                mInitOrders.add(order);
-            }
-            //通知recyclerView插入数据
-            mAdapter.notifyItemRangeInserted(0, newOrders.size());
-            //recyclerView滚动到顶部
-            mWorkRv.smoothScrollToPosition(0);
+        for (SimpleOrderByTypeBean.SimpleOrderBean order : newOrders) {
+            //将获取的新数据插入到数据集
+            mInitOrders.add(order);
         }
+        //通知recyclerView插入数据
+        mAdapter.notifyItemRangeInserted(0, newOrders.size());
+        //recyclerView滚动到顶部
+        mWorkRv.smoothScrollToPosition(0);
+
+    }
+
+    /**
+     * 清空所有数据
+     */
+    public void deleteAll() {
+        mAdapter.notifyItemRangeRemoved(0, mInitOrders.size());
+        mInitOrders.clear();
     }
 
     /**
@@ -238,6 +203,9 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onWorkItemClick(int position) {
         Intent workDetail = new Intent(mMainActivity, WorkDetailActivity.class);
+        if (CustomApplication.isConnect) {
+            workDetail.putExtra(ORDER_ID, mInitOrders.get(position).getOrderID());
+        }
         startActivity(workDetail);
     }
 }

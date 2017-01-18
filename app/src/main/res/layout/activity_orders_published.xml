@@ -15,7 +15,9 @@
             android:id="@+id/published_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:subtitle="未接"
             app:subtitleTextColor="@color/color_EEEEEE"
+            app:title="订单状态"
             app:titleTextAppearance="@style/ToolbarTitleTextAppearance"
             app:titleTextColor="@color/color_white" />
 

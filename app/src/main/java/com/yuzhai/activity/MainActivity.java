@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,15 +23,16 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.yuzhai.adapter.MainViewPagerAdapter;
-import com.yuzhai.bean.BaseUserInfoBean;
-import com.yuzhai.bean.UserInfoBean;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.bean.innerBean.BaseUserInfoBean;
+import com.yuzhai.bean.innerBean.UserInfoBean;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.fragment.ContactFragment;
 import com.yuzhai.fragment.HomeFragment;
 import com.yuzhai.fragment.OrderFragment;
 import com.yuzhai.fragment.PublishFragment;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.RequestQueueSingleton;
+import com.yuzhai.view.CircleImageView;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DrawerLayout mDrawLayout;
     private NavigationView mNavigationView;
     private LinearLayout mUserInfoLayout;
-    private ImageView mUserHeader;
+    private CircleImageView mUserHeader;
     private TextView mUserNameTv;
     private Button mLoginAndRegButton;
 
@@ -92,6 +94,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void initViews() {
         mDrawLayout = (DrawerLayout) findViewById(R.id.drawer);
+//        mDrawLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+//            @Override
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//                mUserHeader.postInvalidate();
+//            }
+//        });
+
         mNavigationView = (NavigationView) findViewById(R.id.navigation);
         mNavigationView.setItemIconTintList(null);
 
@@ -142,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mUserInfoLayout = (LinearLayout) headerView.findViewById(R.id.user_info);
 
         mUserNameTv = (TextView) headerView.findViewById(R.id.user_name);
-        mUserHeader = (ImageView) headerView.findViewById(R.id.head_image);
+        mUserHeader = (CircleImageView) headerView.findViewById(R.id.head_image);
         mUserHeader.setOnClickListener(this);
 
         mLoginAndRegButton = (Button) headerView.findViewById(R.id.menu_login_register);
@@ -180,10 +190,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mUserInfoLayout.setVisibility(View.VISIBLE);
             mNavigationView.getMenu().clear();
             mNavigationView.inflateMenu(R.menu.drawer_login_menu);
-            //设置用户头像
-            setUserHeader(mUserHeadURL);
             //设置用户名
             setUserName(mUserName);
+            //设置用户头像
+            setUserHeader(mUserHeadURL);
 
         } else {
             //未成功登陆
@@ -203,6 +213,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(collection);
                 break;
             case R.id.resume:
+                Intent resume = new Intent(this, SendResumeActivity.class);
+                startActivity(resume);
                 break;
             case R.id.realName:
                 Intent identityAuthen = new Intent(this, IdentityAuthenActivity.class);
@@ -231,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 //通过EventBus发送登录后返回的个人信息到UserInfoActivity
                 EventBus.getDefault().postSticky(new UserInfoBean(
-                        IPConfig.addressPrefix + mUserHeadURL,
+                        mUserHeadURL,
                         mUserName,
                         mCustomApplication.getUserPhone(),
                         null,
@@ -244,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
 
     /**
      * 通过EventBus传递的数据判断消息并作出回应
@@ -263,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initMenuLayout();
         }
         //修改用户名后改变用户名
-        else if (baseUserInfoBean.getUserName() == null && baseUserInfoBean.getUserHeadUrl() != null && baseUserInfoBean.isLogin()) {
+        else if (baseUserInfoBean.getUserName() != null && baseUserInfoBean.getUserHeadUrl() == null && baseUserInfoBean.isLogin()) {
             mUserName = baseUserInfoBean.getUserName();
             setUserName(mUserName);
         }
@@ -285,8 +298,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void setUserHeader(String userHeadUrl) {
         //通过返回的用户头像地址获取用户头像
         if (userHeadUrl != null) {
+            Log.i("user_header_url", IPConfig.image_addressPrefix + "/" + userHeadUrl);
             Glide.with(this)
-                    .load(userHeadUrl)
+                    .load(IPConfig.image_addressPrefix + "/" + userHeadUrl)
                     .placeholder(R.drawable.default_image)
                     .error(R.drawable.default_image)
                     .into(mUserHeader);

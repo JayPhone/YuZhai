@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.yuzhai.bean.responseBean.DetailOrderBean;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.List;
@@ -43,6 +42,15 @@ public class IndicatedViewFlipper extends FrameLayout {
         mIndicator = (CustomLinerLayout) view.findViewById(R.id.indicator);
     }
 
+    /**
+     * 设置子项点击监听
+     *
+     * @param onItemClickListener
+     */
+    public void setOnItemClickListener(CustomViewFlipper.OnItemClickListener onItemClickListener) {
+        mCustomViewFlipper.setOnItemClickListener(onItemClickListener);
+    }
+
     public void setFlipperInAnimation(int inAnimationId) {
         mCustomViewFlipper.setInAnimation(mContext, inAnimationId);
     }
@@ -63,7 +71,7 @@ public class IndicatedViewFlipper extends FrameLayout {
         }
     }
 
-    public void setFlipperImageUrls(String prefix, List<DetailOrderBean.OrderInfoBean.PicturesBean> imageUrlsList) {
+    public void setFlipperImageUrls(String prefix, List<String> imageUrlsList) {
         mCustomViewFlipper.setImageUrls(prefix, imageUrlsList);
         if (mIsShowIndicator) {
             generateIndicator(mCustomViewFlipper, imageUrlsList.size());

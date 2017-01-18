@@ -16,10 +16,11 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.yuzhai.bean.BaseUserInfoBean;
+import com.yuzhai.bean.innerBean.BaseUserInfoBean;
+import com.yuzhai.bean.innerBean.LoginToOrderBean;
 import com.yuzhai.bean.requestBean.UserLoginBean;
 import com.yuzhai.bean.responseBean.LoginRespBean;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
@@ -237,8 +238,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             customApplication.addUserInfo(userLoginBean.getUserPhone(), userLoginBean.getUserPsw());
             //设置为登录状态
             customApplication.setLoginState(true);
+            //保存cookie
+            customApplication.setCookie(loginRequest.getResponseCookie());
             //使用EventBus发送替换为登录的界面的消息到MainActivity
             EventBus.getDefault().post(new BaseUserInfoBean(userHead, userName, customApplication.isLogin()));
+            //刷新个人订单界面
+            EventBus.getDefault().post(new LoginToOrderBean(customApplication.isLogin()));
             finish();
         }
     }

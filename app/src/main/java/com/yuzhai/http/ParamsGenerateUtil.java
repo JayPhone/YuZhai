@@ -1,6 +1,6 @@
 package com.yuzhai.http;
 
-import com.yuzhai.config.RequestParamsNameConfig;
+import com.yuzhai.bean.requestBean.SendResumeBean;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class ParamsGenerateUtil {
     public static Map<String, String> generateReNameParam(String newName,
                                                           String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.ReNameParam.NEWNAME, newName);
+        params.put(RequestParamsNameConfig.ReNameParam.NAME, newName);
         params.put(RequestParamsNameConfig.ReNameParam.TOKEN, token);
         return params;
     }
@@ -110,10 +110,12 @@ public class ParamsGenerateUtil {
      */
     public static Map<String, String> generateAlterPswParams(String oldPsw,
                                                              String newPsw,
+                                                             String comPsw,
                                                              String token) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.AlterPswParam.OLDPSW, oldPsw);
-        params.put(RequestParamsNameConfig.AlterPswParam.USERPSW, newPsw);
+        params.put(RequestParamsNameConfig.AlterPswParam.NEWPSW, newPsw);
+        params.put(RequestParamsNameConfig.AlterPswParam.COMPSW, comPsw);
         params.put(RequestParamsNameConfig.AlterPswParam.TOKEN, token);
         return params;
     }
@@ -128,7 +130,7 @@ public class ParamsGenerateUtil {
     public static Map<String, String> generateCancelPublishedOrderParams(String publishId,
                                                                          String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.CancelPublishedOrderParam.PUBLISHID, publishId);
+        params.put(RequestParamsNameConfig.CancelPublishedOrderParam.ORDER_ID, publishId);
         params.put(RequestParamsNameConfig.CancelPublishedOrderParam.TOKEN, token);
         return params;
     }
@@ -212,7 +214,93 @@ public class ParamsGenerateUtil {
      */
     public static Map<String, String> generateExitLoginParam(String token) {
         Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.OrderDetailParam.TOKEN, token);
+        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
         return params;
     }
+
+    /**
+     * 生成查看个人已发布的订单请求的参数集
+     *
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generatePublishedOrderParam(String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
+        return params;
+    }
+
+    /**
+     * 生成查看个人已接收的订单请求的参数集
+     *
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generateAcceptedOrderParam(String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
+        return params;
+    }
+
+    /**
+     * 生成投递简历请求的参数
+     *
+     * @param sendResumeBean
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generateSendResumeParam(SendResumeBean sendResumeBean, String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.SendResumeParam.NAME, sendResumeBean.getName());
+        params.put(RequestParamsNameConfig.SendResumeParam.SEX, sendResumeBean.getSex());
+        params.put(RequestParamsNameConfig.SendResumeParam.MODULE, sendResumeBean.getType());
+        params.put(RequestParamsNameConfig.SendResumeParam.EDUCATION, sendResumeBean.getEducation());
+        params.put(RequestParamsNameConfig.SendResumeParam.CONTACT_NUMBER, sendResumeBean.getTel());
+        params.put(RequestParamsNameConfig.SendResumeParam.EDUCATION_EXPERIENCE, sendResumeBean.getEducationalExperience());
+        params.put(RequestParamsNameConfig.SendResumeParam.SKILL, sendResumeBean.getSkill());
+        params.put(RequestParamsNameConfig.SendResumeParam.WORK_EXPERIENCE, sendResumeBean.getWorkExperience());
+        params.put(RequestParamsNameConfig.SendResumeParam.SELF_EVALUATION, sendResumeBean.getSelfEvaluation());
+        params.put(RequestParamsNameConfig.SendResumeParam.TOKEN, token);
+        return params;
+    }
+
+    /**
+     * 生成通过类型查询简历请求的参数集
+     *
+     * @param type
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generateResumesByTypeParams(String type, String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.ResumesByTypeParam.TYPE, type);
+        params.put(RequestParamsNameConfig.ResumesByTypeParam.TOKEN, token);
+        return params;
+    }
+
+    /**
+     * 生成查看个人简历请求的参数集
+     *
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generatePersonalResumeParams(String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
+        return params;
+    }
+
+    /**
+     * 生成查看详细简历请求的参数集
+     *
+     * @param token
+     * @return
+     */
+    public static Map<String, String> generateDetailResumeParams(String resumeId, String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.DetailResumeParam.USER_PHONE, resumeId);
+        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
+        return params;
+    }
+
 }

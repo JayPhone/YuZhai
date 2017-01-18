@@ -41,12 +41,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/user_header"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="25dp"
                     android:gravity="center"
                     android:text="神秘的发布方"
                     android:textColor="@color/color_white"
                     android:textSize="20sp" />
             </RelativeLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/user_data_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/Theme.ToolBar"
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll"
+                app:navigationIcon="@drawable/back"
+                app:titleTextColor="@color/color_white" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -191,4 +201,16 @@
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/agree_accept_text"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/agree_accept_button_bg"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="同意申请"
+        android:textColor="@color/color_white"
+        android:textSize="22sp" />
 </android.support.design.widget.CoordinatorLayout>

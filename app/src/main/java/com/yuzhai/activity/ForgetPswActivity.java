@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.bean.requestBean.UserForgetPswBean;
 import com.yuzhai.bean.requestBean.UserPhoneBean;
 import com.yuzhai.bean.responseBean.ForgetPswRespBean;

@@ -3,20 +3,19 @@ package com.yuzhai.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.yuzhai.bean.BaseUserInfoBean;
+import com.yuzhai.bean.innerBean.BaseUserInfoBean;
 import com.yuzhai.bean.requestBean.UserAlterPswBean;
 import com.yuzhai.bean.responseBean.AlterPswRespBean;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
@@ -30,8 +29,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.Map;
 
 public class AlterPswActivity extends AppCompatActivity implements View.OnClickListener {
-    private ImageView mBackImage;
-    private TextView mTitleText;
+    private Toolbar mAlterPswToolbar;
     private EditText mOldPswEdit;
     private EditText mNewPswEdit;
     private EditText mCfmPswEdit;
@@ -51,33 +49,27 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void initViews() {
-        mBackImage = (ImageView) findViewById(R.id.back_image);
-        if (mBackImage != null) {
-            mBackImage.setImageResource(R.drawable.back);
-        }
+        mAlterPswToolbar = (Toolbar) findViewById(R.id.alter_psw_toolbar);
+        mAlterPswToolbar.setNavigationIcon(R.drawable.back);
+        mAlterPswToolbar.setTitle("修改密码");
+        mAlterPswToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
-        mTitleText = (TextView) findViewById(R.id.title_text);
-        if (mTitleText != null) {
-            mTitleText.setText("修改密码");
-        }
         mAlterBtn = (Button) findViewById(R.id.change_button);
         mOldPswEdit = (EditText) findViewById(R.id.password);
         mNewPswEdit = (EditText) findViewById(R.id.new_password);
         mCfmPswEdit = (EditText) findViewById(R.id.confirm_password);
 
-        mBackImage.setOnClickListener(this);
         mAlterBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            //返回
-            case R.id.back_image:
-                finish();
-                break;
-
-            //点击修改按钮
             case R.id.change_button:
                 //发送修改密码请求
                 sendAlterPswRequest(mOldPswEdit.getText().toString(),
@@ -101,8 +93,8 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
                 cfmPsw)) {
 
             //生成修改密码参数集
-            Map<String, String> params = ParamsGenerateUtil.generateAlterPswParams(userAlterPswBean.getOldPswd(),
-                    userAlterPswBean.getNewPswd(), token);
+            Map<String, String> params = ParamsGenerateUtil.generateAlterPswParams(oldPsw,
+                    newPsw, cfmPsw, token);
 
             //创建修改密码请求
             CommonRequest alterPswRequest = new CommonRequest(IPConfig.alterPswAddress,
@@ -128,8 +120,12 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
                                 startActivity(main);
                             }
 
-                            if (respCode != null && respCode.equals("-1")) {
+                            if (respCode != null && respCode.equals("0")) {
                                 UnRepeatToast.showToast(AlterPswActivity.this, "原密码错误");
+                            }
+
+                            if (respCode != null && respCode.equals("-1")) {
+                                UnRepeatToast.showToast(AlterPswActivity.this, "两次密码不一致");
                             }
                         }
                     },

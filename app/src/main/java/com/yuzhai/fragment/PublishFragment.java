@@ -33,7 +33,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.activity.LoginActivity;
 import com.yuzhai.bean.requestBean.PublishBean;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
@@ -76,7 +76,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     private EditText mTelEdit;
     private EditText mRewardEdit;
     private Button mPublishButton;
-    private int imageMargin = 15;
+    private ProgressDialog mProgressDialog;
 
     //数据引用
     private String[] typeTexts = new String[]{"请选择项目类型", "软件IT", "音乐制作", "平面设计", "视频拍摄", "游戏研发", "文案撰写", "金融会计"};
@@ -86,13 +86,11 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     private List<String> imagePathsList;
     private List<ImageView> imageViewsList;
     private PublishBean publishBean;
+    private int imageMargin = 15;
 
     //Activity请求码
-    private final int CAMERA_PEQUEST = 1;
-    private final int IMAGEPICK_PEQUEST = 2;
-
-    private ProgressDialog mProgressDialog;
-    private final String COOKIE = "cookie";
+    private final int CAMERA_REQUEST = 1;
+    private final int IMAGE_PICK_REQUEST = 2;
 
     @Override
 
@@ -177,7 +175,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         Log.i("path", imagePath);
         Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(imagePath)));
-        startActivityForResult(intent_camera, CAMERA_PEQUEST);
+        startActivityForResult(intent_camera, CAMERA_REQUEST);
     }
 
     public void showImagePick() {
@@ -191,7 +189,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         //图片输出格式
         intent_imagePick.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent_imagePick.putExtra("return-data", false);
-        startActivityForResult(intent_imagePick, IMAGEPICK_PEQUEST);
+        startActivityForResult(intent_imagePick, IMAGE_PICK_REQUEST);
     }
 
     //当用户选择不再提示后的处理
@@ -214,7 +212,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case CAMERA_PEQUEST:
+            case CAMERA_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     int imageLayoutWidth = mImagesPreviewLayout.getMeasuredWidth();
                     int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
@@ -233,7 +231,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     Log.i("paths", imagePathsList.toString());
                 }
                 break;
-            case IMAGEPICK_PEQUEST:
+            case IMAGE_PICK_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     int imageLayoutWidth = mImagesPreviewLayout.getMeasuredWidth();
                     int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
@@ -350,9 +348,6 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                             mTelEdit.getText().toString(),
                             mRewardEdit.getText().toString(),
                             mCustomApplication.getToken());
-
-                    //显示正在发布对话框
-                    showProgressDialog();
                 }
                 break;
         }
@@ -376,7 +371,9 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                                         String reward,
                                         String token) {
 
-        if (checkPublishData(title, description, type, deadline, tel, reward)) {
+        if (checkPublishData(title, description, imagePathsList, type, deadline, tel, reward)) {
+            //显示正在发布对话框
+            showProgressDialog();
             //获取请求参数
             Map<String, String> params = ParamsGenerateUtil.generatePublishOrderParams(title,
                     description,
@@ -393,13 +390,14 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 public void onResponse(String resp) {
                     Log.i("publish_order_resp", resp);
                     dismissProgressDialog();
+                    clearAll();
                     UnRepeatToast.showToast(mMainActivity, "发布成功");
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     dismissProgressDialog();
-                    UnRepeatToast.showToast(mMainActivity, "服务器睡着了");
+                    UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
                 }
             });
 
@@ -432,18 +430,33 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     }
 
     /**
+     * 清空所有数据
+     */
+    public void clearAll() {
+        mTitleEdit.getText().clear();
+        mDescriptionEdit.getText().clear();
+        mImagesPreviewLayout.removeAllViews();
+        mTypeSpinner.setSelection(0);
+        mDeadlineSpinner.setSelection(0);
+        mTelEdit.getText().clear();
+        mRewardEdit.getText().clear();
+    }
+
+    /**
      * 用于校验发布订单操作的数据
      *
-     * @param title       需求标题
-     * @param description 需求内容
-     * @param type        需求类型
-     * @param deadline    需求期限
-     * @param tel         联系电话
-     * @param reward      项目金额
+     * @param title          需求标题
+     * @param description    需求内容
+     * @param imagePathsList
+     * @param type           需求类型
+     * @param deadline       需求期限
+     * @param tel            联系电话
+     * @param reward         项目金额
      * @return 如果填写的数据其中一项或全部不正确，返回false，否则返回true
      */
     public boolean checkPublishData(String title,
                                     String description,
+                                    List<String> imagePathsList,
                                     String type,
                                     String deadline,
                                     String tel,
@@ -456,6 +469,11 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
         if (description.equals("")) {
             UnRepeatToast.showToast(mMainActivity, "需求内容不能为空");
+            return false;
+        }
+
+        if (imagePathsList.size() == 0) {
+            UnRepeatToast.showToast(mMainActivity, "至少需要上传一张图片");
             return false;
         }
 

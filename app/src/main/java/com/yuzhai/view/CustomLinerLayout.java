@@ -28,6 +28,12 @@ public class CustomLinerLayout extends LinearLayout implements CustomViewFlipper
         mContext = context;
     }
 
+    /**
+     * 根据子项的数量生成相应的指示点
+     *
+     * @param customViewFlipper
+     * @param indicatorCount
+     */
     public void setIndicator(CustomViewFlipper customViewFlipper, int indicatorCount) {
         customViewFlipper.setOnFlipListener(this);
         mIndicatorList = new ArrayList<>();

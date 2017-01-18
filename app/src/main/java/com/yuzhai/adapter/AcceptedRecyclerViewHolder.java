@@ -18,8 +18,8 @@ public class AcceptedRecyclerViewHolder extends RecyclerView.ViewHolder {
     TextView mOrderIdText;
     TextView mDateText;
     TextView mTitleText;
-    TextView mLimitText;
-    TextView mPriceText;
+    TextView mDeadlineText;
+    TextView mRewardText;
     ImageView mTypeImage;
 
     public AcceptedRecyclerViewHolder(View itemView) {
@@ -29,8 +29,8 @@ public class AcceptedRecyclerViewHolder extends RecyclerView.ViewHolder {
         mOrderIdText = (TextView) itemView.findViewById(R.id.order_id);
         mDateText = (TextView) itemView.findViewById(R.id.date);
         mTitleText = (TextView) itemView.findViewById(R.id.title);
-        mLimitText = (TextView) itemView.findViewById(R.id.deadline);
-        mPriceText = (TextView) itemView.findViewById(R.id.price);
+        mDeadlineText = (TextView) itemView.findViewById(R.id.deadline);
+        mRewardText = (TextView) itemView.findViewById(R.id.price);
         mTypeImage = (ImageView) itemView.findViewById(R.id.type_image);
     }
 }

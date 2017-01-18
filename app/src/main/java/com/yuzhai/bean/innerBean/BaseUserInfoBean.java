@@ -1,4 +1,4 @@
-package com.yuzhai.bean;
+package com.yuzhai.bean.innerBean;
 
 /**
  * Created by Administrator on 2016/11/23.

@@ -16,11 +16,11 @@ import android.view.View;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.yuzhai.bean.BaseUserInfoBean;
+import com.yuzhai.bean.innerBean.BaseUserInfoBean;
 import com.yuzhai.bean.responseBean.LoginRespBean;
-import com.yuzhai.config.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.util.JsonUtil;
@@ -111,7 +111,6 @@ public class WelcomeActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String resp) {
                         Log.i("welcome_resp", resp);
-
                         //获取返回码
                         LoginRespBean loginRespBean = JsonUtil.decodeByGson(resp, LoginRespBean.class);
                         String respCode = loginRespBean.getCode();
@@ -130,7 +129,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(main);
 
-                            //使用EventBus将loginRespBaen传递到主界面
+                            //使用EventBus将loginRespBean传递到主界面
                             EventBus.getDefault().postSticky(new BaseUserInfoBean(
                                     loginRespBean.getUserHeadUrl(),
                                     loginRespBean.getUserName()

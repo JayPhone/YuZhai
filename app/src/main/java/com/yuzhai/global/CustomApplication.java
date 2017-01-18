@@ -17,8 +17,8 @@ import java.util.Map;
 public class CustomApplication extends Application {
     private UserInfoOperate mUserInfoOperate;
     private CookieOperate mCookieOperate;
-    private boolean login = false;
-    public static boolean isConnect = true;
+    private boolean login = true;
+    public static boolean isConnect = false;
     private final String COOKIE = "cookie";
     private final String IMEI = "IMEI";
 

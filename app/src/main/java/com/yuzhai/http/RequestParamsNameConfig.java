@@ -1,4 +1,4 @@
-package com.yuzhai.config;
+package com.yuzhai.http;
 
 /**
  * 创建时间：2016/8/18
@@ -30,7 +30,7 @@ public class RequestParamsNameConfig {
     /**
      * 获取验证码参数
      */
-    public class VerifyParam extends BaseParam  {
+    public class VerifyParam extends BaseParam {
         /**
          * 获取验证码的手机号: USERPHONE
          */
@@ -40,7 +40,7 @@ public class RequestParamsNameConfig {
     /**
      * 注册参数
      */
-    public class RegisterParam extends BaseParam  {
+    public class RegisterParam extends BaseParam {
         /**
          * 注册号码
          */
@@ -58,17 +58,17 @@ public class RequestParamsNameConfig {
     /**
      * 重命名用户名参数
      */
-    public class ReNameParam extends BaseParam  {
+    public class ReNameParam extends BaseParam {
         /**
          * 新用户名
          */
-        public final static String NEWNAME = "newname";
+        public final static String NAME = "name";
     }
 
     /**
      * 忘记密码参数
      */
-    public class ForgetPswParam extends BaseParam  {
+    public class ForgetPswParam extends BaseParam {
         /**
          * 用户手机号码
          */
@@ -86,31 +86,35 @@ public class RequestParamsNameConfig {
     /**
      * 修改密码参数
      */
-    public class AlterPswParam extends BaseParam  {
+    public class AlterPswParam extends BaseParam {
         /**
          * 旧密码
          */
-        public final static String OLDPSW = "oldPsw";
+        public final static String OLDPSW = "password1";
         /**
          * 新密码
          */
-        public final static String USERPSW = "userPsw";
+        public final static String NEWPSW = "password2";
+        /**
+         * 确认密码
+         */
+        public final static String COMPSW = "password3";
     }
 
     /**
      * 取消已发布订单参数
      */
-    public class CancelPublishedOrderParam extends BaseParam  {
+    public class CancelPublishedOrderParam extends BaseParam {
         /**
          * 发布的订单号
          */
-        public final static String PUBLISHID = "publishId";
+        public final static String ORDER_ID = "orderID";
     }
 
     /**
      * 通过类型查询订单参数
      */
-    public class OrdersByTypeParam extends BaseParam  {
+    public class OrdersByTypeParam extends BaseParam {
         /**
          * 项目类型
          */
@@ -120,17 +124,17 @@ public class RequestParamsNameConfig {
     /**
      * 申请接收订单参数
      */
-    public class ApplyOrderParam extends BaseParam  {
+    public class ApplyOrderParam extends BaseParam {
         /**
          * 订单ID
          */
-        public final static String ORDERID = "orderId";
+        public final static String ORDERID = "orderID";
     }
 
     /**
      * 发布订单参数
      */
-    public class PublishOrderParam extends BaseParam  {
+    public class PublishOrderParam extends BaseParam {
         /**
          * 需求标题
          */
@@ -165,10 +169,39 @@ public class RequestParamsNameConfig {
     /**
      * 查看详细订单参数
      */
-    public class OrderDetailParam extends BaseParam  {
-        /**D
+    public class OrderDetailParam extends BaseParam {
+        /**
          * 订单ID
          */
         public final static String ORDERID = "orderID";
+    }
+
+    /**
+     * 投递简历参数
+     */
+    public class SendResumeParam extends BaseParam {
+        public final static String NAME = "name";
+        public final static String SEX = "sex";
+        public final static String MODULE = "module";
+        public final static String EDUCATION = "education";
+        public final static String CONTACT_NUMBER = "contactNumber";
+        public final static String EDUCATION_EXPERIENCE = "educationExperience";
+        public final static String SKILL = "skill";
+        public final static String WORK_EXPERIENCE = "workExperience";
+        public final static String SELF_EVALUATION = "selfEvaluation";
+    }
+
+    /**
+     * 通过类型查询简历参数
+     */
+    public class ResumesByTypeParam extends BaseParam {
+        public final static String TYPE = "type";
+    }
+
+    /**
+     * 通过类型查询简历参数
+     */
+    public class DetailResumeParam extends BaseParam {
+        public final static String USER_PHONE = "userPhone";
     }
 }

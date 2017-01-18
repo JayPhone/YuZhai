@@ -19,7 +19,7 @@ import com.yuzhai.bean.requestBean.UserPhoneBean;
 import com.yuzhai.bean.requestBean.UserRegBeanBean;
 import com.yuzhai.bean.responseBean.RegisterRespBean;
 import com.yuzhai.bean.responseBean.VerifyRespBean;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.ParamsGenerateUtil;

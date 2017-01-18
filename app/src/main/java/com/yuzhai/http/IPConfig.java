@@ -1,4 +1,4 @@
-package com.yuzhai.config;
+package com.yuzhai.http;
 
 /**
  * 创建时间：2016/5/14
@@ -14,7 +14,7 @@ public interface IPConfig {
     /**
      * 目标地址和端口
      */
-    String DesAddress = "172.16.178.126:8080";
+    String DesAddress = "172.16.178.5:8088";
 
     /**
      * 主机名称
@@ -54,7 +54,7 @@ public interface IPConfig {
     /**
      * 修改用户密码地址
      */
-    String alterPswAddress = addressPrefix + "/login/alter_psw";
+    String alterPswAddress = addressPrefix + "/repassword";
 
     /**
      * 忘记密码修改地址
@@ -69,7 +69,7 @@ public interface IPConfig {
     /**
      * 上传用户头像地址
      */
-    String uploadHeadAddress = addressPrefix + "/headupload/uploadUserHead";
+    String uploadHeadAddress = addressPrefix + "/changeavatar";
 
     /**
      * 重命名用户名地址
@@ -84,17 +84,22 @@ public interface IPConfig {
     /**
      * 申请接收订单地址
      */
-    String applyOrderAddress = addressPrefix + "/apply";
+    String applyOrderAddress = addressPrefix + "/applyorder";
 
     /**
      * 查看已发布订单地址
      */
-    String orderPublishedAddress = addressPrefix + "/selectOrderByType/personalPublish";
+    String orderPublishedAddress = addressPrefix + "/lookuppublished";
+
+    /**
+     * 查看以接收订单地址
+     */
+    String orderAcceptedAddress = addressPrefix + "/lookupreceived";
 
     /**
      * 取消已发布订单地址
      */
-    String cancelPublishedOrderAddress = addressPrefix + "/cancelPublish";
+    String cancelPublishedOrderAddress = addressPrefix + "/cancelpublish";
 
     /**
      * 查看详细订单地址
@@ -105,4 +110,24 @@ public interface IPConfig {
      * 退出登录地址
      */
     String exitLoginAddress = addressPrefix + "/quit";
+
+    /**
+     * 投递简历地址
+     */
+    String sendResumeAddress = addressPrefix + "/launchresume";
+
+    /**
+     * 通过需求类型查看简历订单地址
+     */
+    String resumesByTypeAddress = addressPrefix + "/resumes";
+
+    /**
+     * 查看详细简历地址
+     */
+    String resumeDetailAddress = addressPrefix + "/detailedresumes";
+
+    /**
+     * 查看个人已发布简历
+     */
+    String personalResumeAddress = addressPrefix + "/selfdetailedresume";
 }

@@ -200,7 +200,7 @@
 
                 <!--订单状态-->
                 <RelativeLayout
-                    android:id="@+id/state_layout"
+                    android:id="@+id/status_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/id_layout"
@@ -209,31 +209,31 @@
                     android:layout_marginTop="10dp">
 
                     <ImageView
-                        android:id="@+id/tel_icon"
+                        android:id="@+id/status_icon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_centerVertical="true"
                         android:src="@drawable/status" />
 
                     <TextView
-                        android:id="@+id/tel"
+                        android:id="@+id/status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/tel_icon"
+                        android:layout_alignTop="@+id/status_icon"
                         android:layout_marginLeft="20dp"
-                        android:layout_toRightOf="@+id/tel_icon"
+                        android:layout_toRightOf="@+id/status_icon"
                         android:text="未接"
                         android:textColor="@color/color_424242"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/tel_title"
+                        android:id="@+id/status_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/tel"
+                        android:layout_below="@+id/status"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="2dp"
-                        android:layout_toRightOf="@+id/tel_icon"
+                        android:layout_toRightOf="@+id/status_icon"
                         android:text="项目状态 - 状态有未接,已接,完成"
                         android:textColor="@color/color_757575"
                         android:textSize="14sp" />
@@ -244,7 +244,7 @@
                     android:id="@+id/deadline_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/state_layout"
+                    android:layout_below="@+id/status_layout"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp">

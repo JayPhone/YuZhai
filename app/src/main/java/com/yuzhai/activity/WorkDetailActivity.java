@@ -24,14 +24,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.yuzhai.bean.responseBean.ApplyOrderRespBean;
 import com.yuzhai.bean.responseBean.DetailOrderBean;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.fragment.WorkFragment;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.CircleImageView;
+import com.yuzhai.view.CustomViewFlipper;
 import com.yuzhai.view.IndicatedViewFlipper;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
@@ -39,6 +41,8 @@ import com.yuzhai.yuzhaiwork.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.yuzhai.util.JsonUtil.decodeByGson;
 
 /**
  * Created by Administrator on 2016/11/1.
@@ -48,25 +52,67 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private TextView mTitle;
-    private TextView mReward;
     private CircleImageView mUserHeader;
     private TextView mUserName;
-    private TextView mState;
+    private TextView mID;
+    private TextView mStatus;
     private TextView mDeadline;
     private TextView mDate;
     private TextView mTel;
     private TextView mDescription;
-    private IndicatedViewFlipper mImages;
+    private IndicatedViewFlipper mImageFlipper;
     private LinearLayout mApplyUserLayout;
     private FloatingActionButton mApplyOrderFab;
 
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
-    private String mType;
-    private String mOrderId;
     private DetailOrderBean.OrderInfoBean mOrder;
-    private List<Integer> imagesList = new ArrayList<>();
-    private int[] imageId = new int[]{R.drawable.test1, R.drawable.test2, R.drawable.test3, R.drawable.test4, R.drawable.test1, R.drawable.test2};
+    private String mOrderId;
+    private CommonRequest mOrderDetailRequest;
+    public static final String IMAGE_URL = "image_url";
+
+    /**
+     * 测试数据
+     */
+    private int[] imageId = new int[]{R.drawable.test1, R.drawable.test2, R.drawable.test3, R.drawable.test4, R.drawable.test2};
+    private List<Integer> testImagesList = new ArrayList<>();
+
+    private void testMethod() {
+        for (int i = 0; i < imageId.length; i++) {
+            testImagesList.add(imageId[i]);
+        }
+        mImageFlipper.setFlipperImageResources(testImagesList);
+
+        mApplyUserLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int circleImageWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
+                int circleImageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
+                int marginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+
+                for (int i = 0; i < testImagesList.size(); i++) {
+                    CircleImageView circleImageView = new CircleImageView(WorkDetailActivity.this);
+                    circleImageView.setBorderColor(Color.WHITE);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(circleImageWidth, circleImageHeight);
+                    if (i != 0) {
+                        params.setMargins(marginLeft, 0, 0, 0);
+                    }
+
+                    circleImageView.setLayoutParams(params);
+                    circleImageView.setImageResource(testImagesList.get(i));
+                    circleImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            UnRepeatToast.showToast(WorkDetailActivity.this, "你点击了用户头像");
+                        }
+                    });
+
+                    mApplyUserLayout.addView(circleImageView);
+                }
+                mApplyUserLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,20 +125,12 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
         mRequestQueue = RequestQueueSingleton.getRequestQueue(this);
 
         //获取订单号
-//        mOrderId = getIntent().getStringExtra(WorkFragment.ORDER_ID);
-
-        imagesList.add(R.drawable.test1);
-        imagesList.add(R.drawable.test2);
-        imagesList.add(R.drawable.test3);
-        imagesList.add(R.drawable.test4);
+        mOrderId = getIntent().getStringExtra(WorkFragment.ORDER_ID);
 
         initViews();
         initData();
     }
 
-    /**
-     * 获取组件引用
-     */
     private void initViews() {
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
@@ -111,16 +149,27 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
         mTitle = (TextView) findViewById(R.id.title);
         mUserHeader = (CircleImageView) findViewById(R.id.user_header);
         mUserName = (TextView) findViewById(R.id.user_name);
-        mState = (TextView) findViewById(R.id.tel);
+        mID = (TextView) findViewById(R.id.id);
+        mStatus = (TextView) findViewById(R.id.status);
         mDeadline = (TextView) findViewById(R.id.deadline);
         mDate = (TextView) findViewById(R.id.date);
         mTel = (TextView) findViewById(R.id.tel);
         mDescription = (TextView) findViewById(R.id.description);
-        mImages = (IndicatedViewFlipper) findViewById(R.id.image_flipper);
+        mImageFlipper = (IndicatedViewFlipper) findViewById(R.id.image_flipper);
+        mImageFlipper.setOnItemClickListener(new CustomViewFlipper.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if (CustomApplication.isConnect) {
+                    Intent showImage = new Intent(WorkDetailActivity.this, ShowImageActivity.class);
+                    showImage.putExtra(IMAGE_URL, mOrder.getPictures().get(position).getImage());
+                    Log.i("url", mOrder.getPictures().get(position).getImage());
+                    startActivity(showImage);
+                }
+            }
+        });
+
         mApplyUserLayout = (LinearLayout) findViewById(R.id.apply_user);
-
         mApplyOrderFab = (FloatingActionButton) findViewById(R.id.apply_order_fab);
-
         mApplyOrderFab.setOnClickListener(this);
     }
 
@@ -128,99 +177,81 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
      * 初始化组件数据
      */
     private void initData() {
-//        sendOrderDetailRequest(mOrderId, mCustomApplication.getToken());
-
-        mImages.setFlipperImageResources(imagesList);
-        mApplyUserLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                int layoutWidth = mApplyUserLayout.getWidth();
-                int circleImageWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
-                int circleImageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
-                int marginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
-                int count = (layoutWidth + marginLeft) / (circleImageWidth + marginLeft);
-                for (int i = 0; i < count; i++) {
-                    CircleImageView circleImageView = new CircleImageView(WorkDetailActivity.this);
-                    circleImageView.setBorderColor(Color.WHITE);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(circleImageWidth, circleImageHeight);
-                    if (i != 0) {
-                        params.setMargins(marginLeft, 0, 0, 0);
-                    }
-                    circleImageView.setLayoutParams(params);
-                    circleImageView.setImageResource(imageId[i]);
-                    circleImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent userData = new Intent(WorkDetailActivity.this, UserDataActivity.class);
-                            startActivity(userData);
-                        }
-                    });
-//                    ImageLoader imageLoader = RequestQueueSingleton.getRequestQueue(WorkDetailActivity.this).getImageLoader();
-//                    ImageLoader.ImageListener listener = ImageLoader.getImageListener(circleImageView, 0, 0);
-//                    imageLoader.get(null, listener, circleImageWidth, circleImageHeight);
-                    mApplyUserLayout.addView(circleImageView);
-                }
-                mApplyUserLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
-
+        if (CustomApplication.isConnect) {
+            sendOrderDetailRequest(mOrderId, mCustomApplication.getToken());
+        } else {
+            testMethod();
+        }
     }
 
     public void updateData(final DetailOrderBean.OrderInfoBean detailOrder) {
+        //设置订单标题
         mTitle.setText(detailOrder.getTitle());
-        mReward.setText(detailOrder.getReward());
-        mUserName.setText(detailOrder.getPublisher().getName());
-        mState.setText(detailOrder.getState());
+        //设置订单金额
+        mCollapsingToolbarLayout.setTitle("￥" + detailOrder.getReward());
+        //设置发布用户名
+        mUserName.setText(detailOrder.getPublisher());
+        //设置订单Id
+        mID.setText(detailOrder.getOrderID());
+        //设置订单状态
+        mStatus.setText(detailOrder.getStatus());
+        //设置订单期限
         mDeadline.setText(detailOrder.getDeadline());
+        //设置订单发布日期
         mDate.setText(detailOrder.getDate());
+        //设置发布方联系电话
         mTel.setText(detailOrder.getTel());
+        //设置订单详细描述
         mDescription.setText(detailOrder.getDescription());
-        mImages.setFlipperImageUrls(IPConfig.image_addressPrefix, detailOrder.getPicture());
-
-        //获取用户头像
+        //设置订单图片
+        setFlipperImages(detailOrder.getPictures());
+        //设置用户头像
         Glide.with(this)
-                .load(IPConfig.image_addressPrefix + "/" + detailOrder.getPublisher().getAvatar())
+                .load(IPConfig.image_addressPrefix + "/" + detailOrder.getPublisherAvatar())
                 .placeholder(R.drawable.default_image)
                 .error(R.drawable.default_image)
                 .into(mUserHeader);
+        Log.i("ApplicantAvatar", detailOrder.getApplicantAvatars().toString());
 
-        //获取申请订单用户
+        //设置申请订单的用户头像
         mApplyUserLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int layoutWidth = mApplyUserLayout.getWidth();
-                int circleImageWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
-                int circleImageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
-                int marginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+                if (null != mOrder.getApplicantAvatars() && mOrder.getApplicantAvatars().size() > 0) {
+                    int layoutWidth = mApplyUserLayout.getWidth();
+                    int circleImageWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
+                    int circleImageHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
+                    int marginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
 
-                int hasCount = detailOrder.getApplicant().size();
-                int maxCount = (layoutWidth + marginLeft) / (circleImageWidth + marginLeft);
-                maxCount = hasCount >= maxCount ? maxCount : hasCount;
+                    int hasCount = detailOrder.getApplicantAvatars().size();
+                    int maxCount = (layoutWidth + marginLeft) / (circleImageWidth + marginLeft);
+                    maxCount = hasCount >= maxCount ? maxCount : hasCount;
 
-                for (int i = 0; i < maxCount; i++) {
-                    CircleImageView circleImageView = new CircleImageView(WorkDetailActivity.this);
-                    circleImageView.setBorderColor(Color.WHITE);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(circleImageWidth, circleImageHeight);
-                    if (i != 0) {
-                        params.setMargins(marginLeft, 0, 0, 0);
-                    }
-
-                    circleImageView.setLayoutParams(params);
-
-                    Glide.with(WorkDetailActivity.this)
-                            .load(IPConfig.image_addressPrefix + "/" + detailOrder.getApplicant().get(i).getApplicantAvatar())
-                            .placeholder(R.drawable.default_image)
-                            .error(R.drawable.default_image)
-                            .into(circleImageView);
-
-                    circleImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            UnRepeatToast.showToast(WorkDetailActivity.this, "你点击了用户头像");
+                    for (int i = 0; i < maxCount; i++) {
+                        CircleImageView circleImageView = new CircleImageView(WorkDetailActivity.this);
+                        circleImageView.setBorderColor(Color.WHITE);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(circleImageWidth, circleImageHeight);
+                        if (i != 0) {
+                            params.setMargins(marginLeft, 0, 0, 0);
                         }
-                    });
 
-                    mApplyUserLayout.addView(circleImageView);
+                        circleImageView.setLayoutParams(params);
+                        Log.i("Avatar", detailOrder.getApplicantAvatars().get(i).getApplicantAvatar());
+                        Glide.with(WorkDetailActivity.this)
+                                .load(IPConfig.image_addressPrefix + "/" + detailOrder.getApplicantAvatars().get(i).getApplicantAvatar())
+                                .placeholder(R.drawable.default_image)
+                                .error(R.drawable.default_image)
+                                .into(circleImageView);
+
+                        circleImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                UnRepeatToast.showToast(WorkDetailActivity.this, "你点击了用户头像");
+                            }
+                        });
+
+                        mApplyUserLayout.addView(circleImageView);
+                    }
                 }
                 mApplyUserLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
@@ -232,13 +263,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.apply_order_fab:
                 if (!mCustomApplication.isLogin()) {
-                    Snackbar.make(v, "你尚未登陆，点击登陆", Snackbar.LENGTH_INDEFINITE).setAction("登录", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent login = new Intent(WorkDetailActivity.this, LoginActivity.class);
-                            startActivity(login);
-                        }
-                    }).show();
+                    Snackbar.make(v, "你尚未登陆，请登录后再接单", Snackbar.LENGTH_SHORT).show();
                 } else {
                     showApplyOrderDialog();
                 }
@@ -276,27 +301,38 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
         builder.setPositiveButton("申请", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                sendApplyOrderRequest(mOrder.getPublish().getPublishId(), mCustomApplication.getToken());
+                if (CustomApplication.isConnect) {
+                    sendApplyOrderRequest(mOrder.getOrderID(), mCustomApplication.getToken());
+                }
             }
         });
         builder.setNegativeButton("取消", null);
         builder.create().show();
     }
 
+    /**
+     * 发送查看详细订单的请求
+     *
+     * @param orderId
+     * @param token
+     */
     public void sendOrderDetailRequest(String orderId, String token) {
         //生成详细订单的参数集
         Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId, token);
         Log.i("order_detail_params", params.toString());
 
-        CommonRequest orderDetailRequest = new CommonRequest(IPConfig.orderDetailAddress,
+        mOrderDetailRequest = new CommonRequest(IPConfig.orderDetailAddress,
                 null,
                 params,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
                         Log.i("order_detail_resp", resp);
+                        mOrder = decodeByGson(resp, DetailOrderBean.class).getDetailedOrder();
                         //更新数据
-                        updateData(JsonUtil.decodeByGson(resp, DetailOrderBean.class).getOrder());
+                        updateData(mOrder);
+                        Log.i("order_detail_cookie", mOrderDetailRequest.getResponseCookie());
+//                        mCustomApplication.setCookie(mOrderDetailRequest.getResponseCookie());
                     }
                 },
                 new Response.ErrorListener() {
@@ -307,7 +343,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
                 });
 
         //添加到请求队列
-        mRequestQueue.add(orderDetailRequest);
+        mRequestQueue.add(mOrderDetailRequest);
     }
 
     /**
@@ -321,12 +357,21 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
 
         //创建发送申请接收订单的参数集
         CommonRequest applyOrderRequest = new CommonRequest(IPConfig.applyOrderAddress,
-                null,
+                mCustomApplication.generateCookieMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
                         Log.i("apply_order_resp", resp);
+                        String code = decodeByGson(resp, ApplyOrderRespBean.class).getCode();
+                        //订单申请接收成功
+                        if (code.equals("1")) {
+                            UnRepeatToast.showToast(WorkDetailActivity.this, "申请接收订单成功");
+                        }
+                        //订单重复申请接收
+                        else if (code.equals("2")) {
+                            UnRepeatToast.showToast(WorkDetailActivity.this, "你已成功申请，请不要重复申请");
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -338,5 +383,18 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
 
         //添加到请求队列
         mRequestQueue.add(applyOrderRequest);
+    }
+
+    /**
+     * 设置imageFlipper的图片
+     *
+     * @param imageList
+     */
+    private void setFlipperImages(List<DetailOrderBean.OrderInfoBean.PicturesBean> imageList) {
+        List<String> imagePaths = new ArrayList<>();
+        for (int i = 0; i < imageList.size(); i++) {
+            imagePaths.add(imageList.get(i).getImage());
+        }
+        mImageFlipper.setFlipperImageUrls(IPConfig.image_addressPrefix, imagePaths);
     }
 }

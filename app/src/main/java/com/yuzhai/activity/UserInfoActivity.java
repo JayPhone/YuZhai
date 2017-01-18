@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,17 +25,20 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
-import com.yuzhai.bean.BaseUserInfoBean;
-import com.yuzhai.bean.UserInfoBean;
-import com.yuzhai.config.IPConfig;
+import com.yuzhai.bean.innerBean.BaseUserInfoBean;
+import com.yuzhai.bean.innerBean.LoginToOrderBean;
+import com.yuzhai.bean.innerBean.UserInfoBean;
+import com.yuzhai.bean.responseBean.ReNameBean;
+import com.yuzhai.bean.responseBean.UserHeaderUploadBean;
+import com.yuzhai.http.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.FileUploadRequest;
 import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
-import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.FileUtil;
 import com.yuzhai.util.GetPathUtil;
+import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -54,25 +58,26 @@ import permissions.dispatcher.RuntimePermissions;
  */
 @RuntimePermissions
 public class UserInfoActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView changePsw;
-    private TextView userName;
-    private TextView userPhone;
-    private TextView titleText;
-    private Button loginExit;
-    private ImageView headerImage;
-    private ImageView backImage;
-    private RelativeLayout changeHeaderImage;
-    private RelativeLayout changeUserName;
+    private Toolbar mUserInfoToolbar;
+    private TextView mAlterPswText;
+    private TextView mUserNameText;
+    private TextView mUserPhoneText;
+    private Button mLoginExitBtn;
+    private ImageView mHeaderImage;
+    private RelativeLayout mAlterHeaderImageLayout;
+    private RelativeLayout mChangeUserNameLayout;
 
-    private String imageCameraPath;
+    private String mImagePath;
+    private String mUserHeadUrl;
+    private String mUserNameStr;
+    private String mUserPhoneStr;
+
     private CustomApplication mCustomApplication;
     private RequestQueue requestQueue;
-    private final int CAMERA_PEQUEST = 1;
-    private final int IMAGEPICK_PEQUEST = 2;
 
-    private String userHeadUrl;
-    private String userNameStr;
-    private String userPhoneStr;
+    private final int CAMERA_REQUEST = 1;
+    private final int IMAGE_PICK_REQUEST = 2;
+    public static final String IMAGE_URL = "image_url";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,39 +98,35 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      * 初始化组件
      */
     public void initViews() {
-        backImage = (ImageView) findViewById(R.id.back_image);
-        if (backImage != null) {
-            backImage.setImageResource(R.drawable.back);
-        }
-        titleText = (TextView) findViewById(R.id.title_text);
-        if (titleText != null) {
-            titleText.setText("账户管理");
-        }
-        changeHeaderImage = (RelativeLayout) findViewById(R.id.change_image_layout);
-        headerImage = (ImageView) findViewById(R.id.header_image);
-        changePsw = (TextView) findViewById(R.id.change_pswd);
-        changeUserName = (RelativeLayout) findViewById(R.id.change_user_name_layout);
-        userName = (TextView) findViewById(R.id.user_name);
-        userPhone = (TextView) findViewById(R.id.user_name);
-        loginExit = (Button) findViewById(R.id.exit_login);
+        mUserInfoToolbar = (Toolbar) findViewById(R.id.user_info_toolbar);
+        mUserInfoToolbar.setNavigationIcon(R.drawable.back);
+        mUserInfoToolbar.setTitle("账户管理");
+        mUserInfoToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        mAlterHeaderImageLayout = (RelativeLayout) findViewById(R.id.change_image_layout);
+        mHeaderImage = (ImageView) findViewById(R.id.header_image);
+        mAlterPswText = (TextView) findViewById(R.id.change_pswd);
+        mChangeUserNameLayout = (RelativeLayout) findViewById(R.id.change_user_name_layout);
+        mUserNameText = (TextView) findViewById(R.id.user_name);
+        mUserPhoneText = (TextView) findViewById(R.id.user_name);
+        mLoginExitBtn = (Button) findViewById(R.id.exit_login);
 
         //设置监听器
-        backImage.setOnClickListener(this);
-        changeHeaderImage.setOnClickListener(this);
-        headerImage.setOnClickListener(this);
-        changePsw.setOnClickListener(this);
-        changeUserName.setOnClickListener(this);
-        loginExit.setOnClickListener(this);
+        mAlterHeaderImageLayout.setOnClickListener(this);
+        mHeaderImage.setOnClickListener(this);
+        mAlterPswText.setOnClickListener(this);
+        mChangeUserNameLayout.setOnClickListener(this);
+        mLoginExitBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            //点击回退按钮
-            case R.id.back_image:
-                this.finish();
-                break;
-
             //点击左边选择头像
             case R.id.change_image_layout:
                 //打开选择头像对话框
@@ -135,10 +136,9 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
             //点击右边的头像
             case R.id.header_image:
                 //打开查看头像界面
-//                Intent intent = new Intent();
-//                intent.setAction(android.content.Intent.ACTION_VIEW);
-//                intent.setDataAndType(Uri.fromFile(new File(imageCameraPath)), "image/*");
-//                startActivity(intent);
+                Intent showImage = new Intent(this, ShowImageActivity.class);
+                showImage.putExtra(IMAGE_URL, mUserHeadUrl);
+                startActivity(showImage);
                 break;
 
             //点击修改密码
@@ -166,21 +166,17 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      * 设置头像，用户名和手机号等数据
      */
     public void initData() {
-        if (userHeadUrl != null) {
-            Glide.with(this)
-                    .load(userHeadUrl)
-                    .placeholder(R.drawable.default_image)
-                    .error(R.drawable.default_image)
-                    .into(headerImage);
-            Log.i("url", userHeadUrl);
+        if (mUserHeadUrl != null) {
+            Log.i("user_header_url", mUserHeadUrl);
+            setUserHeader(mUserHeadUrl);
         }
 
-        if (userNameStr != null) {
-            userName.setText(userNameStr);
+        if (mUserNameStr != null) {
+            mUserNameText.setText(mUserNameStr);
         }
 
-        if (userPhoneStr != null) {
-            userPhone.setText(userPhoneStr);
+        if (mUserPhoneStr != null) {
+            mUserPhoneText.setText(mUserPhoneStr);
         }
     }
 
@@ -189,7 +185,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      */
     public void changeImageDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("上传头像");
+        builder.setTitle("选择上传头像方式");
         builder.setItems(
                 new String[]{
                         "手机相机添加",
@@ -203,7 +199,6 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                                 //打开相机
                                 UserInfoActivityPermissionsDispatcher.showCameraWithCheck(UserInfoActivity.this);
                                 break;
-
                             case 1:
                                 //打开图片选择器
                                 showImagePick();
@@ -220,11 +215,11 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     @NeedsPermission(Manifest.permission.CAMERA)
     public void showCamera() {
         //生成路径
-        imageCameraPath = FileUtil.createFilePath(FileUtil.HEAD_IMAGE);
+        mImagePath = FileUtil.createFilePath(FileUtil.HEAD_IMAGE);
         //启动相机
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(imageCameraPath)));
-        startActivityForResult(camera, CAMERA_PEQUEST);
+        camera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(mImagePath)));
+        startActivityForResult(camera, CAMERA_REQUEST);
     }
 
     /**
@@ -241,7 +236,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         //图片输出格式
         intent_imagePick.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent_imagePick.putExtra("return-data", false);
-        startActivityForResult(intent_imagePick, IMAGEPICK_PEQUEST);
+        startActivityForResult(intent_imagePick, IMAGE_PICK_REQUEST);
     }
 
     /**
@@ -250,7 +245,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     public void changeUserNameDialog() {
         //获取重命名对话框的输入框实例
         final View chanNameView = getLayoutInflater().inflate(R.layout.userinfo_change_username_layout, null);
-        final EditText changeUserName = (EditText) chanNameView.findViewById(R.id.change_user_name_edit);
+        final EditText alterUserName = (EditText) chanNameView.findViewById(R.id.change_user_name_edit);
 
         //创建重命名对话框
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -259,8 +254,8 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         builder.setPositiveButton("修改", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (!changeUserName.getText().toString().equals("")) {
-                    sendReNameRequest(changeUserName.getText().toString(),
+                if (!alterUserName.getText().toString().equals("")) {
+                    sendReNameRequest(alterUserName.getText().toString(),
                             mCustomApplication.getToken());
                 }
             }
@@ -284,17 +279,18 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("response", resp);
-                        //TODO resp只有1,没有key
-                        //设置新用户名
-                        userName.setText(newName);
-                        //使用Event发送替换侧滑菜单用户名的消息到MainActivity
-                        EventBus.getDefault().post(new BaseUserInfoBean(
-                                null,
-                                newName,
-                                mCustomApplication.isLogin()));
+                        Log.i("re_name_resp", resp);
+                        if (JsonUtil.decodeByGson(resp, ReNameBean.class).getCode().equals("1")) {
+                            //设置新用户名
+                            mUserNameText.setText(newName);
+                            //使用Event发送替换侧滑菜单用户名的消息到MainActivity
+                            EventBus.getDefault().post(new BaseUserInfoBean(
+                                    null,
+                                    newName,
+                                    mCustomApplication.isLogin()));
 
-                        UnRepeatToast.showToast(UserInfoActivity.this, "用户名修改成功");
+                            UnRepeatToast.showToast(UserInfoActivity.this, "用户名修改成功");
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -330,6 +326,8 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                         mCustomApplication.setLoginState(false);
                         //使用Event发送替换个人信息界面为未登录的消息到MainActivity
                         EventBus.getDefault().post(new BaseUserInfoBean(null, null, mCustomApplication.isLogin()));
+                        //通知个人订单界面清空数据
+                        EventBus.getDefault().post(new LoginToOrderBean(mCustomApplication.isLogin()));
                         UnRepeatToast.showToast(UserInfoActivity.this, "退出成功");
                         finish();
                     }
@@ -367,21 +365,21 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             //处理相机返回结果
-            case CAMERA_PEQUEST:
+            case CAMERA_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imageCameraPath, 100, 100));
-                    sendUploadHeaderRequest(new File(imageCameraPath));
+                    sendUploadHeaderRequest(new File(mImagePath), mCustomApplication.getToken());
+                    Log.i("path", mImagePath);
                 }
                 break;
 
             //处理图片选择器返回结果
-            case IMAGEPICK_PEQUEST:
+            case IMAGE_PICK_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     //将获取到的图片URI传给图片裁剪
                     Uri uri = data.getData();
-                    imageCameraPath = GetPathUtil.getImageAbsolutePath(this, uri);
-                    headerImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imageCameraPath, 100, 100));
-                    sendUploadHeaderRequest(new File(imageCameraPath));
+                    mImagePath = GetPathUtil.getImageAbsolutePath(this, uri);
+                    sendUploadHeaderRequest(new File(mImagePath), mCustomApplication.getToken());
+                    Log.i("path", mImagePath);
                 }
                 break;
         }
@@ -392,26 +390,31 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      *
      * @param file 图片路径
      */
-    public void sendUploadHeaderRequest(File file) {
+    public void sendUploadHeaderRequest(File file, String token) {
+
         //创建上传头像请求
-        FileUploadRequest headerUploadRequest = new FileUploadRequest(IPConfig.uploadHeadAddress,
-                null,
+        FileUploadRequest headerUploadRequest = new FileUploadRequest(
+                IPConfig.uploadHeadAddress + "?token=" + token,
+                mCustomApplication.generateCookieMap(),
                 null,
                 "image",
                 file,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("response", resp);
+                        Log.i("upload_header_resp", resp);
+                        mUserHeadUrl = JsonUtil.decodeByGson(resp, UserHeaderUploadBean.class).getAvatar();
+                        //更新头像
+                        setUserHeader(mUserHeadUrl);
                         //使用EventBus发送替换侧滑菜单头像Url的消息到MainActivity
-                        EventBus.getDefault().post(new BaseUserInfoBean(resp, null, mCustomApplication.isLogin()));
+                        EventBus.getDefault().post(new BaseUserInfoBean(mUserHeadUrl, null, mCustomApplication.isLogin()));
                         UnRepeatToast.showToast(UserInfoActivity.this, "头像上传成功");
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        UnRepeatToast.showToast(UserInfoActivity.this, "服务器睡着了");
+                        UnRepeatToast.showToast(UserInfoActivity.this, "服务器不务正业中");
                     }
                 }
         );
@@ -440,8 +443,25 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      */
     @Subscribe(threadMode = ThreadMode.POSTING, sticky = true)
     public void onEventMainActivity(UserInfoBean userInfoBean) {
-        userHeadUrl = userInfoBean.getUserHeadUrl();
-        userNameStr = userInfoBean.getUserName();
-        userPhoneStr = userInfoBean.getUserPhone();
+        mUserHeadUrl = userInfoBean.getUserHeadUrl();
+        mUserNameStr = userInfoBean.getUserName();
+        mUserPhoneStr = userInfoBean.getUserPhone();
+    }
+
+    /**
+     * 设置用户头像
+     *
+     * @param userHeadUrl
+     */
+    public void setUserHeader(String userHeadUrl) {
+        //通过返回的用户头像地址获取用户头像
+        if (userHeadUrl != null) {
+            Log.i("user_header_url", IPConfig.image_addressPrefix + "/" + userHeadUrl);
+            Glide.with(this)
+                    .load(IPConfig.image_addressPrefix + "/" + userHeadUrl)
+                    .placeholder(R.drawable.default_image)
+                    .error(R.drawable.default_image)
+                    .into(mHeaderImage);
+        }
     }
 }

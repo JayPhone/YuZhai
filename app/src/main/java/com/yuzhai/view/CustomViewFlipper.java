@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
 import com.bumptech.glide.Glide;
-import com.yuzhai.bean.responseBean.DetailOrderBean;
 import com.yuzhai.listener.OnFlipperGesture;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -22,6 +21,7 @@ import java.util.List;
  */
 public class CustomViewFlipper extends ViewFlipper {
     private OnFlipListener onFlipListener;
+    private OnItemClickListener onItemClickListener;
     private GestureDetector mFlipperDetector;
     private Context mContext;
     private ViewGroup mDisallowInterceptView;
@@ -36,17 +36,42 @@ public class CustomViewFlipper extends ViewFlipper {
         mFlipperDetector = new GestureDetector(context, new OnFlipperGesture(this));
     }
 
+    /**
+     * 设置切换监听
+     *
+     * @param onFlipListener
+     */
     public void setOnFlipListener(OnFlipListener onFlipListener) {
         this.onFlipListener = onFlipListener;
     }
 
+    /**
+     * 设置点击监听
+     *
+     * @param onItemClickListener
+     */
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    /**
+     * 使用本地资源设置图片内容
+     *
+     * @param imagesList
+     */
     public void setImageResources(List<Integer> imagesList) {
         if (imagesList != null) {
-            addImageViews(imagesList);
+            addImageViewsByResource(imagesList);
         }
     }
 
-    public void setImageUrls(String prefix, List<DetailOrderBean.OrderInfoBean.PicturesBean> imageUrlsList) {
+    /**
+     * 使用网络Url获取图片内容
+     *
+     * @param prefix
+     * @param imageUrlsList
+     */
+    public void setImageUrls(String prefix, List<String> imageUrlsList) {
         if (imageUrlsList != null) {
             List<String> tempList = new ArrayList<>();
             String tempUrl;
@@ -63,7 +88,7 @@ public class CustomViewFlipper extends ViewFlipper {
      *
      * @param imagesList
      */
-    public void addImageViews(List<Integer> imagesList) {
+    public void addImageViewsByResource(List<Integer> imagesList) {
         for (int i = 0; i < imagesList.size(); i++) {
             ImageView imageView = new ImageView(mContext);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -74,8 +99,9 @@ public class CustomViewFlipper extends ViewFlipper {
             imageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent advertise = new Intent(mContext, AdvertiseActivity.class);
-//                    mContext.startActivity(advertise);
+                    if (null != onItemClickListener) {
+                        onItemClickListener.onItemClick(getDisplayedChild());
+                    }
                 }
             });
             this.addView(imageView);
@@ -104,8 +130,9 @@ public class CustomViewFlipper extends ViewFlipper {
             imageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent advertise = new Intent(mContext, AdvertiseActivity.class);
-//                    mContext.startActivity(advertise);
+                    if (null != onItemClickListener) {
+                        onItemClickListener.onItemClick(getDisplayedChild());
+                    }
                 }
             });
             this.addView(imageView);
@@ -149,5 +176,9 @@ public class CustomViewFlipper extends ViewFlipper {
         void onShowPrevious(CustomViewFlipper flipper);
 
         void onShowNext(CustomViewFlipper flipper);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
 }
