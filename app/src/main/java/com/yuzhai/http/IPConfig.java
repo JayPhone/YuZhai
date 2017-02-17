@@ -14,17 +14,17 @@ public interface IPConfig {
     /**
      * 目标地址和端口
      */
-    String DesAddress = "172.16.178.5:8088";
+    String DesAddress = "192.168.31.220:8080";
 
     /**
      * 主机名称
      */
-    String hostName = "yzgz1.2mobile/servlet";
+    String hostName = "yzgz1.3mobile/action";
 
     /**
-     * 图片主机名称
+     * 图片名称
      */
-    String image_hostName = "yzgz1.2mobile";
+    String imagePrefix = "yzgz1.3mobile";
 
     /**
      * 地址前缀
@@ -34,7 +34,7 @@ public interface IPConfig {
     /**
      * 图片地址前缀
      */
-    String image_addressPrefix = protocol + "://" + DesAddress + "/" + image_hostName;
+    String image_addressPrefix = protocol + "://" + DesAddress + "/" + imagePrefix;
 
     /**
      * 获取验证码地址

@@ -8,8 +8,8 @@
         android:id="@+id/logo"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
         android:scaleType="centerInside"
         android:src="@drawable/title_logo" />
 

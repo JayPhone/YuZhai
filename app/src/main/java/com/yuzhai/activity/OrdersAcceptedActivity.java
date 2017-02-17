@@ -68,7 +68,7 @@ public class OrdersAcceptedActivity extends AppCompatActivity implements Toolbar
 
     private void initData() {
         if (CustomApplication.isConnect) {
-            sendAcceptedOrderDetailRequest(mOrderId, mCustomApplication.getToken());
+            sendAcceptedOrderDetailRequest(mOrderId);
         } else {
             initViews(null);
         }
@@ -159,14 +159,14 @@ public class OrdersAcceptedActivity extends AppCompatActivity implements Toolbar
      * 发送查看详细订单的请求
      *
      * @param orderId
-     * @param token
      */
-    public void sendAcceptedOrderDetailRequest(String orderId, String token) {
+    public void sendAcceptedOrderDetailRequest(String orderId) {
         //生成详细订单的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId, token);
+        Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId);
 
-        CommonRequest orderDetailRequest = new CommonRequest(IPConfig.orderDetailAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest orderDetailRequest = new CommonRequest(this,
+                IPConfig.orderDetailAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override

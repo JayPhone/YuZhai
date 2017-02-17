@@ -74,8 +74,7 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
                 //发送修改密码请求
                 sendAlterPswRequest(mOldPswEdit.getText().toString(),
                         mNewPswEdit.getText().toString(),
-                        mCfmPswEdit.getText().toString(),
-                        customApplication.getToken());
+                        mCfmPswEdit.getText().toString());
                 break;
         }
     }
@@ -87,18 +86,19 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
      * @param newPsw 新密码
      * @param cfmPsw 重复密码
      */
-    public void sendAlterPswRequest(String oldPsw, String newPsw, String cfmPsw, String token) {
+    public void sendAlterPswRequest(String oldPsw, String newPsw, String cfmPsw) {
         if (checkAlterPswData(oldPsw,
                 newPsw,
                 cfmPsw)) {
 
             //生成修改密码参数集
             Map<String, String> params = ParamsGenerateUtil.generateAlterPswParams(oldPsw,
-                    newPsw, cfmPsw, token);
+                    newPsw, cfmPsw);
 
             //创建修改密码请求
-            CommonRequest alterPswRequest = new CommonRequest(IPConfig.alterPswAddress,
-                    null,
+            CommonRequest alterPswRequest = new CommonRequest(this,
+                    IPConfig.alterPswAddress,
+                    customApplication.generateHeaderMap(),
                     params,
                     new Response.Listener<String>() {
                         @Override
@@ -110,7 +110,10 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
 
                             if (respCode != null && respCode.equals("1")) {
                                 UnRepeatToast.showToast(AlterPswActivity.this, "密码修改成功,重新登陆");
-
+                                //清除登录的手机号和密码
+                                customApplication.clearUserInfo();
+                                //清除Cookie
+                                customApplication.clearCookie();
                                 //设置为没登录
                                 customApplication.setLoginState(false);
                                 //替换侧滑菜单界面为非登录界面

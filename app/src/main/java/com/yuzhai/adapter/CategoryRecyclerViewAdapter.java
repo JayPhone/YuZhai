@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.yuzhai.db.CategoryMode;
 import com.yuzhai.db.OnCategoryDataChanged;
 import com.yuzhai.recyclerview.OnItemTouchListener;
-import com.yuzhai.activity.CategoryActivity;
+import com.yuzhai.activity.WorkCategoryActivity;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.Collections;
@@ -67,7 +67,7 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
             @Override
             public void onClick(View v) {
                 if (holder.mTextView.getText() != mCategory.get(mCategory.size() - 1).get(CategoryMode.CATEGORY_TEXT)) {
-                    Intent category = new Intent(mContext, CategoryActivity.class);
+                    Intent category = new Intent(mContext, WorkCategoryActivity.class);
                     category.putExtra(CategoryRecyclerViewAdapter.TITLE, holder.mTextView.getText());
                     mContext.startActivity(category);
                 } else {

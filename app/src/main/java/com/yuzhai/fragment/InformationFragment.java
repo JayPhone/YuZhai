@@ -106,7 +106,8 @@ public class InformationFragment extends Fragment implements SwipeRefreshLayout.
 
     public void sendInfoByTypeRequest(String type) {
         //创建通过类型获取资讯请求
-        CommonRequest infoByTypeRequest = new CommonRequest(null,
+        CommonRequest infoByTypeRequest = new CommonRequest(getContext(),
+                null,
                 null,
                 null,
                 new Response.Listener<String>() {

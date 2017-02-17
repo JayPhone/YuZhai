@@ -26,7 +26,7 @@
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/user_header"
         android:text="JF"
-        android:textColor="@color/color_212121"
+        android:textColor="@color/color_424242"
         android:textSize="18sp" />
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_marginTop="3dp"
         android:layout_toRightOf="@+id/user_header"
         android:text="明天大家出来吃饭啊"
-        android:textColor="@color/color_757575"
+        android:textColor="@color/color_9E9E9E"
         android:textSize="14sp" />
 
     <TextView

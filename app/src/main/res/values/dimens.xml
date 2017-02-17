@@ -4,7 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
 
-    <!-- activity_register -->
+    <!-- fragment_register -->
     <dimen name="register_imageview_logo_height">200dp</dimen>
     <dimen name="register_relativeLayout_marginLeftR">10dp</dimen>
     <dimen name="register_editable_first_marginT">10dp</dimen>
@@ -14,11 +14,11 @@
     <dimen name="register_button_code_marginL">10dp</dimen>
     <dimen name="register_textview_last_marginB">10dp</dimen>
 
-    <!-- activity_register font -->
+    <!-- fragment_register font -->
     <dimen name="register_button_register_textsize">20sp</dimen>
     <dimen name="register_textview_last_textsize">15sp</dimen>
 
-    <!-- activity_login -->
+    <!-- fragment_login -->
     <dimen name="login_imageview_logo_height">200dp</dimen>
     <dimen name="login_relativeLayout_marginLeftR">10dp</dimen>
     <dimen name="login_editable_first_marginT">20dp</dimen>
@@ -27,7 +27,7 @@
     <dimen name="login_button_marginT">25dp</dimen>
     <dimen name="login_textview_last_marginB">10dp</dimen>
 
-    <!-- activity_login font -->
+    <!-- fragment_login font -->
     <dimen name="login_button_login_textsize">20sp</dimen>
     <dimen name="login_textview_last_textsize">15sp</dimen>
 

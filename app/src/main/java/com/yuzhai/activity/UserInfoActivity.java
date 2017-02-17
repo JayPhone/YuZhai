@@ -255,8 +255,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!alterUserName.getText().toString().equals("")) {
-                    sendReNameRequest(alterUserName.getText().toString(),
-                            mCustomApplication.getToken());
+                    sendReNameRequest(alterUserName.getText().toString());
                 }
             }
         });
@@ -268,12 +267,13 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      *
      * @param newName 新用户名
      */
-    public void sendReNameRequest(final String newName, String token) {
+    public void sendReNameRequest(final String newName) {
         //生成请求参数
-        Map<String, String> param = ParamsGenerateUtil.generateReNameParam(newName, token);
+        Map<String, String> param = ParamsGenerateUtil.generateReNameParam(newName);
 
         //创建重命名请求
-        CommonRequest reNameRequest = new CommonRequest(IPConfig.reNameAddress,
+        CommonRequest reNameRequest = new CommonRequest(this,
+                IPConfig.reNameAddress,
                 null,
                 param,
                 new Response.Listener<String>() {
@@ -309,12 +309,13 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      */
     public void sendExitLoginRequest() {
         //生成请求参数
-        Map<String, String> param = ParamsGenerateUtil.generateExitLoginParam(mCustomApplication.getToken());
+//        Map<String, String> param = ParamsGenerateUtil.generateExitLoginParam();
 
         //创建退出登录请求
-        CommonRequest exitLoginRequest = new CommonRequest(IPConfig.exitLoginAddress,
-                mCustomApplication.generateCookieMap(),
-                param,
+        CommonRequest exitLoginRequest = new CommonRequest(this,
+                IPConfig.exitLoginAddress,
+                mCustomApplication.generateHeaderMap(),
+                null,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -367,7 +368,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
             //处理相机返回结果
             case CAMERA_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    sendUploadHeaderRequest(new File(mImagePath), mCustomApplication.getToken());
+                    sendUploadHeaderRequest(new File(mImagePath));
                     Log.i("path", mImagePath);
                 }
                 break;
@@ -378,7 +379,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                     //将获取到的图片URI传给图片裁剪
                     Uri uri = data.getData();
                     mImagePath = GetPathUtil.getImageAbsolutePath(this, uri);
-                    sendUploadHeaderRequest(new File(mImagePath), mCustomApplication.getToken());
+                    sendUploadHeaderRequest(new File(mImagePath));
                     Log.i("path", mImagePath);
                 }
                 break;
@@ -390,14 +391,14 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
      *
      * @param file 图片路径
      */
-    public void sendUploadHeaderRequest(File file, String token) {
+    public void sendUploadHeaderRequest(File file) {
 
         //创建上传头像请求
-        FileUploadRequest headerUploadRequest = new FileUploadRequest(
-                IPConfig.uploadHeadAddress + "?token=" + token,
-                mCustomApplication.generateCookieMap(),
+        FileUploadRequest headerUploadRequest = new FileUploadRequest(this,
+                IPConfig.uploadHeadAddress,
+                mCustomApplication.generateHeaderMap(),
                 null,
-                "image",
+                "file",
                 file,
                 new Response.Listener<String>() {
                     @Override

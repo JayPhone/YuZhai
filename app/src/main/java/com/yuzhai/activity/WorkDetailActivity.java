@@ -178,7 +178,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
      */
     private void initData() {
         if (CustomApplication.isConnect) {
-            sendOrderDetailRequest(mOrderId, mCustomApplication.getToken());
+            sendOrderDetailRequest(mOrderId);
         } else {
             testMethod();
         }
@@ -302,7 +302,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (CustomApplication.isConnect) {
-                    sendApplyOrderRequest(mOrder.getOrderID(), mCustomApplication.getToken());
+                    sendApplyOrderRequest(mOrder.getOrderID());
                 }
             }
         });
@@ -314,15 +314,15 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
      * 发送查看详细订单的请求
      *
      * @param orderId
-     * @param token
      */
-    public void sendOrderDetailRequest(String orderId, String token) {
+    public void sendOrderDetailRequest(String orderId) {
         //生成详细订单的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId, token);
+        Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId);
         Log.i("order_detail_params", params.toString());
 
-        mOrderDetailRequest = new CommonRequest(IPConfig.orderDetailAddress,
-                null,
+        mOrderDetailRequest = new CommonRequest(this,
+                IPConfig.orderDetailAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override
@@ -331,8 +331,6 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
                         mOrder = decodeByGson(resp, DetailOrderBean.class).getDetailedOrder();
                         //更新数据
                         updateData(mOrder);
-                        Log.i("order_detail_cookie", mOrderDetailRequest.getResponseCookie());
-//                        mCustomApplication.setCookie(mOrderDetailRequest.getResponseCookie());
                     }
                 },
                 new Response.ErrorListener() {
@@ -351,13 +349,14 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
      *
      * @param orderId 订单ID
      */
-    public void sendApplyOrderRequest(String orderId, String token) {
+    public void sendApplyOrderRequest(String orderId) {
         //生成发送申请接收订单的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateApplyOrderParams(orderId, token);
+        Map<String, String> params = ParamsGenerateUtil.generateApplyOrderParams(orderId);
 
         //创建发送申请接收订单的参数集
-        CommonRequest applyOrderRequest = new CommonRequest(IPConfig.applyOrderAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest applyOrderRequest = new CommonRequest(this,
+                IPConfig.applyOrderAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yuzhai.activity.LoginActivity">
+    tools:context="com.yuzhai.activity.LoginAndRegisterActivity">
 
     <ImageView
         android:id="@+id/logo"
@@ -84,16 +84,17 @@
             android:textColor="@color/mainColor"
             android:textSize="@dimen/login_button_login_textsize" />
 
-        <TextView
+        <Button
             android:id="@+id/forget_pswd_nav"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/register_nav"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
+            android:layout_below="@id/register_nav"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/login_button_style2"
             android:text="忘记密码?"
             android:textColor="@color/mainColor"
-            android:textSize="14sp" />
+            android:textSize="@dimen/login_button_login_textsize" />
 
     </RelativeLayout>
 </RelativeLayout>

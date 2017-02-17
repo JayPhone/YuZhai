@@ -113,7 +113,7 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
                 sendResumeBean.setWorkExperience(mWorkExperienceEdit.getEditableText().toString());
                 sendResumeBean.setSelfEvaluation(mSelfEvaluationEdit.getEditableText().toString());
                 Log.i("data", sendResumeBean.toString());
-                sendSendResumeRequest(sendResumeBean, mCustomApplication.getToken());
+                sendSendResumeRequest(sendResumeBean);
                 break;
         }
     }
@@ -128,7 +128,7 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
         mEducationSpinner.setAdapter(generateAdapter(generateData(educationTexts), R.layout.resume_education_item_layout, R.id.education_item));
 
         if (CustomApplication.isConnect) {
-            sendPersonalDetailResumeRequest(mCustomApplication.getToken());
+            sendPersonalDetailResumeRequest();
         }
     }
 
@@ -168,15 +168,16 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
         );
     }
 
-    public void sendSendResumeRequest(SendResumeBean sendResumeBean, String token) {
+    public void sendSendResumeRequest(SendResumeBean sendResumeBean) {
         if (checkData(sendResumeBean)) {
             //生成投递简历请求的参数
-            Map<String, String> param = ParamsGenerateUtil.generateSendResumeParam(sendResumeBean, token);
+            Map<String, String> param = ParamsGenerateUtil.generateSendResumeParam(sendResumeBean);
             Log.i("param", param.toString());
 
             //生成投递简历请求
-            CommonRequest sendResumeRequest = new CommonRequest(IPConfig.sendResumeAddress,
-                    mCustomApplication.generateCookieMap(),
+            CommonRequest sendResumeRequest = new CommonRequest(this,
+                    IPConfig.sendResumeAddress,
+                    mCustomApplication.generateHeaderMap(),
                     param,
                     new Response.Listener<String>() {
                         @Override
@@ -201,23 +202,22 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
 
     /**
      * 发送查看详细简历请求
-     *
-     * @param token
      */
-    public void sendPersonalDetailResumeRequest(String token) {
+    public void sendPersonalDetailResumeRequest() {
         //生成投递简历请求的参数
-        Map<String, String> param = ParamsGenerateUtil.generatePersonalResumeParams(token);
-        Log.i("param", param.toString());
+//        Map<String, String> param = ParamsGenerateUtil.generatePersonalResumeParams();
+//        Log.i("param", param.toString());
 
         //生成查看详细简历请求
-        CommonRequest sendPersonalDetailResumeRequest = new CommonRequest(IPConfig.personalResumeAddress,
-                mCustomApplication.generateCookieMap(),
-                param,
+        CommonRequest sendPersonalDetailResumeRequest = new CommonRequest(this,
+                IPConfig.personalResumeAddress,
+                mCustomApplication.generateHeaderMap(),
+                null,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
                         Log.i("personal_resume_resp", resp);
-                        if (JsonUtil.decodeByJsonObject(resp, "DetailResume").equals("0")) {
+                        if (JsonUtil.decodeByJsonObject(resp, "detail_resume").equals("0")) {
                             mIsSendResumeText.setVisibility(View.GONE);
                         } else {
                             updateData(JsonUtil.decodeByGson(resp, DetailResumeBean.class).getDetailResume());

@@ -2,7 +2,7 @@
 
     <string name="app_chinese_name">御宅工作</string>
 
-    <!--activity_register-->
+    <!--fragment_register-->
     <string name="register_comfirm_pswd_hint">确认密码</string>
     <string name="register_stroll_textview">闲逛</string>
     <string name="register_code_hint">验证码</string>

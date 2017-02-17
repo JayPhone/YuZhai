@@ -3,7 +3,6 @@ package com.yuzhai.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.yuzhai.activity.OrdersPublishedActivity;
 import com.yuzhai.adapter.PublishedRecyclerViewAdapter;
-import com.yuzhai.bean.innerBean.LoginToOrderBean;
+import com.yuzhai.bean.innerBean.FragmentUserVisibleBean;
 import com.yuzhai.bean.responseBean.OrderPublishedBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
@@ -29,6 +28,7 @@ import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -39,9 +39,11 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/8/21.
  */
-public class OrderPublishedFragment extends Fragment implements
+public class OrderPublishedFragment extends BaseLazyLoadFragment implements
         SwipeRefreshLayout.OnRefreshListener,
         PublishedRecyclerViewAdapter.OnPublishedItemClickListener {
+    private static final String TAG = "OrderPublishedFragment";
+
     private SwipeRefreshLayout mPublishedSrl;
     private RecyclerView mPublishedRv;
     private PublishedRecyclerViewAdapter mAdapter;
@@ -51,19 +53,26 @@ public class OrderPublishedFragment extends Fragment implements
     private RequestQueue mRequestQueue;
     private List<OrderPublishedBean.OrderBean> mInitOrders = new ArrayList<>();
     public final static String ORDER_ID = "order_id";
+    private final static String IS_FIRST_TIME = "yes";
+    private final static String NOT_FIRST_TIME = "no";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.order_viewpager_published_layout, container, false);
+        View view = inflater.inflate(R.layout.order_viewpager_published_layout, container, false);
+        //设置当前Fragment的布局已经加载
+        isViewCreated = true;
+        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMainActivity = getActivity();
+        EventBus.getDefault().register(this);
         mCustomApplication = (CustomApplication) mMainActivity.getApplication();
         mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
         initViews();
+        intData();
     }
 
     /**
@@ -90,7 +99,19 @@ public class OrderPublishedFragment extends Fragment implements
     private void intData() {
         if (CustomApplication.isConnect) {
             setRefreshState(true);
-            sendPublishedOrderRequest(mCustomApplication.getToken());
+            sendPublishedOrderRequest(IS_FIRST_TIME);
+        }
+    }
+
+    /**
+     * 懒加载数据
+     */
+    @Override
+    protected void lazyLoadData() {
+        super.lazyLoadData();
+        if (isViewCreated) {
+            setRefreshState(true);
+            sendPublishedOrderRequest(NOT_FIRST_TIME);
         }
     }
 
@@ -122,7 +143,7 @@ public class OrderPublishedFragment extends Fragment implements
     @Override
     public void onRefresh() {
         if (CustomApplication.isConnect) {
-            sendPublishedOrderRequest(mCustomApplication.getToken());
+            sendPublishedOrderRequest(NOT_FIRST_TIME);
         } else {
             setRefreshState(false);
         }
@@ -132,13 +153,14 @@ public class OrderPublishedFragment extends Fragment implements
     /**
      * 发送查看已发布订单请求
      */
-    public void sendPublishedOrderRequest(String token) {
+    public void sendPublishedOrderRequest(String isFirstTime) {
         //获取查看个人已发布订单请求的参数集
-        Map<String, String> params = ParamsGenerateUtil.generatePublishedOrderParam(token);
+        Map<String, String> params = ParamsGenerateUtil.generatePublishedOrderParam(isFirstTime);
 
         //创建查看已发布订单请求
-        CommonRequest publishedOrderRequest = new CommonRequest(IPConfig.orderPublishedAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest publishedOrderRequest = new CommonRequest(getContext(),
+                IPConfig.orderPublishedAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override
@@ -175,30 +197,48 @@ public class OrderPublishedFragment extends Fragment implements
         mPublishedSrl.setRefreshing(state);
     }
 
-    /**
-     * 登录界面或退出登录通过EventBus传递的数据判断消息并作出回应
-     */
-    @Subscribe(threadMode = ThreadMode.POSTING)
-    public void onEventUserLogin(LoginToOrderBean loginToOrderBean) {
-        if (loginToOrderBean.isLogin()) {
-            deleteAll();
-            sendPublishedOrderRequest(mCustomApplication.getToken());
-        } else if (!loginToOrderBean.isLogin()) {
-            deleteAll();
-        }
-    }
+//    /**
+//     * 登录界面或退出登录通过EventBus传递的数据判断消息并作出回应
+//     */
+//    @Subscribe(threadMode = ThreadMode.POSTING)
+//    public void onEventUserLogin(LoginToOrderBean loginToOrderBean) {
+//        if (loginToOrderBean.isLogin()) {
+//            deleteAll();
+//            sendPublishedOrderRequest("yes");
+//        } else if (!loginToOrderBean.isLogin()) {
+//            deleteAll();
+//        }
+//    }
 
     @Override
     public void onPublishedItemClick(int position) {
         Intent orderPublishedDetail = new Intent(mMainActivity, OrdersPublishedActivity.class);
         if (CustomApplication.isConnect) {
-            orderPublishedDetail.putExtra(ORDER_ID, mInitOrders.get(position).getOrderID());
+            orderPublishedDetail.putExtra(ORDER_ID, mInitOrders.get(position).getOrder_id());
         }
         mMainActivity.startActivity(orderPublishedDetail);
+    }
+
+    //当从别的Tab切换回来的时候重新加载数据
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void onEventOrderFragmentVisible(FragmentUserVisibleBean fragmentUserVisibleBean) {
+        if (fragmentUserVisibleBean.isVisible()
+                && isViewCreated
+                && getUserVisibleHint()) {
+            deleteAll();
+            intData();
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.i(TAG, "UserVisible:" + isVisibleToUser);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

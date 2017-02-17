@@ -4,35 +4,27 @@ package com.yuzhai.bean.responseBean;
  * Created by Administrator on 2016/8/27.
  */
 public class LoginRespBean {
-    /**
-     * 用户名
-     */
-    private String userName;
-
-    /**
-     * 用户头像路径
-     */
-    private String userHeadUrl;
-
-    /**
-     * 返回码
-     */
+    //返回码
     private String code;
+    //用户名
+    private String user_name;
+    //用户头像路径
+    private String user_head_url;
 
-    public String getUserName() {
-        return userName;
+    public String getUser_name() {
+        return user_name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 
-    public String getUserHeadUrl() {
-        return userHeadUrl;
+    public String getUser_head_url() {
+        return user_head_url;
     }
 
-    public void setUserHeadUrl(String userHeadUrl) {
-        this.userHeadUrl = userHeadUrl;
+    public void setUser_head_url(String user_head_url) {
+        this.user_head_url = user_head_url;
     }
 
     public String getCode() {

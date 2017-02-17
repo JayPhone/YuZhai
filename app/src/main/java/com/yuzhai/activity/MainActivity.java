@@ -5,10 +5,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,13 +14,12 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.bumptech.glide.Glide;
-import com.yuzhai.adapter.MainViewPagerAdapter;
 import com.yuzhai.bean.innerBean.BaseUserInfoBean;
 import com.yuzhai.bean.innerBean.UserInfoBean;
 import com.yuzhai.http.IPConfig;
@@ -31,7 +28,6 @@ import com.yuzhai.fragment.HomeFragment;
 import com.yuzhai.fragment.OrderFragment;
 import com.yuzhai.fragment.PublishFragment;
 import com.yuzhai.global.CustomApplication;
-import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.view.CircleImageView;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
@@ -40,15 +36,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Administrator on 2016/6/10.
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        View.OnClickListener,
+        NavigationView.OnNavigationItemSelectedListener,
+        BottomNavigationBar.OnTabSelectedListener {
     private CustomApplication mCustomApplication;
-    private RequestQueue mRequestQueue;
 
     private DrawerLayout mDrawLayout;
     private NavigationView mNavigationView;
@@ -57,19 +52,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mUserNameTv;
     private Button mLoginAndRegButton;
 
+    private BottomNavigationBar mBottomNavigationBar;
+
     private HomeFragment mHomeFragment;
     private OrderFragment mOrderFragment;
     private PublishFragment mPublishFragment;
     private ContactFragment mContactFragment;
+    private Fragment mCurrentFragment;
 
     private String mUserHeadURL;
     private String mUserName;
     private long mClickTime = 0;
-
-    private ViewPager mViewPager;
-    private MainViewPagerAdapter mViewPagerAdapter;
-    private TabLayout mTabLayout;
-    private List<Fragment> mFragmentList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //注册EventBus
         EventBus.getDefault().register(this);
         mCustomApplication = (CustomApplication) getApplication();
-        mRequestQueue = RequestQueueSingleton.getRequestQueue(this);
 
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
@@ -90,6 +82,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //初始化组件
         initViews();
+        //初始化数据
+        initData();
+    }
+
+    private void initData() {
+        if (mHomeFragment == null) {
+            mHomeFragment = HomeFragment.newInstance();
+        }
+
+        if (!mHomeFragment.isAdded()) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_content, mHomeFragment)
+                    .commit();
+
+            mCurrentFragment = mHomeFragment;
+        }
     }
 
     public void initViews() {
@@ -102,49 +110,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 //        });
 
+        //侧边导航栏
         mNavigationView = (NavigationView) findViewById(R.id.navigation);
         mNavigationView.setItemIconTintList(null);
 
-        mFragmentList = new ArrayList<>();
-        mHomeFragment = new HomeFragment();
-        mOrderFragment = new OrderFragment();
-        mPublishFragment = new PublishFragment();
-        mContactFragment = new ContactFragment();
-
-        mFragmentList.add(mHomeFragment);
-        mFragmentList.add(mOrderFragment);
-        mFragmentList.add(mPublishFragment);
-        mFragmentList.add(mContactFragment);
-
-        mViewPager = (ViewPager) findViewById(R.id.main_view_pager);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                changeTabFocus(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        mViewPagerAdapter = new MainViewPagerAdapter(this, getSupportFragmentManager(), mFragmentList);
-        mViewPager.setAdapter(mViewPagerAdapter);
-        mTabLayout = (TabLayout) findViewById(R.id.main_tab);
-        mTabLayout.setupWithViewPager(mViewPager);
-        mTabLayout.setSelectedTabIndicatorHeight(0);
-        for (int i = 0; i < mTabLayout.getTabCount(); i++) {
-            TabLayout.Tab tab = mTabLayout.getTabAt(i);
-            if (tab != null) {
-                tab.setCustomView(mViewPagerAdapter.getTabView(i));
-            }
-        }
-        changeTabFocus(0);
+        //底部导航栏
+        mBottomNavigationBar = (BottomNavigationBar) findViewById(R.id.main_nav_bar);
+        mBottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
+        mBottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
+        mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.home, "御宅")
+                .setActiveColorResource(R.color.mainColor));
+        mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.order, "订单")
+                .setActiveColorResource(R.color.mainColor));
+        mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.publish, "发布")
+                .setActiveColorResource(R.color.mainColor));
+        mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.contact, "聊天")
+                .setActiveColorResource(R.color.mainColor));
+        mBottomNavigationBar.setFirstSelectedPosition(0).initialise();
+        mBottomNavigationBar.setTabSelectedListener(this);
 
         //菜单
         View headerView = mNavigationView.inflateHeaderView(R.layout.navigation_menu_header_layout);
@@ -164,25 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initMenuLayout();
     }
 
-    public void changeTabFocus(int position) {
-        ImageView tabImage;
-        TextView tabText;
-
-        for (int tabIndex = 0; tabIndex < mTabLayout.getTabCount(); tabIndex++) {
-            tabImage = (ImageView) mTabLayout.getTabAt(tabIndex).getCustomView().findViewById(R.id.tab_image);
-            tabText = (TextView) mTabLayout.getTabAt(tabIndex).getCustomView().findViewById(R.id.tab_text);
-            if (tabIndex == position) {
-                Glide.with(this).load(mViewPagerAdapter.focusIcons[tabIndex]).into(tabImage);
-                tabText.setTextColor(ContextCompat.getColor(this, R.color.mainColor));
-            } else {
-                Glide.with(this).load(mViewPagerAdapter.icons[tabIndex]).into(tabImage);
-                tabText.setTextColor(ContextCompat.getColor(this, R.color.color_616161));
-            }
-        }
-    }
-
-    //初始化布局的事件和数据
-    public void initMenuLayout() {
+    private void initMenuLayout() {
         //已成功登录
         if (mCustomApplication.isLogin()) {
             mLoginAndRegButton.setVisibility(View.INVISIBLE);
@@ -203,6 +168,92 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mNavigationView.getMenu().clear();
             mNavigationView.inflateMenu(R.menu.drawer_no_login_menu);
         }
+    }
+
+    @Override
+    public void onTabSelected(int position) {
+        switch (position) {
+            case 0:
+                clickHomeTab();
+                break;
+            case 1:
+                clickOrderTab();
+                break;
+            case 2:
+                clickPublishTab();
+                break;
+            case 3:
+                clickContactTab();
+                break;
+        }
+    }
+
+    @Override
+    public void onTabUnselected(int position) {
+
+    }
+
+    @Override
+    public void onTabReselected(int position) {
+
+    }
+
+    private void clickHomeTab() {
+        if (mHomeFragment == null) {
+            mHomeFragment = HomeFragment.newInstance();
+        }
+
+        showFragment(mHomeFragment);
+    }
+
+    private void clickOrderTab() {
+        if (mOrderFragment == null) {
+            mOrderFragment = OrderFragment.newInstance();
+        }
+
+        showFragment(mOrderFragment);
+    }
+
+    private void clickPublishTab() {
+        if (mPublishFragment == null) {
+            mPublishFragment = PublishFragment.newInstance();
+        }
+
+        showFragment(mPublishFragment);
+    }
+
+    private void clickContactTab() {
+        if (mContactFragment == null) {
+            mContactFragment = ContactFragment.newInstance();
+        }
+
+        showFragment(mContactFragment);
+    }
+
+
+    /**
+     * 点击下方导航后，显示对应的Fragment
+     *
+     * @param fragment 要显示的Fragment
+     */
+    private void showFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (mCurrentFragment == fragment) {
+            return;
+        }
+
+        if (!fragment.isAdded()) {
+            transaction.hide(mCurrentFragment)
+                    .add(R.id.main_content, fragment).commit();
+        } else {
+            transaction.hide(mCurrentFragment)
+                    .show(fragment).commit();
+        }
+        //设置前一个Fragment不显示在用户界面
+        mCurrentFragment.setUserVisibleHint(false);
+        mCurrentFragment = fragment;
+        //设置当前Fragment显示在用户界面
+        mCurrentFragment.setUserVisibleHint(true);
     }
 
     @Override
@@ -251,8 +302,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.menu_login_register:
-                Intent login = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(login);
+                Intent login_register = new Intent(MainActivity.this, LoginAndRegisterActivity.class);
+                startActivity(login_register);
                 break;
         }
     }
@@ -315,13 +366,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //解除注册EventBus
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mPublishFragment.onActivityResult(requestCode, resultCode, data);
@@ -340,5 +384,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //解除注册EventBus
+        EventBus.getDefault().unregister(this);
     }
 }

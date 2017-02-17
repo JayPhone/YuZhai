@@ -14,8 +14,10 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,8 +33,9 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.yuzhai.activity.LoginActivity;
+import com.yuzhai.activity.LoginAndRegisterActivity;
 import com.yuzhai.bean.requestBean.PublishBean;
+import com.yuzhai.bean.responseBean.PublishOrderRespBean;
 import com.yuzhai.http.IPConfig;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.FileUploadRequest;
@@ -41,6 +44,7 @@ import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.util.BitmapUtil;
 import com.yuzhai.util.FileUtil;
 import com.yuzhai.util.GetPathUtil;
+import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
@@ -54,11 +58,16 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
 import permissions.dispatcher.RuntimePermissions;
 
+import static com.android.volley.VolleyLog.TAG;
+import static com.yuzhai.util.JsonUtil.decodeByGson;
+
 /**
  * Created by Administrator on 2016/7/13.
  */
 @RuntimePermissions
 public class PublishFragment extends Fragment implements View.OnTouchListener, View.OnClickListener {
+    private static final String TAG = "PublishFragment";
+
     //全局变量
     private Activity mMainActivity;
     private CustomApplication mCustomApplication;
@@ -66,7 +75,6 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
     //组件引用
     private Toolbar mToolbar;
-    private TextView mTitleText;
     private EditText mTitleEdit;
     private EditText mDescriptionEdit;
     private LinearLayout mImagesPreviewLayout;
@@ -92,8 +100,16 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     private final int CAMERA_REQUEST = 1;
     private final int IMAGE_PICK_REQUEST = 2;
 
-    @Override
+    public static PublishFragment newInstance() {
 
+        Bundle args = new Bundle();
+
+        PublishFragment fragment = new PublishFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mMainActivity = getActivity();
         return inflater.inflate(R.layout.fragment_publish, container, false);
@@ -112,10 +128,16 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     public void initViews() {
         //查找引用
         mToolbar = (Toolbar) getView().findViewById(R.id.publish_toolbar);
+        mToolbar.setTitle("发布需求");
         mToolbar.inflateMenu(R.menu.publish_menu);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DrawerLayout drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer);
+                drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
 
-        mTitleText = (TextView) getView().findViewById(R.id.title_text);
-        mTitleText.setText("发布需求");
         mTitleEdit = (EditText) getView().findViewById(R.id.need_title);
         mDescriptionEdit = (EditText) getView().findViewById(R.id.need_content);
         mImagesPreviewLayout = (LinearLayout) getView().findViewById(R.id.images_preview);
@@ -328,8 +350,8 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     sb.setAction("登录", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent login = new Intent(mMainActivity, LoginActivity.class);
-                            startActivity(login);
+                            Intent login_register = new Intent(mMainActivity, LoginAndRegisterActivity.class);
+                            startActivity(login_register);
                         }
                     }).show();
                 } else {
@@ -346,8 +368,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                             type,
                             deadLine,
                             mTelEdit.getText().toString(),
-                            mRewardEdit.getText().toString(),
-                            mCustomApplication.getToken());
+                            mRewardEdit.getText().toString());
                 }
                 break;
         }
@@ -368,8 +389,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                                         String type,
                                         String deadline,
                                         String tel,
-                                        String reward,
-                                        String token) {
+                                        String reward) {
 
         if (checkPublishData(title, description, imagePathsList, type, deadline, tel, reward)) {
             //显示正在发布对话框
@@ -384,23 +404,34 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
             Log.i("publish_params", params.toString());
 
+            Log.i("publish_cookie", mCustomApplication.getCookie());
             //创建请求
-            FileUploadRequest publishOrderRequest = new FileUploadRequest(IPConfig.publishOrderAddress + "?token=" + token, null, params, "images", generateUploadFile(), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String resp) {
-                    Log.i("publish_order_resp", resp);
-                    dismissProgressDialog();
-                    clearAll();
-                    UnRepeatToast.showToast(mMainActivity, "发布成功");
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    dismissProgressDialog();
-                    UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
-                }
-            });
-
+            FileUploadRequest publishOrderRequest = new FileUploadRequest(getContext(),
+                    IPConfig.publishOrderAddress,
+                    mCustomApplication.generateHeaderMap(),
+                    params,
+                    "files",
+                    generateUploadFile(),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String resp) {
+                            Log.i("publish_order_resp", resp);
+                            PublishOrderRespBean publishOrderRespBean =
+                                    JsonUtil.decodeByGson(resp, PublishOrderRespBean.class);
+                            if (publishOrderRespBean.getCode().equals("1")) {
+                                dismissProgressDialog();
+                                clearAll();
+                                UnRepeatToast.showToast(mMainActivity, "发布成功");
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            dismissProgressDialog();
+                            UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
+                        }
+                    });
             //添加到请求队列
             mRequestQueue.add(publishOrderRequest);
         }
@@ -530,5 +561,11 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // NOTE: 将权限处理委托给生成的方法
         PublishFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.i(TAG, "UserVisible:" + isVisibleToUser);
     }
 }

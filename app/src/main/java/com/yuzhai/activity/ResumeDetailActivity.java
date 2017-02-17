@@ -93,7 +93,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
     private void initData() {
         if (CustomApplication.isConnect) {
-            sendDetailResumeRequest(mResumeId, mCustomApplication.getToken());
+            sendDetailResumeRequest(mResumeId);
         }
     }
 
@@ -116,17 +116,16 @@ public class ResumeDetailActivity extends AppCompatActivity {
 
     /**
      * 发送查看详细简历请求
-     *
-     * @param token
      */
-    public void sendDetailResumeRequest(String resumeId, String token) {
+    public void sendDetailResumeRequest(String resumeId) {
         //生成投递简历请求的参数
-        Map<String, String> param = ParamsGenerateUtil.generateDetailResumeParams(resumeId, token);
+        Map<String, String> param = ParamsGenerateUtil.generateDetailResumeParams(resumeId);
         Log.i("param", param.toString());
 
         //生成查看详细简历请求
-        CommonRequest sendDetailResumeRequest = new CommonRequest(IPConfig.resumeDetailAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest sendDetailResumeRequest = new CommonRequest(this,
+                IPConfig.resumeDetailAddress,
+                mCustomApplication.generateHeaderMap(),
                 param,
                 new Response.Listener<String>() {
                     @Override

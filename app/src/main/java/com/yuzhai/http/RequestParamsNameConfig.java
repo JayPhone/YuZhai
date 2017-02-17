@@ -7,10 +7,6 @@ package com.yuzhai.http;
  */
 public class RequestParamsNameConfig {
     public class BaseParam {
-        /**
-         * 终端标识
-         */
-        public final static String TOKEN = "token";
     }
 
     /**
@@ -46,10 +42,6 @@ public class RequestParamsNameConfig {
          */
         public final static String USERPHONE = "userPhone";
         /**
-         * 验证码
-         */
-        public final static String TEMVERIFY = "temVerify";
-        /**
          * 注册密码
          */
         public final static String USERPSW = "userPsw";
@@ -73,10 +65,6 @@ public class RequestParamsNameConfig {
          * 用户手机号码
          */
         public final static String USERPHONE = "userPhone";
-        /**
-         * 验证码
-         */
-        public final static String TEMVERIFY = "temVerify";
         /**
          * 新密码
          */
@@ -119,6 +107,10 @@ public class RequestParamsNameConfig {
          * 项目类型
          */
         public final static String ITEMTYPE = "itemType";
+        /**
+         * 是否第一次访问
+         */
+        public final static String FIRST = "first";
     }
 
     /**
@@ -203,5 +195,12 @@ public class RequestParamsNameConfig {
      */
     public class DetailResumeParam extends BaseParam {
         public final static String USER_PHONE = "userPhone";
+    }
+
+    /**
+     * 查询个人已发布订单参数
+     */
+    public class PublishedOrderParam extends BaseParam {
+        public final static String FIRST = "first";
     }
 }

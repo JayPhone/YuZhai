@@ -15,16 +15,13 @@ public class ParamsGenerateUtil {
      *
      * @param userPhone 登录的用户名
      * @param userPsw   登录的密码
-     * @param token     标识
      * @return 返回登陆的请求参数集
      */
     public static Map<String, String> generateLoginParams(String userPhone,
-                                                          String userPsw,
-                                                          String token) {
+                                                          String userPsw) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.LoginParam.USERPHONE, userPhone);
         params.put(RequestParamsNameConfig.LoginParam.USERPSWD, userPsw);
-        params.put(RequestParamsNameConfig.LoginParam.TOKEN, token);
         return params;
     }
 
@@ -32,14 +29,11 @@ public class ParamsGenerateUtil {
      * 生成获取验证码请求的参数集
      *
      * @param userPhone 获取验证码的手机号
-     * @param token     标识
      * @return 返回获取验证码的请求参数集
      */
-    public static Map<String, String> generateVerifyParams(String userPhone,
-                                                           String token) {
+    public static Map<String, String> generateVerifyParams(String userPhone) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.VerifyParam.USERPHONE, userPhone);
-        params.put(RequestParamsNameConfig.VerifyParam.TOKEN, token);
         return params;
     }
 
@@ -47,20 +41,14 @@ public class ParamsGenerateUtil {
      * 生成注册请求的参数集
      *
      * @param regPhone  注册号码
-     * @param checkCode 验证码
      * @param regPsw    注册密码
-     * @param token     标识
      * @return 返回注册请求的参数集
      */
     public static Map<String, String> generateRegisterParams(String regPhone,
-                                                             String checkCode,
-                                                             String regPsw,
-                                                             String token) {
+                                                             String regPsw) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.RegisterParam.USERPHONE, regPhone);
-        params.put(RequestParamsNameConfig.RegisterParam.TEMVERIFY, checkCode);
         params.put(RequestParamsNameConfig.RegisterParam.USERPSW, regPsw);
-        params.put(RequestParamsNameConfig.RegisterParam.TOKEN, token);
         return params;
     }
 
@@ -68,14 +56,11 @@ public class ParamsGenerateUtil {
      * 生成重命名用户名的参数集
      *
      * @param newName 新用户名
-     * @param token   标识
      * @return 返回重命名用户名请求的参数集
      */
-    public static Map<String, String> generateReNameParam(String newName,
-                                                          String token) {
+    public static Map<String, String> generateReNameParam(String newName) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.ReNameParam.NAME, newName);
-        params.put(RequestParamsNameConfig.ReNameParam.TOKEN, token);
         return params;
     }
 
@@ -83,20 +68,14 @@ public class ParamsGenerateUtil {
      * 生成忘记密码请求的参数集
      *
      * @param regPhone  用户手机号码
-     * @param checkCode 验证码
      * @param regPsw    新密码
-     * @param token     标识
      * @return 返回忘记密码请求的参数集
      */
     public static Map<String, String> generateForgetPswParams(String regPhone,
-                                                              String checkCode,
-                                                              String regPsw,
-                                                              String token) {
+                                                              String regPsw) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.ForgetPswParam.USERPHONE, regPhone);
-        params.put(RequestParamsNameConfig.ForgetPswParam.TEMVERIFY, checkCode);
         params.put(RequestParamsNameConfig.ForgetPswParam.USERPSW, regPsw);
-        params.put(RequestParamsNameConfig.ForgetPswParam.TOKEN, token);
         return params;
     }
 
@@ -105,18 +84,15 @@ public class ParamsGenerateUtil {
      *
      * @param oldPsw 新密码
      * @param newPsw 旧密码
-     * @param token  标识
      * @return 返回修改密码请求的参数集
      */
     public static Map<String, String> generateAlterPswParams(String oldPsw,
                                                              String newPsw,
-                                                             String comPsw,
-                                                             String token) {
+                                                             String comPsw) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.AlterPswParam.OLDPSW, oldPsw);
         params.put(RequestParamsNameConfig.AlterPswParam.NEWPSW, newPsw);
         params.put(RequestParamsNameConfig.AlterPswParam.COMPSW, comPsw);
-        params.put(RequestParamsNameConfig.AlterPswParam.TOKEN, token);
         return params;
     }
 
@@ -124,29 +100,25 @@ public class ParamsGenerateUtil {
      * 生成取消已发布订单请求的参数集
      *
      * @param publishId 已发布的订单号
-     * @param token     标识
      * @return 返回取消已发布订单请求的参数集
      */
-    public static Map<String, String> generateCancelPublishedOrderParams(String publishId,
-                                                                         String token) {
+    public static Map<String, String> generateCancelPublishedOrderParams(String publishId) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.CancelPublishedOrderParam.ORDER_ID, publishId);
-        params.put(RequestParamsNameConfig.CancelPublishedOrderParam.TOKEN, token);
         return params;
     }
 
     /**
      * 生成通过类型查询订单请求的参数集
      *
-     * @param itemType 需求类型
-     * @param token    标识
+     * @param itemType    需求类型
+     * @param isFirstTime 是否第一次访问
      * @return 返回通过类型查询订单请求的参数集
      */
-    public static Map<String, String> generateOrdersByTypeParams(String itemType,
-                                                                 String token) {
+    public static Map<String, String> generateOrdersByTypeParams(String itemType, String isFirstTime) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.OrdersByTypeParam.ITEMTYPE, itemType);
-        params.put(RequestParamsNameConfig.OrdersByTypeParam.TOKEN, token);
+        params.put(RequestParamsNameConfig.OrdersByTypeParam.FIRST, isFirstTime);
         return params;
     }
 
@@ -154,14 +126,11 @@ public class ParamsGenerateUtil {
      * 生成申请接收订单请求的参数集
      *
      * @param orderId 订单ID
-     * @param token   标识
      * @return 返回申请接收订单请求的参数集
      */
-    public static Map<String, String> generateApplyOrderParams(String orderId,
-                                                               String token) {
+    public static Map<String, String> generateApplyOrderParams(String orderId) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.ApplyOrderParam.ORDERID, orderId);
-        params.put(RequestParamsNameConfig.ApplyOrderParam.TOKEN, token);
         return params;
     }
 
@@ -196,60 +165,52 @@ public class ParamsGenerateUtil {
      * 生成查看详细订单请求的参数集
      *
      * @param orderId
-     * @param token
      * @return
      */
-    public static Map<String, String> generateOrderDetailParam(String orderId, String token) {
+    public static Map<String, String> generateOrderDetailParam(String orderId) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.OrderDetailParam.ORDERID, orderId);
-        params.put(RequestParamsNameConfig.OrderDetailParam.TOKEN, token);
         return params;
     }
 
     /**
      * 生成退出登录请求的参数集
      *
-     * @param token
      * @return
      */
-    public static Map<String, String> generateExitLoginParam(String token) {
-        Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
-        return params;
-    }
+//    public static Map<String, String> generateExitLoginParam() {
+//        Map<String, String> params = new HashMap<>();
+//        return params;
+//    }
 
     /**
      * 生成查看个人已发布的订单请求的参数集
      *
-     * @param token
      * @return
      */
-    public static Map<String, String> generatePublishedOrderParam(String token) {
+    public static Map<String, String> generatePublishedOrderParam(String isFirstTime) {
         Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
+        params.put(RequestParamsNameConfig.PublishedOrderParam.FIRST, isFirstTime);
         return params;
     }
 
     /**
      * 生成查看个人已接收的订单请求的参数集
      *
-     * @param token
      * @return
      */
-    public static Map<String, String> generateAcceptedOrderParam(String token) {
-        Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
-        return params;
-    }
+//    public static Map<String, String> generateAcceptedOrderParam() {
+//        Map<String, String> params = new HashMap<>();
+//        return params;
+//    }
 
     /**
      * 生成投递简历请求的参数
      *
      * @param sendResumeBean
-     * @param token
      * @return
      */
-    public static Map<String, String> generateSendResumeParam(SendResumeBean sendResumeBean, String token) {
+    public static Map<String, String> generateSendResumeParam(SendResumeBean sendResumeBean) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.SendResumeParam.NAME, sendResumeBean.getName());
         params.put(RequestParamsNameConfig.SendResumeParam.SEX, sendResumeBean.getSex());
@@ -260,7 +221,6 @@ public class ParamsGenerateUtil {
         params.put(RequestParamsNameConfig.SendResumeParam.SKILL, sendResumeBean.getSkill());
         params.put(RequestParamsNameConfig.SendResumeParam.WORK_EXPERIENCE, sendResumeBean.getWorkExperience());
         params.put(RequestParamsNameConfig.SendResumeParam.SELF_EVALUATION, sendResumeBean.getSelfEvaluation());
-        params.put(RequestParamsNameConfig.SendResumeParam.TOKEN, token);
         return params;
     }
 
@@ -268,38 +228,32 @@ public class ParamsGenerateUtil {
      * 生成通过类型查询简历请求的参数集
      *
      * @param type
-     * @param token
      * @return
      */
-    public static Map<String, String> generateResumesByTypeParams(String type, String token) {
+    public static Map<String, String> generateResumesByTypeParams(String type) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.ResumesByTypeParam.TYPE, type);
-        params.put(RequestParamsNameConfig.ResumesByTypeParam.TOKEN, token);
         return params;
     }
 
     /**
      * 生成查看个人简历请求的参数集
      *
-     * @param token
      * @return
      */
-    public static Map<String, String> generatePersonalResumeParams(String token) {
-        Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
-        return params;
-    }
+//    public static Map<String, String> generatePersonalResumeParams() {
+//        Map<String, String> params = new HashMap<>();
+//        return params;
+//    }
 
     /**
      * 生成查看详细简历请求的参数集
      *
-     * @param token
      * @return
      */
-    public static Map<String, String> generateDetailResumeParams(String resumeId, String token) {
+    public static Map<String, String> generateDetailResumeParams(String resumeId) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.DetailResumeParam.USER_PHONE, resumeId);
-        params.put(RequestParamsNameConfig.BaseParam.TOKEN, token);
         return params;
     }
 

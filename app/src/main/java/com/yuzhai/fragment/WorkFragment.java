@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,8 +35,10 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/8/22.
  */
-public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+public class WorkFragment extends BaseLazyLoadFragment implements SwipeRefreshLayout.OnRefreshListener,
         WorkRecyclerViewAdapter.OnWorkItemClickListener {
+    private static final String TAG = "WorkFragment";
+
     private SwipeRefreshLayout mWorkSrl;
     private RecyclerView mWorkRv;
     private WorkRecyclerViewAdapter mAdapter;
@@ -51,11 +52,8 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private String mType = "";
     private final static String TYPE = "type";
     public final static String ORDER_ID = "order_id";
-
-
-    /**
-     * 测试数据
-     */
+    private final static String IS_FIRST_TIME = "yes";
+    private final static String NOT_FIRST_TIME = "no";
 
     /**
      * 获取WorkFragment实例
@@ -72,7 +70,9 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.category_viewpager_work_layout, container, false);
+        View view = inflater.inflate(R.layout.category_viewpager_work_layout, container, false);
+        isViewCreated = true;
+        return view;
     }
 
     @Override
@@ -112,7 +112,16 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private void intData() {
         if (CustomApplication.isConnect) {
             setRefreshState(true);
-            sendOrdersByTypeRequest(mType, mCustomApplication.getToken());
+            sendOrdersByTypeRequest(mType,IS_FIRST_TIME);
+        }
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        super.lazyLoadData();
+        if (isViewCreated) {
+            deleteAll();
+            intData();
         }
     }
 
@@ -120,7 +129,7 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         /*正常代码*/
         if (CustomApplication.isConnect) {
-            sendOrdersByTypeRequest(mType, mCustomApplication.getToken());
+            sendOrdersByTypeRequest(mType,NOT_FIRST_TIME);
         } else {
             setRefreshState(false);
         }
@@ -156,14 +165,15 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      *
      * @param type 项目类型
      */
-    public void sendOrdersByTypeRequest(String type, String token) {
+    public void sendOrdersByTypeRequest(String type, String isFirstTime) {
         //获取通过类型查询订单请求的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateOrdersByTypeParams(type, token);
+        Map<String, String> params = ParamsGenerateUtil.generateOrdersByTypeParams(type, isFirstTime);
         Log.i("work_params", params.toString());
 
         //创建通过类型查询订单请求
-        CommonRequest ordersByTypeRequest = new CommonRequest(IPConfig.ordersByTypeAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest ordersByTypeRequest = new CommonRequest(getContext(),
+                IPConfig.ordersByTypeAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override
@@ -204,8 +214,14 @@ public class WorkFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onWorkItemClick(int position) {
         Intent workDetail = new Intent(mMainActivity, WorkDetailActivity.class);
         if (CustomApplication.isConnect) {
-            workDetail.putExtra(ORDER_ID, mInitOrders.get(position).getOrderID());
+            workDetail.putExtra(ORDER_ID, mInitOrders.get(position).getOrder_id());
         }
         startActivity(workDetail);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.i(TAG, "UserVisible:" + isVisibleToUser);
     }
 }

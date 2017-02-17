@@ -9,10 +9,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,7 +34,10 @@ import java.util.List;
  * Created by Administrator on 2016/6/10.
  */
 public class HomeFragment extends Fragment {
+    private static final String TAG = "HomeFragment";
+
     private Activity mainActivity;
+    private FrameLayout statusBar;
     //搜索框
     private TextView searchView;
     //用于弹出个人信息面板
@@ -80,6 +85,8 @@ public class HomeFragment extends Fragment {
 
     //初始化标题栏
     public void initToolbar() {
+        statusBar = (FrameLayout) getView().findViewById(R.id.home_status_bar);
+        statusBar.getBackground().mutate().setAlpha(0);
         toolbar = (RelativeLayout) getView().findViewById(R.id.home_toolbar);
         toolbar.getBackground().mutate().setAlpha(0);
         navigationImage = (ImageView) getView().findViewById(R.id.menu_image);
@@ -106,9 +113,12 @@ public class HomeFragment extends Fragment {
             @Override
             public void onTranslucent(int h, int v, int oldH, int oldV) {
                 if ((float) v <= indicatedFlipper.getMeasuredHeight() - toolbar.getMeasuredHeight()) {
+                    statusBar.getBackground().mutate().setAlpha(
+                            (int) ((float) v / (indicatedFlipper.getMeasuredHeight() - toolbar.getMeasuredHeight()) * 255));
                     toolbar.getBackground().mutate().setAlpha(
                             (int) ((float) v / (indicatedFlipper.getMeasuredHeight() - toolbar.getMeasuredHeight()) * 255));
                 } else if (oldV > indicatedFlipper.getMeasuredHeight() - toolbar.getMeasuredHeight()) {
+                    statusBar.getBackground().mutate().setAlpha(255);
                     toolbar.getBackground().mutate().setAlpha(255);
                 }
             }
@@ -148,5 +158,11 @@ public class HomeFragment extends Fragment {
         mItemTouchHelperCallback = new ItemTouchHelperCallback(categoryAdapter);
         mItemTouchHelper = new ItemTouchHelper(mItemTouchHelperCallback);
         mItemTouchHelper.attachToRecyclerView(categoryRecyclerView);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.i(TAG, "UserVisible:" + isVisibleToUser);
     }
 }

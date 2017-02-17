@@ -65,7 +65,7 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
 
     private void initData() {
         if (CustomApplication.isConnect) {
-            sendPublishedOrderDetailRequest(mOrderId, mCustomApplication.getToken());
+            sendPublishedOrderDetailRequest(mOrderId);
         } else {
             initViews(null);
         }
@@ -132,7 +132,7 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
             public void onClick(DialogInterface dialog, int which) {
                 //发送取消已发布订单请求
                 if (CustomApplication.isConnect) {
-                    sendCancelPublishedRequest(mOrder.getOrderID(), mCustomApplication.getToken());
+                    sendCancelPublishedRequest(mOrder.getOrderID());
                 }
             }
         });
@@ -162,13 +162,14 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
     /**
      * 发送取消已发布订单请求
      */
-    private void sendCancelPublishedRequest(String publishId, String token) {
+    private void sendCancelPublishedRequest(String publishId) {
         //获取取消已发布订单请求的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateCancelPublishedOrderParams(publishId, token);
+        Map<String, String> params = ParamsGenerateUtil.generateCancelPublishedOrderParams(publishId);
 
         //创建取消已发布订单请求
-        CommonRequest cancelPublishedRequest = new CommonRequest(IPConfig.cancelPublishedOrderAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest cancelPublishedRequest = new CommonRequest(this,
+                IPConfig.cancelPublishedOrderAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override
@@ -198,14 +199,14 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
      * 发送查看详细订单的请求
      *
      * @param orderId
-     * @param token
      */
-    public void sendPublishedOrderDetailRequest(String orderId, String token) {
+    public void sendPublishedOrderDetailRequest(String orderId) {
         //生成详细订单的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId, token);
+        Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId);
 
-        CommonRequest orderDetailRequest = new CommonRequest(IPConfig.orderDetailAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest orderDetailRequest = new CommonRequest(this,
+                IPConfig.orderDetailAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override

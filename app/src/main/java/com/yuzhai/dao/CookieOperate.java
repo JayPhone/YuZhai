@@ -8,9 +8,9 @@ import android.content.SharedPreferences;
  */
 public class CookieOperate {
 
-    public static String COOKIE = "cookie";
-    private SharedPreferences.Editor cookieEdit = null;
-    private SharedPreferences cookiePreferences = null;
+    private static String COOKIE = "cookie";
+    private SharedPreferences.Editor cookieEdit;
+    private SharedPreferences cookiePreferences;
 
     public CookieOperate(Context context) {
         cookiePreferences = context.getSharedPreferences("cookie_preferences", Context.MODE_PRIVATE);
@@ -25,8 +25,7 @@ public class CookieOperate {
 
     //获取cookie
     public String getCookie() {
-        String cookie = cookiePreferences.getString(COOKIE, null);
-        return cookie;
+        return cookiePreferences.getString(COOKIE, null);
     }
 
     //清除cookie

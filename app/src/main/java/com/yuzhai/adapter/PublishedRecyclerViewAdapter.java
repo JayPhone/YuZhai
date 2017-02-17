@@ -88,7 +88,7 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
     public void onBindViewHolder(PublishedRecyclerViewHolder holder, final int position) {
         if (CustomApplication.isConnect) {
             holder.mStatusText.setText(mOrder.get(position).getStatus());
-            holder.mOrderIdText.setText(mOrder.get(position).getOrderID());
+            holder.mOrderIdText.setText(mOrder.get(position).getOrder_id());
             holder.mDateText.setText(mOrder.get(position).getDate());
             holder.mTitleText.setText(mOrder.get(position).getTitle());
             holder.mDeadlineText.setText(mOrder.get(position).getDeadline());

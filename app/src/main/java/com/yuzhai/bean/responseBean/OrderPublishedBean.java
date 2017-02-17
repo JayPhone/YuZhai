@@ -6,98 +6,98 @@ import java.util.List;
  * Created by Administrator on 2016/8/28.
  */
 public class OrderPublishedBean {
-    private List<OrderPublishedBean.OrderBean> Orders;
+    private List<OrderPublishedBean.OrderBean> orders;
 
     public List<OrderPublishedBean.OrderBean> getOrders() {
-        return Orders;
+        return orders;
     }
 
     public void setOrders(List<OrderPublishedBean.OrderBean> orders) {
-        this.Orders = orders;
+        this.orders = orders;
     }
 
     @Override
     public String toString() {
         return "OrderPublishedBean{" +
-                "Orders=" + Orders +
+                "Orders=" + orders +
                 '}';
     }
 
     public class OrderBean {
-        private String Status;
-        private String Reward;
-        private String Date;
-        private String OrderID;
-        private String Type;
-        private String Deadline;
-        private String Title;
+        private String status;
+        private String reward;
+        private String date;
+        private String order_id;
+        private String type;
+        private String deadline;
+        private String title;
 
         public String getStatus() {
-            return Status;
+            return status;
         }
 
         public void setStatus(String status) {
-            Status = status;
+            this.status = status;
         }
 
         public String getReward() {
-            return Reward;
+            return reward;
         }
 
         public void setReward(String reward) {
-            Reward = reward;
+            this.reward = reward;
         }
 
         public String getDate() {
-            return Date;
+            return date;
         }
 
         public void setDate(String date) {
-            Date = date;
+            this.date = date;
         }
 
-        public String getOrderID() {
-            return OrderID;
+        public String getOrder_id() {
+            return order_id;
         }
 
-        public void setOrderID(String orderID) {
-            OrderID = orderID;
+        public void setOrder_id(String order_id) {
+            this.order_id = order_id;
         }
 
         public String getType() {
-            return Type;
+            return type;
         }
 
         public void setType(String type) {
-            Type = type;
+            this.type = type;
         }
 
         public String getDeadline() {
-            return Deadline;
+            return deadline;
         }
 
         public void setDeadline(String deadline) {
-            Deadline = deadline;
+            this.deadline = deadline;
         }
 
         public String getTitle() {
-            return Title;
+            return title;
         }
 
         public void setTitle(String title) {
-            Title = title;
+            this.title = title;
         }
 
         @Override
         public String toString() {
             return "OrderBean{" +
-                    "Status='" + Status + '\'' +
-                    ", Reward='" + Reward + '\'' +
-                    ", Date='" + Date + '\'' +
-                    ", OrderID='" + OrderID + '\'' +
-                    ", Type='" + Type + '\'' +
-                    ", Deadline='" + Deadline + '\'' +
-                    ", Title='" + Title + '\'' +
+                    "status='" + status + '\'' +
+                    ", reward='" + reward + '\'' +
+                    ", date='" + date + '\'' +
+                    ", order_id='" + order_id + '\'' +
+                    ", type='" + type + '\'' +
+                    ", deadline='" + deadline + '\'' +
+                    ", title='" + title + '\'' +
                     '}';
         }
     }

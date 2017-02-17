@@ -48,7 +48,6 @@ public class WelcomeActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-
         //获取权限
         WelcomeActivityPermissionsDispatcher.showWriteExternalStorageWithCheck(WelcomeActivity.this);
     }
@@ -68,8 +67,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (customApplication.getUserPhone() != null && customApplication.getPassword() != null) {
             //发送登录请求
             sendLoginRequest(customApplication.getUserPhone(),
-                    customApplication.getPassword(),
-                    customApplication.getToken());
+                    customApplication.getPassword());
 
         } else {
             Log.i("auto_login", "fail");
@@ -95,16 +93,17 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param userPhone 登录的用户名
      * @param userPsw   登录密码
      */
-    public void sendLoginRequest(String userPhone, String userPsw, String token) {
+    public void sendLoginRequest(String userPhone, String userPsw) {
         //生成登录请求参数
         Map<String, String> params = ParamsGenerateUtil.generateLoginParams(
                 userPhone,
-                userPsw,
-                token);
+                userPsw);
         Log.i("loginAddress", IPConfig.loginAddress);
+        Log.v("loginParams", params.toString());
 
         //创建登录请求
-        loginRequest = new CommonRequest(IPConfig.loginAddress,
+        loginRequest = new CommonRequest(this,
+                IPConfig.loginAddress,
                 null,
                 params,
                 new Response.Listener<String>() {
@@ -118,21 +117,20 @@ public class WelcomeActivity extends AppCompatActivity {
 
                         if (respCode != null && respCode.equals("1")) {
                             //用户头像路径
-                            Log.i("welcome_resp_userHead", loginRespBean.getUserHeadUrl());
+                            Log.i("welcome_resp_userHead", loginRespBean.getUser_head_url());
                             //用户名
-                            Log.i("welcome_resp_userName", loginRespBean.getUserName());
+                            Log.i("welcome_resp_userName", loginRespBean.getUser_name());
                             //设置为登录状态
                             customApplication.setLoginState(true);
                             //保存cookie
-                            customApplication.setCookie(loginRequest.getResponseCookie());
-
+                            Log.i("cookie", loginRequest.getResponseCookie());
                             Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(main);
 
                             //使用EventBus将loginRespBean传递到主界面
                             EventBus.getDefault().postSticky(new BaseUserInfoBean(
-                                    loginRespBean.getUserHeadUrl(),
-                                    loginRespBean.getUserName()
+                                    loginRespBean.getUser_head_url(),
+                                    loginRespBean.getUser_name()
                                     , customApplication.isLogin()));
 
                             WelcomeActivity.this.finish();

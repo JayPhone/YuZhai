@@ -30,40 +30,65 @@
     </com.yuzhai.view.TranslucentScrollView>
 
     <RelativeLayout
-        android:id="@+id/home_toolbar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@color/mainColor">
+        android:elevation="4dp">
 
-        <ImageView
-            android:id="@+id/menu_image"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="35dp"
-            android:clickable="true"
-            android:src="@drawable/slide" />
-
-        <TextView
-            android:id="@+id/search_view"
+        <FrameLayout
+            android:id="@+id/home_status_bar"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="33dp"
-            android:layout_toRightOf="@+id/menu_image"
-            android:background="@drawable/home_title_search_style"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="输入搜索内容"
-            android:textColor="@color/color_white" />
+            android:layout_height="20dp"
+            android:background="@color/colorPrimaryDark" />
 
-        <ImageView
-            android:id="@+id/search_image"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignRight="@+id/search_view"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="35dp"
-            android:src="@drawable/search" />
+        <RelativeLayout
+            android:id="@+id/home_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/home_status_bar"
+            android:background="@color/mainColor">
+
+            <ImageView
+                android:id="@+id/menu_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:clickable="true"
+                android:src="@drawable/slide_menu" />
+
+            <TextView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="13dp"
+                android:layout_toLeftOf="@+id/notification_image"
+                android:layout_toRightOf="@+id/menu_image"
+                android:background="@drawable/home_title_search_style"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="输入搜索内容"
+                android:textColor="@color/color_white" />
+
+            <ImageView
+                android:id="@+id/search_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@+id/search_view"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/search" />
+
+            <ImageView
+                android:id="@+id/notification_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:clickable="true"
+                android:src="@drawable/notifications" />
+        </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

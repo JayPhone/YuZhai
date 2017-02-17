@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_gray_f7f7f7">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/contact_detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/mainColor"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/slide_menu"
+        app:titleTextColor="@color/color_white" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/contact_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/contact_detail_toolbar"
+        android:layout_marginBottom="50dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_white">
+
+        <EditText
+            android:id="@+id/send_edt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/face_btn" />
+
+        <ImageView
+            android:id="@+id/face_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/send_btn"
+            android:scaleType="centerInside"
+            android:src="@drawable/expression" />
+
+        <Button
+            android:id="@+id/send_btn"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:background="#F44336"
+            android:text="发送"
+            android:textColor="@color/color_white" />
+    </RelativeLayout>
+</RelativeLayout>

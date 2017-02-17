@@ -12,6 +12,7 @@ import com.yuzhai.yuzhaiwork.R;
  */
 
 public class ContactRecyclerViewAdapter extends RecyclerView.Adapter<ContactRecyclerViewHolder> {
+    private OnContactItemClickListener mOnContactItemClickListener;
     private String[] userNames = new String[]{
             "较大是的",
             "是肯定是的",
@@ -35,6 +36,10 @@ public class ContactRecyclerViewAdapter extends RecyclerView.Adapter<ContactRecy
 
     }
 
+    public void setOnContactItemClickListener(OnContactItemClickListener onContactItemClickListener) {
+        this.mOnContactItemClickListener = onContactItemClickListener;
+    }
+
     @Override
     public ContactRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ContactRecyclerViewHolder(LayoutInflater
@@ -43,11 +48,13 @@ public class ContactRecyclerViewAdapter extends RecyclerView.Adapter<ContactRecy
     }
 
     @Override
-    public void onBindViewHolder(ContactRecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(ContactRecyclerViewHolder holder, final int position) {
         holder.contactLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                if (null != mOnContactItemClickListener) {
+                    mOnContactItemClickListener.onContactItemClick(position, userNames[position]);
+                }
             }
         });
         holder.userheaderImage.setImageResource(headers[position]);
@@ -57,5 +64,9 @@ public class ContactRecyclerViewAdapter extends RecyclerView.Adapter<ContactRecy
     @Override
     public int getItemCount() {
         return headers.length;
+    }
+
+    public interface OnContactItemClickListener {
+        void onContactItemClick(int position, String userName);
     }
 }

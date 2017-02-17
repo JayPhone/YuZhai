@@ -7,127 +7,127 @@ import java.util.List;
  */
 
 public class SimpleOrderByTypeBean {
-    private List<SimpleOrderBean> Orders;
+    private List<SimpleOrderBean> orders;
 
     public List<SimpleOrderBean> getOrders() {
-        return Orders;
+        return orders;
     }
 
     public void setOrders(List<SimpleOrderBean> orders) {
-        this.Orders = orders;
+        this.orders = orders;
     }
 
     @Override
     public String toString() {
         return "SimpleOrderByTypeBean{" +
-                "Orders=" + Orders +
+                "orders=" + orders +
                 '}';
     }
 
     public class SimpleOrderBean {
-        private String Publisher;
-        private String Reward;
-        private String Date;
-        private String OrderID;
-        private String Type;
-        private String Deadline;
-        private String Title;
-        private List<PicturesBean> Picture;
+        private String publisher;
+        private String reward;
+        private String date;
+        private String order_id;
+        private String type;
+        private String deadline;
+        private String title;
+        private List<PicturesBean> picture;
 
         public String getPublisher() {
-            return Publisher;
+            return publisher;
         }
 
         public void setPublisher(String publisher) {
-            Publisher = publisher;
+            this.publisher = publisher;
         }
 
         public String getReward() {
-            return Reward;
+            return reward;
         }
 
         public void setReward(String reward) {
-            Reward = reward;
+            this.reward = reward;
         }
 
         public String getDate() {
-            return Date;
+            return date;
         }
 
         public void setDate(String date) {
-            Date = date;
+            this.date = date;
         }
 
-        public String getOrderID() {
-            return OrderID;
+        public String getOrder_id() {
+            return order_id;
         }
 
-        public void setOrderID(String orderID) {
-            OrderID = orderID;
+        public void setOrder_id(String order_id) {
+            this.order_id = order_id;
         }
 
         public String getType() {
-            return Type;
+            return type;
         }
 
         public void setType(String type) {
-            Type = type;
+            this.type = type;
         }
 
         public String getDeadline() {
-            return Deadline;
+            return deadline;
         }
 
         public void setDeadline(String deadline) {
-            Deadline = deadline;
+            this.deadline = deadline;
         }
 
         public String getTitle() {
-            return Title;
+            return title;
         }
 
         public void setTitle(String title) {
-            Title = title;
+            this.title = title;
         }
 
         public List<PicturesBean> getPicture() {
-            return Picture;
+            return picture;
         }
 
         public void setPicture(List<PicturesBean> picture) {
-            this.Picture = picture;
+            this.picture = picture;
         }
 
         @Override
         public String toString() {
             return "OrderBean{" +
-                    "Publisher='" + Publisher + '\'' +
-                    ", Reward='" + Reward + '\'' +
-                    ", Date='" + Date + '\'' +
-                    ", OrderID='" + OrderID + '\'' +
-                    ", Type='" + Type + '\'' +
-                    ", Deadline='" + Deadline + '\'' +
-                    ", Title='" + Title + '\'' +
-                    ", Picture=" + Picture +
+                    "publisher='" + publisher + '\'' +
+                    ", reward='" + reward + '\'' +
+                    ", date='" + date + '\'' +
+                    ", order_id='" + order_id + '\'' +
+                    ", type='" + type + '\'' +
+                    ", deadline='" + deadline + '\'' +
+                    ", title='" + title + '\'' +
+                    ", picture=" + picture +
                     '}';
         }
 
         //图片信息
         public class PicturesBean {
-            private String Image;
+            private String image;
 
             public String getImage() {
-                return Image;
+                return image;
             }
 
             public void setImage(String image) {
-                this.Image = image;
+                this.image = image;
             }
 
             @Override
             public String toString() {
                 return "PicturesBean{" +
-                        "Image='" + Image + '\'' +
+                        "image='" + image + '\'' +
                         '}';
             }
         }

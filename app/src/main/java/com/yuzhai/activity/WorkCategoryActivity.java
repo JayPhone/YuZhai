@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/7/4.
  */
-public class CategoryActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+public class WorkCategoryActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
     private Toolbar mToolbar;
     private ViewPager mCategoryViewPager;
     private CategoryViewPagerAdapter mCategoryViewPagerAdapter;
@@ -67,6 +67,7 @@ public class CategoryActivity extends AppCompatActivity implements Toolbar.OnMen
 
         //创建viewPager的适配器并设置
         mCategoryViewPager = (ViewPager) findViewById(R.id.category_viewPager);
+        mCategoryViewPager.setOffscreenPageLimit(2);
         mCategoryViewPagerAdapter = new CategoryViewPagerAdapter(getSupportFragmentManager(), fragmentList);
         mCategoryViewPager.setAdapter(mCategoryViewPagerAdapter);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);

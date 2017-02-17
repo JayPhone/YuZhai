@@ -36,8 +36,10 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/8/24.
  */
-public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+public class ResumeFragment extends BaseLazyLoadFragment implements SwipeRefreshLayout.OnRefreshListener,
         ResumeRecyclerViewAdapter.OnResumeItemClickListener {
+    private static final String TAG = "ResumeFragment";
+
     private SwipeRefreshLayout mResumeSrl;
     private RecyclerView mResumeRv;
     private ResumeRecyclerViewAdapter mAdapter;
@@ -68,7 +70,9 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.category_viewpager_resume_layout, container, false);
+        View view = inflater.inflate(R.layout.category_viewpager_resume_layout, container, false);
+        isViewCreated = true;
+        return view;
     }
 
     @Override
@@ -80,7 +84,6 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
         mType = getArguments().getString(TYPE);
 
         initViews();
-        initData();
     }
 
     /**
@@ -107,7 +110,15 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
     public void initData() {
         if (CustomApplication.isConnect) {
             setRefreshState(true);
-            sendResumeByTypeRequest(mType, mCustomApplication.getToken());
+            sendResumeByTypeRequest(mType);
+        }
+    }
+
+    @Override
+    protected void lazyLoadData() {
+        super.lazyLoadData();
+        if (isViewCreated) {
+            initData();
         }
     }
 
@@ -139,20 +150,21 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onRefresh() {
         if (CustomApplication.isConnect) {
-            sendResumeByTypeRequest(mType, mCustomApplication.getToken());
+            sendResumeByTypeRequest(mType);
         } else {
             setRefreshState(false);
         }
     }
 
-    public void sendResumeByTypeRequest(String type, String token) {
+    public void sendResumeByTypeRequest(String type) {
         //获取通过类型查询订单请求的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateResumesByTypeParams(type, token);
+        Map<String, String> params = ParamsGenerateUtil.generateResumesByTypeParams(type);
         Log.i("resume_params", params.toString());
 
         //创建通过类型获取简历请求
-        CommonRequest resumeByTypeRequest = new CommonRequest(IPConfig.resumesByTypeAddress,
-                mCustomApplication.generateCookieMap(),
+        CommonRequest resumeByTypeRequest = new CommonRequest(getContext(),
+                IPConfig.resumesByTypeAddress,
+                mCustomApplication.generateHeaderMap(),
                 params,
                 new Response.Listener<String>() {
                     @Override
@@ -173,7 +185,7 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 });
 
         //添加到请求队列
-        mRequestQueue.add(resumeByTypeRequest);
+//        mRequestQueue.add(resumeByTypeRequest);
     }
 
     /**
@@ -192,5 +204,11 @@ public class ResumeFragment extends Fragment implements SwipeRefreshLayout.OnRef
             resumeDetail.putExtra(RESUME_ID, mInitResumes.get(position).getUserPhone());
         }
         startActivity(resumeDetail);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.i(TAG, "UserVisible:" + isVisibleToUser);
     }
 }
