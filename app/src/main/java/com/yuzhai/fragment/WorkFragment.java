@@ -29,6 +29,8 @@ import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +51,8 @@ public class WorkFragment extends BaseLazyLoadFragment implements SwipeRefreshLa
     private List<SimpleOrderByTypeBean.SimpleOrderBean> mInitOrders = new ArrayList<>();
     private List<SimpleOrderByTypeBean.SimpleOrderBean> mNewOrders;
 
+    //第一次显示时初始化数据
+    private Boolean isShowed = false;
     private String mType = "";
     private final static String TYPE = "type";
     public final static String ORDER_ID = "order_id";
@@ -112,15 +116,16 @@ public class WorkFragment extends BaseLazyLoadFragment implements SwipeRefreshLa
     private void intData() {
         if (CustomApplication.isConnect) {
             setRefreshState(true);
-            sendOrdersByTypeRequest(mType,IS_FIRST_TIME);
+            sendOrdersByTypeRequest(mType, IS_FIRST_TIME);
+            isShowed = true;
         }
     }
 
     @Override
     protected void lazyLoadData() {
         super.lazyLoadData();
-        if (isViewCreated) {
-            deleteAll();
+        if (isViewCreated && !isShowed) {
+            isShowed = true;
             intData();
         }
     }
@@ -129,7 +134,7 @@ public class WorkFragment extends BaseLazyLoadFragment implements SwipeRefreshLa
     public void onRefresh() {
         /*正常代码*/
         if (CustomApplication.isConnect) {
-            sendOrdersByTypeRequest(mType,NOT_FIRST_TIME);
+            sendOrdersByTypeRequest(mType, NOT_FIRST_TIME);
         } else {
             setRefreshState(false);
         }
@@ -141,12 +146,10 @@ public class WorkFragment extends BaseLazyLoadFragment implements SwipeRefreshLa
      * @param newOrders 新获取的订单数据集
      */
     public void updateData(List<SimpleOrderByTypeBean.SimpleOrderBean> newOrders) {
-        for (SimpleOrderByTypeBean.SimpleOrderBean order : newOrders) {
-            //将获取的新数据插入到数据集
-            mInitOrders.add(order);
-        }
+        Collections.reverse(newOrders);
+        mInitOrders.addAll(0, newOrders);
         //通知recyclerView插入数据
-        mAdapter.notifyItemRangeInserted(0, newOrders.size());
+        mAdapter.notifyDataSetChanged();
         //recyclerView滚动到顶部
         mWorkRv.smoothScrollToPosition(0);
 

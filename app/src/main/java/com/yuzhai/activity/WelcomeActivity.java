@@ -5,10 +5,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.view.View;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.xiaomi.mipush.sdk.MiPushClient;
 import com.yuzhai.bean.innerBean.BaseUserInfoBean;
 import com.yuzhai.bean.responseBean.LoginRespBean;
 import com.yuzhai.global.CustomApplication;
@@ -31,33 +35,45 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Map;
 
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.RuntimePermissions;
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.core.ConnectionStatus;
+import cn.bmob.newim.listener.ConnectListener;
+import cn.bmob.newim.listener.ConnectStatusChangeListener;
+import cn.bmob.v3.exception.BmobException;
 
 /**
  * Created by Administrator on 2016/7/11.
  */
-@RuntimePermissions
 public class WelcomeActivity extends AppCompatActivity {
+    private static final String TAG = "WelcomeActivity";
     private CustomApplication customApplication;
     private RequestQueue requestQueue;
     private CommonRequest loginRequest;
+    //请求获取读写外存权限请求码
+    private static final int STORAGE_PERMISSION = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        //获取权限
-        WelcomeActivityPermissionsDispatcher.showWriteExternalStorageWithCheck(WelcomeActivity.this);
+        checkStoragePermission();
     }
 
     /**
-     * 需要获取到权限才能执行以下方法
+     * 检测是否拥有读写外存权限
      */
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    public void showWriteExternalStorage() {
-        //获取全局Applicant对象，主要用于保存cookie
+    private void checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION);
+        } else {
+            initData();
+        }
+    }
+
+    /**
+     * 初始化数据，包括用户自动登陆等
+     */
+    public void initData() {
         customApplication = (CustomApplication) getApplication();
 
         //获取请求队列
@@ -67,10 +83,11 @@ public class WelcomeActivity extends AppCompatActivity {
         if (customApplication.getUserPhone() != null && customApplication.getPassword() != null) {
             //发送登录请求
             sendLoginRequest(customApplication.getUserPhone(),
-                    customApplication.getPassword());
+                    customApplication.getPassword(),
+                    MiPushClient.getRegId(this));
 
         } else {
-            Log.i("auto_login", "fail");
+            Log.i(TAG, "auto_login_fail");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -93,13 +110,13 @@ public class WelcomeActivity extends AppCompatActivity {
      * @param userPhone 登录的用户名
      * @param userPsw   登录密码
      */
-    public void sendLoginRequest(String userPhone, String userPsw) {
+    public void sendLoginRequest(String userPhone, String userPsw, String regId) {
         //生成登录请求参数
         Map<String, String> params = ParamsGenerateUtil.generateLoginParams(
                 userPhone,
-                userPsw);
-        Log.i("loginAddress", IPConfig.loginAddress);
-        Log.v("loginParams", params.toString());
+                userPsw,
+                regId);
+        Log.v(TAG, "login_params:" + params.toString());
 
         //创建登录请求
         loginRequest = new CommonRequest(this,
@@ -109,21 +126,39 @@ public class WelcomeActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("welcome_resp", resp);
+                        Log.i(TAG, "login_resp:" + resp);
                         //获取返回码
                         LoginRespBean loginRespBean = JsonUtil.decodeByGson(resp, LoginRespBean.class);
                         String respCode = loginRespBean.getCode();
-                        Log.i("welcome_resp_code", respCode);
+                        Log.i(TAG, "login_resp_code:" + respCode);
 
                         if (respCode != null && respCode.equals("1")) {
                             //用户头像路径
-                            Log.i("welcome_resp_userHead", loginRespBean.getUser_head_url());
+                            Log.i(TAG, "login_resp_userHead:" + loginRespBean.getUser_head_url());
                             //用户名
-                            Log.i("welcome_resp_userName", loginRespBean.getUser_name());
+                            Log.i(TAG, "login_resp_userName:" + loginRespBean.getUser_name());
                             //设置为登录状态
                             customApplication.setLoginState(true);
-                            //保存cookie
-                            Log.i("cookie", loginRequest.getResponseCookie());
+
+                            //即时聊天连接
+                            BmobIM.connect(customApplication.getUserPhone(), new ConnectListener() {
+                                @Override
+                                public void done(String s, BmobException e) {
+                                    if (e == null) {
+                                        Log.i(TAG, "连接成功");
+                                        //监听连接状态
+                                        BmobIM.getInstance().setOnConnectStatusChangeListener(new ConnectStatusChangeListener() {
+                                            @Override
+                                            public void onChange(ConnectionStatus status) {
+                                                Log.i(TAG, "连接状态:" + status.getMsg());
+                                            }
+                                        });
+                                    } else {
+                                        Log.e(TAG, e.getErrorCode() + "/" + e.getMessage());
+                                    }
+                                }
+                            });
+
                             Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
                             startActivity(main);
 
@@ -141,7 +176,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         UnRepeatToast.showToast(WelcomeActivity.this, "服务器不务正业中");
-                        Log.i("auto_login", "fail");
+                        Log.i(TAG, "auto_login_fail");
                         Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
                         startActivity(main);
                         finish();
@@ -155,8 +190,7 @@ public class WelcomeActivity extends AppCompatActivity {
     /**
      * 当获取读写存储器的权限拒绝时，显示一个对话框让用户开启
      */
-    @OnNeverAskAgain(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    public void rejectWriteExternalStorage() {
+    public void showOnDenienStoragePermission() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("权限申请");
         builder.setMessage("请到设置 - 应用 - 御宅工作 - 权限中开启读取内部存储权限，以正常使用御宅工作的功能");
@@ -179,8 +213,15 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // NOTE: 将权限处理委托给生成的方法
-        WelcomeActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+        switch (requestCode) {
+            case STORAGE_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initData();
+                } else {
+                    showOnDenienStoragePermission();
+                }
+                break;
+        }
     }
 
     @Override

@@ -54,7 +54,7 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
             map.put("type", typeImages[i]);
             map.put("status", status[i]);
             map.put("date", dates[i]);
-            map.put("title", titles[i]);
+            map.put("notificationTitle", titles[i]);
             map.put("price", prices[i]);
             map.put("limit", limits[i]);
             map.put("orderId", orderIds[i]);
@@ -98,7 +98,7 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
             holder.mStatusText.setText((CharSequence) testPublishedOrders.get(position).get("status"));
             holder.mOrderIdText.setText((CharSequence) testPublishedOrders.get(position).get("orderId"));
             holder.mDateText.setText((CharSequence) testPublishedOrders.get(position).get("date"));
-            holder.mTitleText.setText((CharSequence) testPublishedOrders.get(position).get("title"));
+            holder.mTitleText.setText((CharSequence) testPublishedOrders.get(position).get("notificationTitle"));
             holder.mDeadlineText.setText((CharSequence) testPublishedOrders.get(position).get("limit"));
             holder.mRewardText.setText((CharSequence) testPublishedOrders.get(position).get("price"));
             holder.mTypeImage.setImageResource((Integer) testPublishedOrders.get(position).get("type"));
@@ -136,7 +136,7 @@ public class PublishedRecyclerViewAdapter extends RecyclerView.Adapter<Published
 //            public void onClick(DialogInterface dialog, int which) {
 //                正常代码
 //                发送取消已发布订单请求
-//                sendCancelPublishedRequest(mData.get(mPosition).getPublish().getPublishId());
+//                sendCancelPublishedRequest(mData.get(mPosition).getType().getPublishId());
 //
 //            }
 //        });

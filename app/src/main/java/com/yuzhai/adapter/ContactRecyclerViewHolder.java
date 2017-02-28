@@ -18,6 +18,7 @@ public class ContactRecyclerViewHolder extends RecyclerView.ViewHolder {
     TextView userNameText;
     TextView contentText;
     TextView timeText;
+    TextView unReadText;
 
     public ContactRecyclerViewHolder(View itemView) {
         super(itemView);
@@ -26,5 +27,6 @@ public class ContactRecyclerViewHolder extends RecyclerView.ViewHolder {
         userNameText = (TextView) itemView.findViewById(R.id.user_name);
         contentText = (TextView) itemView.findViewById(R.id.contact_content);
         timeText = (TextView) itemView.findViewById(R.id.received_time);
+        unReadText = (TextView) itemView.findViewById(R.id.un_read_point);
     }
 }

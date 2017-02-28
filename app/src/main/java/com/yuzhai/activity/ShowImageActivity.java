@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import com.yuzhai.yuzhaiwork.R;
  */
 
 public class ShowImageActivity extends AppCompatActivity {
+    private static final String TAG = "ShowImageActivity";
     private ImageView mShowImage;
     private String mImageUrl;
 
@@ -32,7 +34,7 @@ public class ShowImageActivity extends AppCompatActivity {
 
         mShowImage = (ImageView) findViewById(R.id.show_image);
         Glide.with(this)
-                .load(IPConfig.image_addressPrefix + "/" + mImageUrl)
+                .load(IPConfig.image_addressPrefix + mImageUrl)
                 .placeholder(R.drawable.default_image)
                 .error(R.drawable.default_image)
                 .into(mShowImage);

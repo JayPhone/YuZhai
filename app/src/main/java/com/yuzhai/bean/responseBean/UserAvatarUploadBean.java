@@ -4,21 +4,21 @@ package com.yuzhai.bean.responseBean;
  * Created by Administrator on 2017/1/10.
  */
 
-public class UserHeaderUploadBean {
-    private String Avatar;
+public class UserAvatarUploadBean {
+    private String avatar;
 
     public String getAvatar() {
-        return Avatar;
+        return avatar;
     }
 
     public void setAvatar(String avatar) {
-        Avatar = avatar;
+        this.avatar = avatar;
     }
 
     @Override
     public String toString() {
-        return "UserHeaderUploadBean{" +
-                "Avatar='" + Avatar + '\'' +
+        return "UserAvatarUploadBean{" +
+                "avatar='" + avatar + '\'' +
                 '}';
     }
 }

@@ -14,6 +14,10 @@ public class RequestParamsNameConfig {
      */
     public class LoginParam extends BaseParam {
         /**
+         * 手机标识号用于小米推送
+         */
+        public final static String REGID = "regID";
+        /**
          * 登录手机号: USERPHONE
          */
         public final static String USERPHONE = "userPhone";
@@ -68,7 +72,11 @@ public class RequestParamsNameConfig {
         /**
          * 新密码
          */
-        public final static String USERPSW = "userPsw";
+        public final static String NEWPSW = "psw1";
+        /**
+         * 确认新密码
+         */
+        public final static String COMPSW = "psw2";
     }
 
     /**
@@ -93,6 +101,26 @@ public class RequestParamsNameConfig {
      * 取消已发布订单参数
      */
     public class CancelPublishedOrderParam extends BaseParam {
+        /**
+         * 发布的订单号
+         */
+        public final static String ORDER_ID = "orderID";
+    }
+
+    /**
+     * 取消已申请订单参数
+     */
+    public class CancelAppliedOrderParam extends BaseParam {
+        /**
+         * 发布的订单号
+         */
+        public final static String ORDER_ID = "orderID";
+    }
+
+    /**
+     * 取消已接收订单参数
+     */
+    public class CancelAcceptedOrderParam extends BaseParam {
         /**
          * 发布的订单号
          */
@@ -187,6 +215,7 @@ public class RequestParamsNameConfig {
      * 通过类型查询简历参数
      */
     public class ResumesByTypeParam extends BaseParam {
+        public final static String FIRST = "first";
         public final static String TYPE = "type";
     }
 
@@ -202,5 +231,41 @@ public class RequestParamsNameConfig {
      */
     public class PublishedOrderParam extends BaseParam {
         public final static String FIRST = "first";
+    }
+
+    /**
+     * 查询个人已申请订单参数
+     */
+    public class AppliedOrderParam extends BaseParam {
+        public final static String FIRST = "first";
+    }
+
+    /**
+     * 查询个人已接收订单参数
+     */
+    public class AcceptedOrderParam extends BaseParam {
+        public final static String FIRST = "first";
+    }
+
+    /**
+     * 查看申请接单用户的信息参数
+     */
+    public class ApplyUserDataParam extends BaseParam {
+        public final static String AVATAR = "avatar";
+    }
+
+    /**
+     * 同意申请用户申请订单参数
+     */
+    public class AgreeApplyOrderParam extends BaseParam {
+        public final static String ORDERID = "orderID";
+        public final static String BIDDERID = "bidderID";
+    }
+
+    /**
+     * 查询聊天用户信息参数
+     */
+    public class QueryContactUserInfoParam extends BaseParam {
+        public final static String USERPHONE = "userPhone";
     }
 }

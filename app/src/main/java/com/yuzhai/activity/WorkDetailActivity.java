@@ -24,6 +24,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.yuzhai.bean.innerBean.PayRoleBean;
 import com.yuzhai.bean.responseBean.ApplyOrderRespBean;
 import com.yuzhai.bean.responseBean.DetailOrderBean;
 import com.yuzhai.fragment.WorkFragment;
@@ -38,17 +39,32 @@ import com.yuzhai.view.IndicatedViewFlipper;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static android.icu.util.HebrewCalendar.AV;
+import static com.yuzhai.fragment.OrderPublishedProcessFragment.PRICE;
 import static com.yuzhai.util.JsonUtil.decodeByGson;
 
 /**
  * Created by Administrator on 2016/11/1.
  */
 
-public class WorkDetailActivity extends AppCompatActivity implements View.OnClickListener, Toolbar.OnMenuItemClickListener {
+public class WorkDetailActivity extends AppCompatActivity implements
+        View.OnClickListener, Toolbar.OnMenuItemClickListener {
+    private static final String TAG = "WorkDetailActivity";
+    public static final String IMAGE_URL = "image_url";
+    private static final String PAY_ROLE = "pay_role";
+    private static final String PRICE = "price";
+    private static final String PAY_DESCRIPTION = "pay_description";
+    public static final String APPLY_ROLE = "apply_role";
+    private static final String AVATAR = "avatar";
+
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private TextView mTitle;
@@ -69,7 +85,6 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
     private DetailOrderBean.OrderInfoBean mOrder;
     private String mOrderId;
     private CommonRequest mOrderDetailRequest;
-    public static final String IMAGE_URL = "image_url";
 
     /**
      * 测试数据
@@ -117,6 +132,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
@@ -148,6 +164,15 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
 
         mTitle = (TextView) findViewById(R.id.title);
         mUserHeader = (CircleImageView) findViewById(R.id.user_header);
+        mUserHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent userData = new Intent(WorkDetailActivity.this, UserDataActivity.class);
+                userData.putExtra(AVATAR, mOrder.getPublisherAvatar());
+                startActivity(userData);
+            }
+        });
+
         mUserName = (TextView) findViewById(R.id.user_name);
         mID = (TextView) findViewById(R.id.id);
         mStatus = (TextView) findViewById(R.id.status);
@@ -162,7 +187,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
                 if (CustomApplication.isConnect) {
                     Intent showImage = new Intent(WorkDetailActivity.this, ShowImageActivity.class);
                     showImage.putExtra(IMAGE_URL, mOrder.getPictures().get(position).getImage());
-                    Log.i("url", mOrder.getPictures().get(position).getImage());
+                    Log.i(TAG, "pictures_url:" + mOrder.getPictures().get(position).getImage());
                     startActivity(showImage);
                 }
             }
@@ -211,7 +236,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
                 .placeholder(R.drawable.default_image)
                 .error(R.drawable.default_image)
                 .into(mUserHeader);
-        Log.i("ApplicantAvatar", detailOrder.getApplicantAvatars().toString());
+        Log.i(TAG, "applicant_avatar:" + detailOrder.getApplicantAvatars().toString());
 
         //设置申请订单的用户头像
         mApplyUserLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -236,19 +261,12 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
                         }
 
                         circleImageView.setLayoutParams(params);
-                        Log.i("Avatar", detailOrder.getApplicantAvatars().get(i).getApplicantAvatar());
+                        Log.i("AVATAR", detailOrder.getApplicantAvatars().get(i).getApplicantAvatar());
                         Glide.with(WorkDetailActivity.this)
                                 .load(IPConfig.image_addressPrefix + "/" + detailOrder.getApplicantAvatars().get(i).getApplicantAvatar())
                                 .placeholder(R.drawable.default_image)
                                 .error(R.drawable.default_image)
                                 .into(circleImageView);
-
-                        circleImageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                UnRepeatToast.showToast(WorkDetailActivity.this, "你点击了用户头像");
-                            }
-                        });
 
                         mApplyUserLayout.addView(circleImageView);
                     }
@@ -297,11 +315,19 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
     public void showApplyOrderDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("申请接单");
-        builder.setMessage("申请接单后，等待发布方的回复，如果发布方同意您的申请，你将成功接单");
-        builder.setPositiveButton("申请", new DialogInterface.OnClickListener() {
+        builder.setMessage("申请接单需要缴纳违约金(订单金额30%)，违约金将会在订单完成之后返还到您的账户");
+        builder.setPositiveButton("申请并支付", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (CustomApplication.isConnect) {
+//                    Intent pay = new Intent(WorkDetailActivity.this, PayActivity.class);
+//                    //计算支付金额
+//                    double rewardPrice = Double.parseDouble(mOrder.getReward());
+//                    double penalty = rewardPrice * 0.3;
+//                    pay.putExtra(PAY_ROLE, APPLY_ROLE);
+//                    pay.putExtra(PRICE, String.valueOf(penalty));
+//                    pay.putExtra(PAY_DESCRIPTION, "支付金额为您申请接收的订单违约金(订单金额的30%),订单违约金会在发布方确认完成订单后退还到您的账户。");
+//                    startActivity(pay);
                     sendApplyOrderRequest(mOrder.getOrderID());
                 }
             }
@@ -318,7 +344,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
     public void sendOrderDetailRequest(String orderId) {
         //生成详细订单的参数集
         Map<String, String> params = ParamsGenerateUtil.generateOrderDetailParam(orderId);
-        Log.i("order_detail_params", params.toString());
+        Log.i(TAG, "order_detail_params:" + params.toString());
 
         mOrderDetailRequest = new CommonRequest(this,
                 IPConfig.orderDetailAddress,
@@ -327,7 +353,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("order_detail_resp", resp);
+                        Log.i(TAG, "order_detail_resp:" + resp);
                         mOrder = decodeByGson(resp, DetailOrderBean.class).getDetailedOrder();
                         //更新数据
                         updateData(mOrder);
@@ -361,7 +387,7 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("apply_order_resp", resp);
+                        Log.i(TAG, "apply_order_resp:" + resp);
                         String code = decodeByGson(resp, ApplyOrderRespBean.class).getCode();
                         //订单申请接收成功
                         if (code.equals("1")) {
@@ -395,5 +421,19 @@ public class WorkDetailActivity extends AppCompatActivity implements View.OnClic
             imagePaths.add(imageList.get(i).getImage());
         }
         mImageFlipper.setFlipperImageUrls(IPConfig.image_addressPrefix, imagePaths);
+    }
+
+    //支付成功后调用
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void onEventPayActivity(PayRoleBean payRoleBean) {
+        if (payRoleBean.getPayRole().equals(APPLY_ROLE)) {
+            sendApplyOrderRequest(mOrder.getOrderID());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

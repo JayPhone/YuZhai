@@ -27,7 +27,7 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
     private CategoryMode mCategoryMode;
     private List<Map<String, Object>> mCategory;
 
-    public static final String TITLE = "title";
+    public static final String TITLE = "notificationTitle";
 
     public CategoryRecyclerViewAdapter(Context context) {
         this.mContext = context;

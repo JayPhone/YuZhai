@@ -30,6 +30,7 @@ import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,9 +51,13 @@ public class ResumeFragment extends BaseLazyLoadFragment implements SwipeRefresh
     private List<SimpleResumeByTypeBean.SimpleResumeBean> mInitResumes = new ArrayList<>();
     private List<SimpleResumeByTypeBean.SimpleResumeBean> mNewResumes;
 
+    //第一次显示时初始化数据
+    private Boolean isShowed = false;
     private String mType = "";
     private final static String TYPE = "type";
     public final static String RESUME_ID = "resume_id";
+    private final static String IS_FIRST_TIME = "yes";
+    private final static String NOT_FIRST_TIME = "no";
 
     /**
      * 获取ResumeFragment实例
@@ -110,14 +115,16 @@ public class ResumeFragment extends BaseLazyLoadFragment implements SwipeRefresh
     public void initData() {
         if (CustomApplication.isConnect) {
             setRefreshState(true);
-            sendResumeByTypeRequest(mType);
+            sendResumeByTypeRequest(mType, IS_FIRST_TIME);
         }
     }
 
     @Override
     protected void lazyLoadData() {
         super.lazyLoadData();
-        if (isViewCreated) {
+        //第一次加载数据
+        if (isViewCreated && !isShowed) {
+            isShowed = true;
             initData();
         }
     }
@@ -128,12 +135,10 @@ public class ResumeFragment extends BaseLazyLoadFragment implements SwipeRefresh
      * @param newResumes 新获取的订单数据集
      */
     public void updateData(List<SimpleResumeByTypeBean.SimpleResumeBean> newResumes) {
-        for (SimpleResumeByTypeBean.SimpleResumeBean resume : newResumes) {
-            //将获取的新数据插入到数据集
-            mInitResumes.add(resume);
-        }
+        Collections.reverse(newResumes);
+        mInitResumes.addAll(0, newResumes);
         //通知recyclerView插入数据
-        mAdapter.notifyItemRangeInserted(0, newResumes.size());
+        mAdapter.notifyDataSetChanged();
         //recyclerView滚动到顶部
         mResumeRv.smoothScrollToPosition(0);
 
@@ -150,16 +155,16 @@ public class ResumeFragment extends BaseLazyLoadFragment implements SwipeRefresh
     @Override
     public void onRefresh() {
         if (CustomApplication.isConnect) {
-            sendResumeByTypeRequest(mType);
+            sendResumeByTypeRequest(mType, NOT_FIRST_TIME);
         } else {
             setRefreshState(false);
         }
     }
 
-    public void sendResumeByTypeRequest(String type) {
+    public void sendResumeByTypeRequest(String type, String isFirstTime) {
         //获取通过类型查询订单请求的参数集
-        Map<String, String> params = ParamsGenerateUtil.generateResumesByTypeParams(type);
-        Log.i("resume_params", params.toString());
+        Map<String, String> params = ParamsGenerateUtil.generateResumesByTypeParams(type, isFirstTime);
+        Log.i(TAG, "resume_params:" + params.toString());
 
         //创建通过类型获取简历请求
         CommonRequest resumeByTypeRequest = new CommonRequest(getContext(),
@@ -169,7 +174,7 @@ public class ResumeFragment extends BaseLazyLoadFragment implements SwipeRefresh
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("resume_fragment_resp", resp);
+                        Log.i(TAG, "resume_fragment_resp:" + resp);
                         //解析数据
                         mNewResumes = JsonUtil.decodeByGson(resp, SimpleResumeByTypeBean.class).getResumes();
                         //更新数据
@@ -185,7 +190,7 @@ public class ResumeFragment extends BaseLazyLoadFragment implements SwipeRefresh
                 });
 
         //添加到请求队列
-//        mRequestQueue.add(resumeByTypeRequest);
+        mRequestQueue.add(resumeByTypeRequest);
     }
 
     /**

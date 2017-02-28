@@ -1,7 +1,6 @@
 package com.yuzhai.global;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
 import android.os.Process;
 import android.util.Log;
@@ -11,19 +10,25 @@ import com.xiaomi.mipush.sdk.Logger;
 import com.xiaomi.mipush.sdk.MiPushClient;
 import com.yuzhai.dao.CookieOperate;
 import com.yuzhai.dao.UserInfoOperate;
+import com.yuzhai.util.InstantMessageHandler;
+
+import org.litepal.LitePalApplication;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.bmob.newim.BmobIM;
+import cn.bmob.v3.Bmob;
+
 /**
  * Created by Administrator on 2016/7/9.
  */
-public class CustomApplication extends Application {
+public class CustomApplication extends LitePalApplication {
     private UserInfoOperate mUserInfoOperate;
     private CookieOperate mCookieOperate;
     private boolean login = false;
-    public static boolean isConnect = false;
+    public static boolean isConnect = true;
 
     //Bmob后端云APPId
     public static final String BOMB_APP_ID = "d6c96dccb6148cc1b83b00b9676d6e43";
@@ -63,6 +68,12 @@ public class CustomApplication extends Application {
             }
         };
         Logger.setLogger(this, newLogger);
+
+        //NewIM初始化
+        BmobIM.init(this);
+        //注册消息接收器
+        BmobIM.registerDefaultMessageHandler(new InstantMessageHandler(this));
+
     }
 
     //通过判断手机里的所有进程是否有这个App的进程

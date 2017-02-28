@@ -7,98 +7,98 @@ import java.util.List;
  */
 
 public class SimpleResumeByTypeBean {
-    private List<SimpleResumeBean> Resumes;
+    private List<SimpleResumeBean> resumes;
 
     public List<SimpleResumeBean> getResumes() {
-        return Resumes;
+        return resumes;
     }
 
     public void setResumes(List<SimpleResumeBean> Resumes) {
-        this.Resumes = Resumes;
+        this.resumes = Resumes;
     }
 
     @Override
     public String toString() {
         return "SimpleResumeByTypeBean{" +
-                "resumes=" + Resumes +
+                "resumes=" + resumes +
                 '}';
     }
 
     public class SimpleResumeBean {
-        private String Avatar;
-        private String UserPhone;
-        private String Name;
-        private String Module;
-        private String Sex;
-        private String Education;
-        private String ContactNumber;
+        private String avatar;
+        private String user_phone;
+        private String name;
+        private String module;
+        private String sex;
+        private String education;
+        private String contact_number;
 
         public String getAvatar() {
-            return Avatar;
+            return avatar;
         }
 
         public void setAvatar(String avatar) {
-            Avatar = avatar;
+            this.avatar = avatar;
         }
 
         public String getUserPhone() {
-            return UserPhone;
+            return user_phone;
         }
 
         public void setUserPhone(String userPhone) {
-            UserPhone = userPhone;
+            user_phone = userPhone;
         }
 
         public String getName() {
-            return Name;
+            return name;
         }
 
         public void setName(String name) {
-            Name = name;
+            this.name = name;
         }
 
         public String getModule() {
-            return Module;
+            return module;
         }
 
         public void setModule(String module) {
-            Module = module;
+            this.module = module;
         }
 
         public String getSex() {
-            return Sex;
+            return sex;
         }
 
         public void setSex(String sex) {
-            Sex = sex;
+            this.sex = sex;
         }
 
         public String getEducation() {
-            return Education;
+            return education;
         }
 
         public void setEducation(String education) {
-            Education = education;
+            this.education = education;
         }
 
         public String getContactNumber() {
-            return ContactNumber;
+            return contact_number;
         }
 
         public void setContactNumber(String contactNumber) {
-            ContactNumber = contactNumber;
+            contact_number = contactNumber;
         }
 
         @Override
         public String toString() {
             return "SimpleResumeBean{" +
-                    "Avatar='" + Avatar + '\'' +
-                    ", UserPhone='" + UserPhone + '\'' +
-                    ", Name='" + Name + '\'' +
-                    ", Module='" + Module + '\'' +
-                    ", Sex='" + Sex + '\'' +
-                    ", Education='" + Education + '\'' +
-                    ", ContactNumber='" + ContactNumber + '\'' +
+                    "avatar='" + avatar + '\'' +
+                    ", user_phone='" + user_phone + '\'' +
+                    ", name='" + name + '\'' +
+                    ", module='" + module + '\'' +
+                    ", sex='" + sex + '\'' +
+                    ", education='" + education + '\'' +
+                    ", contact_number='" + contact_number + '\'' +
                     '}';
         }
     }

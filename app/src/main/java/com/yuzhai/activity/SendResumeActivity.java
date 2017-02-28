@@ -37,6 +37,8 @@ import java.util.Map;
  */
 
 public class SendResumeActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "SendResumeActivity";
+
     private Toolbar mToolbar;
     private TextView mIsSendResumeText;
     private TextInputLayout mNameLayout;
@@ -85,7 +87,7 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
         mTypeSpinner = (Spinner) findViewById(R.id.type_spinner);
         mEducationSpinner = (Spinner) findViewById(R.id.education_spinner);
         mTelLayout = (TextInputLayout) findViewById(R.id.tel_layout);
-        mTelEdit = (TextInputEditText) findViewById(R.id.tel);
+        mTelEdit = (TextInputEditText) findViewById(R.id.status);
         mEducationEdit = (TextInputEditText) findViewById(R.id.educational);
         mSkillEdit = (TextInputEditText) findViewById(R.id.skill);
         mWorkExperienceEdit = (TextInputEditText) findViewById(R.id.work);
@@ -172,7 +174,7 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
         if (checkData(sendResumeBean)) {
             //生成投递简历请求的参数
             Map<String, String> param = ParamsGenerateUtil.generateSendResumeParam(sendResumeBean);
-            Log.i("param", param.toString());
+            Log.i(TAG, "param:" + param.toString());
 
             //生成投递简历请求
             CommonRequest sendResumeRequest = new CommonRequest(this,
@@ -182,10 +184,12 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String resp) {
-                            Log.i("send_resume_resp", resp);
+                            Log.i(TAG, "send_resume_resp:" + resp);
                             if (JsonUtil.decodeByGson(resp, SendResumeRespBean.class).getCode().equals("1")) {
                                 UnRepeatToast.showToast(SendResumeActivity.this, "简历投递成功");
                                 clearAll();
+                            } else if (JsonUtil.decodeByGson(resp, SendResumeRespBean.class).getCode().equals("-1")) {
+                                UnRepeatToast.showToast(SendResumeActivity.this, "简历投递失败，请稍后重试");
                             }
                         }
                     },
@@ -204,9 +208,6 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
      * 发送查看详细简历请求
      */
     public void sendPersonalDetailResumeRequest() {
-        //生成投递简历请求的参数
-//        Map<String, String> param = ParamsGenerateUtil.generatePersonalResumeParams();
-//        Log.i("param", param.toString());
 
         //生成查看详细简历请求
         CommonRequest sendPersonalDetailResumeRequest = new CommonRequest(this,
@@ -216,8 +217,8 @@ public class SendResumeActivity extends AppCompatActivity implements View.OnClic
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("personal_resume_resp", resp);
-                        if (JsonUtil.decodeByJsonObject(resp, "detail_resume").equals("0")) {
+                        Log.i(TAG, "personal_resume_resp:" + resp);
+                        if (JsonUtil.decodeByJsonObject(resp, "detail_resume").equals("{}")) {
                             mIsSendResumeText.setVisibility(View.GONE);
                         } else {
                             updateData(JsonUtil.decodeByGson(resp, DetailResumeBean.class).getDetailResume());

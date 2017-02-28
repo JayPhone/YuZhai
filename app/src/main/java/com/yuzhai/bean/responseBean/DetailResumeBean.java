@@ -5,138 +5,138 @@ package com.yuzhai.bean.responseBean;
  */
 
 public class DetailResumeBean {
-    private ResumeBean DetailResume;
+    private ResumeBean detail_resume;
 
     public ResumeBean getDetailResume() {
-        return DetailResume;
+        return detail_resume;
     }
 
     public void setDetailResume(ResumeBean detailResume) {
-        DetailResume = detailResume;
+        detail_resume = detailResume;
     }
 
     @Override
     public String toString() {
         return "DetailResumeBean{" +
-                "DetailResume=" + DetailResume +
+                "detail_resume=" + detail_resume +
                 '}';
     }
 
     public class ResumeBean {
-        private String Avatar;
-        private String UserName;
-        private String ContactNumber;
-        private String Name;
-        private String Sex;
-        private String Module;
-        private String Education;
-        private String EducationExperience;
-        private String Skill;
-        private String WorkExperience;
-        private String SelfEvaluation;
+        private String avatar;
+        private String user_name;
+        private String contact_number;
+        private String name;
+        private String sex;
+        private String module;
+        private String education;
+        private String education_experience;
+        private String skill;
+        private String work_experience;
+        private String self_evaluation;
 
         public String getAvatar() {
-            return Avatar;
+            return avatar;
         }
 
         public void setAvatar(String avatar) {
-            Avatar = avatar;
+            this.avatar = avatar;
         }
 
         public String getUserName() {
-            return UserName;
+            return user_name;
         }
 
         public void setUserName(String userName) {
-            UserName = userName;
+            user_name = userName;
         }
 
         public String getContactNumber() {
-            return ContactNumber;
+            return contact_number;
         }
 
         public void setContactNumber(String contactNumber) {
-            ContactNumber = contactNumber;
+            contact_number = contactNumber;
         }
 
         public String getName() {
-            return Name;
+            return name;
         }
 
         public void setName(String name) {
-            Name = name;
+            this.name = name;
         }
 
         public String getSex() {
-            return Sex;
+            return sex;
         }
 
         public void setSex(String sex) {
-            Sex = sex;
+            this.sex = sex;
         }
 
         public String getModule() {
-            return Module;
+            return module;
         }
 
         public void setModule(String module) {
-            Module = module;
+            this.module = module;
         }
 
         public String getEducation() {
-            return Education;
+            return education;
         }
 
         public void setEducation(String education) {
-            Education = education;
+            this.education = education;
         }
 
         public String getEducationExperience() {
-            return EducationExperience;
+            return education_experience;
         }
 
         public void setEducationExperience(String educationExperience) {
-            EducationExperience = educationExperience;
+            education_experience = educationExperience;
         }
 
         public String getSkill() {
-            return Skill;
+            return skill;
         }
 
         public void setSkill(String skill) {
-            Skill = skill;
+            this.skill = skill;
         }
 
         public String getWorkExperience() {
-            return WorkExperience;
+            return work_experience;
         }
 
         public void setWorkExperience(String workExperience) {
-            WorkExperience = workExperience;
+            work_experience = workExperience;
         }
 
         public String getSelfEvaluation() {
-            return SelfEvaluation;
+            return self_evaluation;
         }
 
         public void setSelfEvaluation(String selfEvaluation) {
-            SelfEvaluation = selfEvaluation;
+            self_evaluation = selfEvaluation;
         }
 
         @Override
         public String toString() {
             return "ResumeBean{" +
-                    "Avatar='" + Avatar + '\'' +
-                    ", UserName='" + UserName + '\'' +
-                    ", ContactNumber='" + ContactNumber + '\'' +
-                    ", Name='" + Name + '\'' +
-                    ", Sex='" + Sex + '\'' +
-                    ", Module='" + Module + '\'' +
-                    ", Education='" + Education + '\'' +
-                    ", EducationExperience='" + EducationExperience + '\'' +
-                    ", Skill='" + Skill + '\'' +
-                    ", WorkExperience='" + WorkExperience + '\'' +
-                    ", SelfEvaluation='" + SelfEvaluation + '\'' +
+                    "avatar='" + avatar + '\'' +
+                    ", user_name='" + user_name + '\'' +
+                    ", contact_number='" + contact_number + '\'' +
+                    ", name='" + name + '\'' +
+                    ", sex='" + sex + '\'' +
+                    ", module='" + module + '\'' +
+                    ", education='" + education + '\'' +
+                    ", education_experience='" + education_experience + '\'' +
+                    ", skill='" + skill + '\'' +
+                    ", work_experience='" + work_experience + '\'' +
+                    ", self_evaluation='" + self_evaluation + '\'' +
                     '}';
         }
     }

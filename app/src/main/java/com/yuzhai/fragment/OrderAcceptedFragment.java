@@ -24,6 +24,7 @@ import com.yuzhai.bean.responseBean.OrderAcceptedBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
 import com.yuzhai.http.IPConfig;
+import com.yuzhai.http.ParamsGenerateUtil;
 import com.yuzhai.http.RequestQueueSingleton;
 import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
@@ -34,7 +35,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/8/21.
@@ -52,7 +55,10 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
     private List<OrderAcceptedBean.OrderBean> mInitOrders = new ArrayList<>();
+
     public final static String ORDER_ID = "order_id";
+    private final static String IS_FIRST_TIME = "yes";
+    private final static String NOT_FIRST_TIME = "no";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,7 +101,7 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
     private void intData() {
         if (CustomApplication.isConnect) {
             setRefreshState(true);
-            sendAcceptedOrderRequest();
+            sendAcceptedOrderRequest(IS_FIRST_TIME);
         }
     }
 
@@ -106,6 +112,7 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
     protected void lazyLoadData() {
         super.lazyLoadData();
         if (isViewCreated) {
+            deleteAll();
             intData();
         }
     }
@@ -113,7 +120,7 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
     @Override
     public void onRefresh() {
         if (CustomApplication.isConnect) {
-            sendAcceptedOrderRequest();
+            sendAcceptedOrderRequest(NOT_FIRST_TIME);
         } else {
             setRefreshState(false);
         }
@@ -125,15 +132,12 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
      * @param newOrders 新获取的订单数据集
      */
     public void updateData(List<OrderAcceptedBean.OrderBean> newOrders) {
-        for (OrderAcceptedBean.OrderBean order : newOrders) {
-            //将获取的新数据插入到数据集
-            mInitOrders.add(order);
-        }
+        Collections.reverse(newOrders);
+        mInitOrders.addAll(0, newOrders);
         //通知recyclerView插入数据
-        mAdapter.notifyItemRangeInserted(0, newOrders.size());
+        mAdapter.notifyDataSetChanged();
         //recyclerView滚动到顶部
         mAcceptedRv.smoothScrollToPosition(0);
-
     }
 
     /**
@@ -144,19 +148,22 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
         mInitOrders.clear();
     }
 
-    public void sendAcceptedOrderRequest() {
-        //获取查看个人已发布订单请求的参数集
-//        Map<String, String> params = ParamsGenerateUtil.generateAcceptedOrderParam();
+    /**
+     * 发送查看个人已接受订单请求
+     */
+    public void sendAcceptedOrderRequest(String isFirstTime) {
+        //获取查看个人已接收订单请求的参数集
+        Map<String, String> params = ParamsGenerateUtil.generateAcceptedOrderParam(isFirstTime);
 
         //创建查看已接收订单请求
         CommonRequest acceptedOrderRequest = new CommonRequest(getContext(),
                 IPConfig.orderAcceptedAddress,
                 mCustomApplication.generateHeaderMap(),
-                null,
+                params,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("order_accept_resp", resp);
+                        Log.i(TAG, "order_accept_resp:" + resp);
                         if (!JsonUtil.decodeByJsonObject(resp, "code").equals("overdue")) {
                             //解析获取到的订单数据
                             updateData(JsonUtil.decodeByGson(resp, OrderAcceptedBean.class).getOrders());
@@ -176,7 +183,7 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
                 });
 
         //添加到请求队列
-//        mRequestQueue.add(acceptedOrderRequest);
+        mRequestQueue.add(acceptedOrderRequest);
     }
 
     /**
@@ -187,19 +194,6 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
     public void setRefreshState(Boolean state) {
         mAcceptedSrl.setRefreshing(state);
     }
-
-//    /**
-//     * 通过EventBus传递的数据判断消息并作出回应
-//     */
-//    @Subscribe(threadMode = ThreadMode.POSTING)
-//    public void onEventUserLogin(LoginToOrderBean loginToOrderBean) {
-//        if (loginToOrderBean.isLogin()) {
-//            deleteAll();
-//            sendAcceptedOrderRequest();
-//        } else if (!loginToOrderBean.isLogin()) {
-//            deleteAll();
-//        }
-//    }
 
     //当从别的Tab切换回来的时候重新加载数据
     @Subscribe(threadMode = ThreadMode.POSTING)
@@ -227,6 +221,7 @@ public class OrderAcceptedFragment extends BaseLazyLoadFragment implements
     @Override
     public void onAcceptedItemClick(int position) {
         Intent ordersAccepted = new Intent(mMainActivity, OrdersAcceptedActivity.class);
-        mMainActivity.startActivity(ordersAccepted);
+        ordersAccepted.putExtra(ORDER_ID, mInitOrders.get(position).getOrderID());
+        getActivity().startActivity(ordersAccepted);
     }
 }

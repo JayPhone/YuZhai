@@ -95,7 +95,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/user_name"
+            android:layout_alignBottom="@+id/user_phone"
             android:layout_marginLeft="15dp"
             android:gravity="center_vertical"
             android:text="认证手机"
@@ -103,7 +103,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/user_name"
+            android:id="@+id/user_phone"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"

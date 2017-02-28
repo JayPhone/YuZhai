@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.yuzhai.activity.NotificationCenterActivity;
 import com.yuzhai.activity.SearchActivity;
 import com.yuzhai.adapter.CategoryRecyclerViewAdapter;
 import com.yuzhai.recyclerview.DividerGridItemDecoration;
@@ -29,6 +30,8 @@ import com.yuzhai.yuzhaiwork.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.string.no;
 
 /**
  * Created by Administrator on 2016/6/10.
@@ -42,6 +45,8 @@ public class HomeFragment extends Fragment {
     private TextView searchView;
     //用于弹出个人信息面板
     private ImageView navigationImage;
+    //用于弹出消息中心
+    private ImageView notificationsImage;
     //滚动面板
     private IndicatedViewFlipper indicatedFlipper;
     //类别面板
@@ -95,6 +100,15 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 DrawerLayout drawerLayout = (DrawerLayout) mainActivity.findViewById(R.id.drawer);
                 drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+
+        notificationsImage = (ImageView) getView().findViewById(R.id.notification_image);
+        notificationsImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent notification_center = new Intent(getActivity(), NotificationCenterActivity.class);
+                startActivity(notification_center);
             }
         });
 

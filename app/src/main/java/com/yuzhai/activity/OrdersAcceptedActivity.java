@@ -2,6 +2,7 @@ package com.yuzhai.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -18,6 +19,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.yuzhai.adapter.OrdersAcceptedViewPagerAdapter;
+import com.yuzhai.bean.responseBean.CancelAcceptedRespBean;
+import com.yuzhai.bean.responseBean.CancelAppliedRespBean;
 import com.yuzhai.bean.responseBean.OrderAcceptedDetailBean;
 import com.yuzhai.http.IPConfig;
 import com.yuzhai.fragment.OrderAcceptedDetailFragment;
@@ -41,6 +44,9 @@ import java.util.Map;
  */
 
 public class OrdersAcceptedActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, View.OnClickListener {
+    private static final String TAG = "OrdersAcceptedActivity";
+    private static final String AVATAR = "avatar";
+
     private Toolbar mToolbar;
     private CircleImageView mPublisherHeader;
     private TabLayout mTabLayout;
@@ -86,6 +92,14 @@ public class OrdersAcceptedActivity extends AppCompatActivity implements Toolbar
         mToolbar.inflateMenu(R.menu.accepted_detail_menu);
         mToolbar.setOnMenuItemClickListener(this);
         mPublisherHeader = (CircleImageView) findViewById(R.id.publisher_header);
+        mPublisherHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent userData = new Intent(OrdersAcceptedActivity.this, UserDataActivity.class);
+                userData.putExtra(AVATAR, mOrder.getPublisherAvatar());
+                startActivity(userData);
+            }
+        });
 
         //订单进度Fragment
         OrderAcceptedProcessFragment orderAcceptedProcessFragment = OrderAcceptedProcessFragment.newInstance(order);
@@ -141,14 +155,11 @@ public class OrdersAcceptedActivity extends AppCompatActivity implements Toolbar
     private void showCancelAcceptedOrderDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("取消接单");
-        builder.setMessage("您确定要取消接收订单，如果该订单已经同意您接收，则需要赔付一定的金额，您还要继续吗?");
+        builder.setMessage("您确定要取消接收订单，如果该订单已经同意您接收，则需要赔付你所缴纳的违约金，您还要继续吗?");
         builder.setPositiveButton("我要取消接收", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //正常代码
-                //发送取消已发布订单请求
-//                sendCancelPublishedRequest(mData.get(mPosition).getPublish().getPublishId());
-
+                sendCancelAcceptedRequest(mOrder.getOrderID());
             }
         });
         builder.setNegativeButton("先不取消", null);
@@ -189,5 +200,43 @@ public class OrdersAcceptedActivity extends AppCompatActivity implements Toolbar
 
         //添加到请求队列
         mRequestQueue.add(orderDetailRequest);
+    }
+
+    /**
+     * 发送取消申请订单的请求
+     *
+     * @param orderId
+     */
+    public void sendCancelAcceptedRequest(String orderId) {
+        //生成取消接收订单的请求参数集
+        Map<String, String> params = ParamsGenerateUtil.generateCancelAcceptedOrderParams(orderId);
+
+        CommonRequest cancelAcceptedOrder = new CommonRequest(this,
+                IPConfig.cancelAcceptedOrderAddress,
+                mCustomApplication.generateHeaderMap(),
+                params,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String resp) {
+                        Log.i(TAG, "cancel_accepted_resp:" + resp);
+                        //解析数据
+                        String code = JsonUtil.decodeByGson(resp, CancelAcceptedRespBean.class).getCode();
+                        if (code.equals("1")) {
+                            UnRepeatToast.showToast(OrdersAcceptedActivity.this, "取消接收订单成功");
+                        }
+                        if (code.equals("-1")) {
+                            UnRepeatToast.showToast(OrdersAcceptedActivity.this, "取消接收失败,请稍后再试");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        UnRepeatToast.showToast(OrdersAcceptedActivity.this, "服务器不务正业中");
+                    }
+                });
+
+        //添加到请求队列
+        mRequestQueue.add(cancelAcceptedOrder);
     }
 }

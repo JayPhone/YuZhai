@@ -36,6 +36,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import cn.bmob.newim.notification.BmobNotificationManager;
+
 /**
  * Created by Administrator on 2016/6/10.
  */
@@ -43,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements
         View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener,
         BottomNavigationBar.OnTabSelectedListener {
+    private static final String TAG = "MainActivity";
+    private static final String NOTIFICATION = "notification";
+    private static final String CONTACT = "contact";
+
     private CustomApplication mCustomApplication;
 
     private DrawerLayout mDrawLayout;
@@ -64,12 +70,16 @@ public class MainActivity extends AppCompatActivity implements
     private String mUserName;
     private long mClickTime = 0;
 
+    //通知打开聊天页面
+    private String mNotificationMsg;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //注册EventBus
         EventBus.getDefault().register(this);
+        mNotificationMsg = getIntent().getStringExtra(NOTIFICATION);
         mCustomApplication = (CustomApplication) getApplication();
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -97,6 +107,11 @@ public class MainActivity extends AppCompatActivity implements
                     .commit();
 
             mCurrentFragment = mHomeFragment;
+
+            //打开最近联系页面
+            if (mNotificationMsg != null && mNotificationMsg.equals(CONTACT)) {
+                clickContactTab();
+            }
         }
     }
 
@@ -126,7 +141,13 @@ public class MainActivity extends AppCompatActivity implements
                 .setActiveColorResource(R.color.mainColor));
         mBottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.contact, "聊天")
                 .setActiveColorResource(R.color.mainColor));
-        mBottomNavigationBar.setFirstSelectedPosition(0).initialise();
+
+        //如果通过离线消息进入界面，则选择聊天界面
+        if (mNotificationMsg != null && mNotificationMsg.equals(CONTACT)) {
+            mBottomNavigationBar.setFirstSelectedPosition(3).initialise();
+        } else {
+            mBottomNavigationBar.setFirstSelectedPosition(0).initialise();
+        }
         mBottomNavigationBar.setTabSelectedListener(this);
 
         //菜单
@@ -384,6 +405,13 @@ public class MainActivity extends AppCompatActivity implements
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //进入应用后，通知栏应取消
+        BmobNotificationManager.getInstance(this).cancelNotification();
     }
 
     @Override

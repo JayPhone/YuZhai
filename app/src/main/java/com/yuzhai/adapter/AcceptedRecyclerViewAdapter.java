@@ -55,7 +55,7 @@ public class AcceptedRecyclerViewAdapter extends RecyclerView.Adapter<AcceptedRe
             map.put("type", typeImages[i]);
             map.put("status", status[i]);
             map.put("date", dates[i]);
-            map.put("title", titles[i]);
+            map.put("notificationTitle", titles[i]);
             map.put("price", prices[i]);
             map.put("limit", limits[i]);
             map.put("orderId", orderIds[i]);
@@ -98,7 +98,7 @@ public class AcceptedRecyclerViewAdapter extends RecyclerView.Adapter<AcceptedRe
             holder.mStatusText.setText((CharSequence) testAcceptedOrders.get(position).get("status"));
             holder.mOrderIdText.setText((CharSequence) testAcceptedOrders.get(position).get("orderId"));
             holder.mDateText.setText((CharSequence) testAcceptedOrders.get(position).get("date"));
-            holder.mTitleText.setText((CharSequence) testAcceptedOrders.get(position).get("title"));
+            holder.mTitleText.setText((CharSequence) testAcceptedOrders.get(position).get("notificationTitle"));
             holder.mDeadlineText.setText((CharSequence) testAcceptedOrders.get(position).get("limit"));
             holder.mRewardText.setText((CharSequence) testAcceptedOrders.get(position).get("price"));
             holder.mTypeImage.setImageResource((Integer) testAcceptedOrders.get(position).get("type"));

@@ -24,7 +24,7 @@ public class PublishedRecyclerViewHolder extends RecyclerView.ViewHolder {
     public PublishedRecyclerViewHolder(View itemView) {
         super(itemView);
         mCardView = (CardView) itemView.findViewById(R.id.card_view);
-        mStatusText = (TextView) itemView.findViewById(R.id.tel);
+        mStatusText = (TextView) itemView.findViewById(R.id.status);
         mOrderIdText = (TextView) itemView.findViewById(R.id.order_id);
         mDateText = (TextView) itemView.findViewById(R.id.date);
         mTitleText = (TextView) itemView.findViewById(R.id.title);

@@ -60,7 +60,7 @@ public class AlterPswActivity extends AppCompatActivity implements View.OnClickL
         });
 
         mAlterBtn = (Button) findViewById(R.id.change_button);
-        mOldPswEdit = (EditText) findViewById(R.id.password);
+        mOldPswEdit = (EditText) findViewById(R.id.new_psw);
         mNewPswEdit = (EditText) findViewById(R.id.new_password);
         mCfmPswEdit = (EditText) findViewById(R.id.confirm_password);
 

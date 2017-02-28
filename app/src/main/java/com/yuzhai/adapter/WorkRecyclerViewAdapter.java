@@ -50,7 +50,7 @@ public class WorkRecyclerViewAdapter extends RecyclerView.Adapter<WorkRecyclerVi
         for (int i = 0; i < titles.length; i++) {
             map = new HashMap<>();
             map.put("image", images[i]);
-            map.put("title", titles[i]);
+            map.put("notificationTitle", titles[i]);
             map.put("date", dates[i]);
             map.put("limit", limits[i]);
             map.put("price", prices[i]);
@@ -96,7 +96,7 @@ public class WorkRecyclerViewAdapter extends RecyclerView.Adapter<WorkRecyclerVi
                 holder.mImage.setImageResource(R.drawable.default_image);
             }
         } else {
-            holder.mTitle.setText((String) testOrders.get(position).get("title"));
+            holder.mTitle.setText((String) testOrders.get(position).get("notificationTitle"));
             holder.mDate.setText((String) testOrders.get(position).get("date"));
             holder.mDeadline.setText((String) testOrders.get(position).get("limit"));
             holder.mReward.setText((String) testOrders.get(position).get("price"));

@@ -9,12 +9,14 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/published_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/published_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
             app:subtitle="未接"
             app:subtitleTextColor="@color/color_EEEEEE"
             app:title="订单状态"
@@ -25,11 +27,11 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/mainColor"
-            app:tabIndicatorColor="@color/color_white"
+            android:background="@color/color_white"
+            app:tabIndicatorColor="@color/mainColor"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/color_white"
-            app:tabTextColor="@color/color_E0E0E0" />
+            app:tabSelectedTextColor="@color/mainColor"
+            app:tabTextColor="@color/color_424242" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager

@@ -21,8 +21,11 @@ import android.widget.Button;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.xiaomi.mipush.sdk.MiPushClient;
+import com.yuzhai.bean.innerBean.BaseUserInfoBean;
 import com.yuzhai.bean.requestBean.UserLoginBean;
 import com.yuzhai.bean.requestBean.UserPhoneBean;
+import com.yuzhai.bean.responseBean.LoginRespBean;
 import com.yuzhai.bean.responseBean.RegisterRespBean;
 import com.yuzhai.global.CustomApplication;
 import com.yuzhai.http.CommonRequest;
@@ -33,12 +36,14 @@ import com.yuzhai.util.JsonUtil;
 import com.yuzhai.view.UnRepeatToast;
 import com.yuzhai.yuzhaiwork.R;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Map;
 
-import cn.bmob.newsmssdk.BmobSMS;
-import cn.bmob.newsmssdk.exception.BmobException;
-import cn.bmob.newsmssdk.listener.RequestSMSCodeListener;
-import cn.bmob.newsmssdk.listener.VerifySMSCodeListener;
+import cn.bmob.v3.BmobSMS;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.RequestSMSCodeListener;
+import cn.bmob.v3.listener.VerifySMSCodeListener;
 
 /**
  * Created by 35429 on 2017/2/16.
@@ -91,8 +96,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
         } else {
-            //初始化短信接口
-            initBmobSMS();
+            Log.i(TAG, "已开启读取手机状态权限");
         }
 
         mCustomApplication = (CustomApplication) getActivity().getApplication();
@@ -100,13 +104,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         initViews();
         //获取请求队列
         requestQueue = RequestQueueSingleton.getRequestQueue(getActivity());
-    }
-
-    /**
-     * //初始化短信接口
-     */
-    private void initBmobSMS() {
-        BmobSMS.initialize(getActivity(), CustomApplication.BOMB_APP_ID);
     }
 
     /**
@@ -121,7 +118,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         regPhoneEdit = (TextInputEditText) getView().findViewById(R.id.user_name);
         checkCodeEdit = (TextInputEditText) getView().findViewById(R.id.verify_code);
         checkCodeButton = (Button) getView().findViewById(R.id.verify_button);
-        pswEdit = (TextInputEditText) getView().findViewById(R.id.password);
+        pswEdit = (TextInputEditText) getView().findViewById(R.id.new_psw);
         cfmPswEdit = (TextInputEditText) getView().findViewById(R.id.confirm_psw);
         registerButton = (Button) getView().findViewById(R.id.register_button);
         loginButton = (Button) getView().findViewById(R.id.login_nav);
@@ -253,6 +250,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void done(Integer smsId, BmobException e) {
                     if (e == null) {//验证码发送成功
+                        UnRepeatToast.showToast(getActivity(), "验证码已发送，请注意查收");
                         Log.i(TAG, "短信id：" + smsId);//用于查询本次短信发送详情
                     }
                 }
@@ -314,24 +312,21 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String resp) {
-                            Log.i("register_resp", resp);
+                            Log.i(TAG, "register_resp:" + resp);
 
                             //获取返回码
                             RegisterRespBean registerRespBean = JsonUtil.decodeByGson(resp, RegisterRespBean.class);
                             String respCode = registerRespBean.getCode();
-                            Log.i("register_resp_code", respCode);
+                            Log.i(TAG, "register_resp_code:" + respCode);
 
                             if (respCode != null && respCode.equals("-1")) {
                                 UnRepeatToast.showToast(getActivity(), "用户已存在");
                             }
 
                             if (respCode != null && respCode.equals("1")) {
-                                Log.i("register_resp", "注册成功");
-                                getActivity().finish();
-                            }
-
-                            if (respCode != null && respCode.equals("2")) {
-                                UnRepeatToast.showToast(getActivity(), "验证码已过期，请重新获取");
+                                Log.i(TAG, "register_resp:" + "注册成功");
+                                //发送登录请求
+                                sendLoginRequest(userBean.getUserPhone(), userBean.getUserPsw(), MiPushClient.getRegId(getContext()));
                             }
                         }
                     },
@@ -344,6 +339,74 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
             //添加注册请求到请求队列
             requestQueue.add(regRequest);
+        }
+    }
+
+    /**
+     * 发送登录请求
+     *
+     * @param userPhone 用户名
+     * @param psw       密码
+     */
+    public void sendLoginRequest(String userPhone, String psw, String regId) {
+        if (checkRegPhone(userPhone) && checkLoginPsw(psw)) {
+            //生成登录请求参数
+            Map<String, String> params = ParamsGenerateUtil.generateLoginParams(
+                    userBean.getUserPhone(),
+                    userBean.getUserPsw(),
+                    regId);
+            Log.i(TAG, "login_url:" + IPConfig.loginAddress);
+            Log.i(TAG, "login_param:" + params.toString());
+
+            //创建登录请求
+            CommonRequest loginRequest = new CommonRequest(getActivity(),
+                    IPConfig.loginAddress,
+                    null,
+                    params,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.i(TAG, "login_resp:" + response);
+                            LoginRespBean loginRespBean = JsonUtil.decodeByGson(response, LoginRespBean.class);
+
+                            //返回的响应码
+                            String respCode = loginRespBean.getCode();
+                            Log.i(TAG, "login_resp_code:" + loginRespBean.getCode());
+
+                            if (respCode != null && respCode.equals("-1")) {
+                                UnRepeatToast.showToast(getActivity(), "密码错误");
+                            }
+
+                            if (respCode != null && respCode.equals("0")) {
+                                UnRepeatToast.showToast(getActivity(), "账号不存在");
+                            }
+
+                            if (respCode != null && respCode.equals("1")) {
+                                //用户头像路径
+                                String userHead = loginRespBean.getUser_head_url();
+                                Log.i(TAG, "login_resp_userHead:" + loginRespBean.getUser_head_url());
+                                //用户名
+                                String userName = loginRespBean.getUser_name();
+                                Log.i(TAG, "login_resp_userName:" + loginRespBean.getUser_name());
+                                //保存登陆成功的手机号和密码
+                                mCustomApplication.addUserInfo(userBean.getUserPhone(), userBean.getUserPsw());
+                                //设置为登录状态
+                                mCustomApplication.setLoginState(true);
+                                //使用EventBus发送替换为登录的界面的消息到MainActivity
+                                EventBus.getDefault().post(new BaseUserInfoBean(userHead, userName, mCustomApplication.isLogin()));
+                                getActivity().finish();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            UnRepeatToast.showToast(getActivity(), "服务器不务正业中");
+                        }
+                    });
+
+            //添加登录请求到请求队列
+            requestQueue.add(loginRequest);
         }
     }
 
@@ -366,6 +429,27 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         //校验成功后，保存手机号
         userPhoneBean = new UserPhoneBean(phoneNumber);
+        return true;
+    }
+
+    /**
+     * 用于校验登录操作的数据
+     *
+     * @param loginPsw 验证登录的密码合法性
+     * @return 如果填写的数据其中一项或全部不正确，返回false，否则返回true
+     */
+    public Boolean checkLoginPsw(String loginPsw) {
+        //校验密码
+        if (loginPsw.equals("")) {
+            UnRepeatToast.showToast(getActivity(), "密码不能为空");
+            return false;
+        }
+
+        if (loginPsw.length() < 6) {
+            UnRepeatToast.showToast(getActivity(), "密码长度不能小于6位");
+            return false;
+        }
+
         return true;
     }
 
@@ -434,8 +518,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //初始化短信接口
-                    initBmobSMS();
+                    Log.i(TAG, "开启读取手机状态权限");
                 } else {
                     UnRepeatToast.showToast(getActivity(), "需要开启权限才能获取验证码");
                 }

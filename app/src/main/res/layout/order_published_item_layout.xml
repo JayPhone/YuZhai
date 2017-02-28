@@ -27,19 +27,19 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/tel_title"
+                android:id="@+id/status_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="状态:"
                 android:textColor="@color/color_616161" />
 
             <TextView
-                android:id="@+id/tel"
+                android:id="@+id/status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/tel_title"
+                android:layout_alignBaseline="@+id/status_title"
                 android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@id/tel_title"
+                android:layout_toRightOf="@id/status_title"
                 android:textColor="@color/color_616161" />
 
             <TextView
@@ -63,7 +63,7 @@
                 android:id="@+id/deadline_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tel_title"
+                android:layout_below="@id/status_title"
                 android:layout_marginTop="5dp"
                 android:text="期限:"
                 android:textColor="@color/color_616161" />

@@ -35,6 +35,7 @@ public class OrderPublishedDetailBean {
         private String title;
         private String status;
         private String tel;
+        private String bidder;
         private List<OrderPublishedDetailBean.OrderInfoBean.PicturesBean> pictures;
         private List<OrderPublishedDetailBean.OrderInfoBean.ApplicantAvatars> applicant_avatars;
 
@@ -134,6 +135,14 @@ public class OrderPublishedDetailBean {
             this.applicant_avatars = applicantAvatars;
         }
 
+        public String getBidder() {
+            return bidder;
+        }
+
+        public void setBidder(String bidder) {
+            this.bidder = bidder;
+        }
+
         @Override
         public String toString() {
             return "OrderInfoBean{" +
@@ -147,8 +156,9 @@ public class OrderPublishedDetailBean {
                     ", title='" + title + '\'' +
                     ", status='" + status + '\'' +
                     ", tel='" + tel + '\'' +
+                    ", bidder='" + bidder + '\'' +
                     ", pictures=" + pictures +
-                    ", applicantAvatars=" + applicant_avatars +
+                    ", applicant_avatars=" + applicant_avatars +
                     '}';
         }
 

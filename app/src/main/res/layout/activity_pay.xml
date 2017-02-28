@@ -5,9 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
+    <android.support.v7.widget.Toolbar
         android:id="@+id/pay_toolbar"
-        layout="@layout/toolbar_layout" />
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/mainColor"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/back"
+        app:title="支付详情"
+        app:titleTextColor="@color/color_white" />
 
     <TextView
         android:id="@+id/reward_hint"
@@ -16,8 +22,8 @@
         android:layout_below="@+id/pay_toolbar"
         android:layout_marginTop="15dp"
         android:gravity="center"
-        android:text="订单支付金额"
-        android:textColor="@color/color_616161"
+        android:text="需要支付金额"
+        android:textColor="@color/color_424242"
         android:textSize="14sp" />
 
     <TextView
@@ -27,24 +33,25 @@
         android:layout_below="@+id/reward_hint"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="￥500"
         android:textColor="@color/mainColor"
         android:textSize="40sp" />
 
     <TextView
-        android:id="@+id/order_id"
+        android:id="@+id/pay_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/reward"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="订单号:1315613646" />
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:textColor="@color/color_424242" />
 
     <View
         android:id="@+id/pay_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/order_id"
+        android:layout_below="@id/pay_description"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="10dp"
@@ -67,16 +74,6 @@
             android:textColor="@color/color_424242"
             android:textSize="16sp" />
 
-        <com.yuzhai.view.CircleImageView
-            android:id="@+id/user_header"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/user_name"
-            android:src="@drawable/test2"
-            app:border_color="@color/color_white" />
-
         <TextView
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
@@ -84,7 +81,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:gravity="center_vertical"
-            android:text="JFJF"
+            android:text="御宅工作"
             android:textColor="@color/color_424242"
             android:textSize="16sp" />
     </RelativeLayout>
@@ -222,14 +219,15 @@
         android:background="@color/color_EEEEEE" />
 
     <Button
+        android:id="@+id/pay_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/wxpay_divider"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="50dp"
         android:background="@drawable/button_style"
-        android:text="确认支付"
+        android:text="确认支付方式"
         android:textColor="@color/color_white"
         android:textSize="16sp" />
 </RelativeLayout>

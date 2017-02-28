@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +14,9 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -54,22 +57,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.RuntimePermissions;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
 
-import static com.android.volley.VolleyLog.TAG;
-import static com.yuzhai.util.JsonUtil.decodeByGson;
+import static com.a.a.b.a.i.im;
 
 /**
  * Created by Administrator on 2016/7/13.
  */
-@RuntimePermissions
 public class PublishFragment extends Fragment implements View.OnTouchListener, View.OnClickListener {
     private static final String TAG = "PublishFragment";
+    private static final String TYPE = "type";
 
     //全局变量
-    private Activity mMainActivity;
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
 
@@ -92,7 +92,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
     private String imagePath;
     private List<String> imagePathsList;
-    private List<ImageView> imageViewsList;
+    private List<File> imageFilesList;
     private PublishBean publishBean;
     private int imageMargin = 15;
 
@@ -111,17 +111,16 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mMainActivity = getActivity();
         return inflater.inflate(R.layout.fragment_publish, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mCustomApplication = (CustomApplication) mMainActivity.getApplication();
-        mRequestQueue = RequestQueueSingleton.getRequestQueue(mMainActivity);
+        mCustomApplication = (CustomApplication) getActivity().getApplication();
+        mRequestQueue = RequestQueueSingleton.getRequestQueue(getActivity());
+        imageFilesList = new ArrayList<>();
         imagePathsList = new ArrayList<>();
-        imageViewsList = new ArrayList<>();
         initViews();
     }
 
@@ -160,7 +159,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
     //对话框显示图片的添加方式
     public void addImageDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("添加图片");
         builder.setItems(new String[]{"手机相机添加", "本地相册选择"},
                 new DialogInterface.OnClickListener() {
@@ -170,19 +169,19 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                             case 0:
                                 //每次只能上传5张图片
                                 if (imagePathsList.size() < 5) {
-                                    Log.i("count", imagePathsList.size() + "");
-                                    PublishFragmentPermissionsDispatcher.showCameraWithCheck(PublishFragment.this);
+                                    Log.i(TAG, "count" + imagePathsList.size() + "");
+                                    checkCameraPermission();
                                 } else {
-                                    UnRepeatToast.showToast(mMainActivity, "一次最多只能上传5张图片");
+                                    UnRepeatToast.showToast(getActivity(), "一次最多只能上传5张图片");
                                 }
                                 break;
 
                             case 1:
                                 if (imagePathsList.size() < 5) {
-                                    Log.i("count", imagePathsList.size() + "");
+                                    Log.i(TAG, "count" + imagePathsList.size() + "");
                                     showImagePick();
                                 } else {
-                                    UnRepeatToast.showToast(mMainActivity, "一次最多只能上传5张图片");
+                                    UnRepeatToast.showToast(getActivity(), "一次最多只能上传5张图片");
                                 }
                                 break;
                         }
@@ -191,7 +190,20 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         builder.create().show();
     }
 
-    @NeedsPermission(Manifest.permission.CAMERA)
+    /**
+     * 检测是否拥有相机权限
+     */
+    private void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            this.requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+        } else {
+            showCamera();
+        }
+    }
+
+    /**
+     * 打开相机
+     */
     public void showCamera() {
         imagePath = FileUtil.createFilePath(FileUtil.NEED_IMAGE);
         Log.i("path", imagePath);
@@ -200,6 +212,9 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         startActivityForResult(intent_camera, CAMERA_REQUEST);
     }
 
+    /**
+     * 打开图片选择器
+     */
     public void showImagePick() {
         Intent intent_imagePick = new Intent(Intent.ACTION_PICK);
         intent_imagePick.setType("image/*");
@@ -214,10 +229,11 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         startActivityForResult(intent_imagePick, IMAGE_PICK_REQUEST);
     }
 
-    //当用户选择不再提示后的处理
-    @OnNeverAskAgain(Manifest.permission.CAMERA)
-    void onCameraNeverAskAgain() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
+    /**
+     * 当用户拒绝授予相机权限时调用
+     */
+    private void showOnDenienCameraPermission() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("权限申请");
         builder.setMessage("请到设置 - 应用 - 御宅工作 - 权限中开启相机权限，以正常使用头像上传，需求图片上传等功能");
         builder.setPositiveButton("设置", new DialogInterface.OnClickListener() {
@@ -239,7 +255,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     int imageLayoutWidth = mImagesPreviewLayout.getMeasuredWidth();
                     int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
                     int imageHeight = imageWidth;
-                    ImageView needImage = new ImageView(mMainActivity);
+                    ImageView needImage = new ImageView(getActivity());
                     needImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
                     params.setMargins(imageMargin, 0, 0, 0);
@@ -248,9 +264,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, imageWidth, imageHeight));
                     //添加当前图片路径到List
                     imagePathsList.add(imagePath);
-                    //添加当前图片到List
-                    imageViewsList.add(needImage);
-                    Log.i("paths", imagePathsList.toString());
+                    Log.i(TAG, "paths" + imagePathsList.toString());
                 }
                 break;
             case IMAGE_PICK_REQUEST:
@@ -258,26 +272,26 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     int imageLayoutWidth = mImagesPreviewLayout.getMeasuredWidth();
                     int imageWidth = (imageLayoutWidth - (imageMargin * 6)) / 5;
                     int imageHeight = imageWidth;
-                    ImageView needImage = new ImageView(mMainActivity);
+                    ImageView needImage = new ImageView(getActivity());
                     needImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageWidth, imageHeight);
                     params.setMargins(imageMargin, 0, 0, 0);
                     needImage.setLayoutParams(params);
                     mImagesPreviewLayout.addView(needImage);
                     Uri uri = data.getData();
-                    imagePath = GetPathUtil.getImageAbsolutePath(mMainActivity, uri);
+                    imagePath = GetPathUtil.getImageAbsolutePath(getActivity(), uri);
                     needImage.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(imagePath, imageWidth, imageHeight));
                     //添加当前图片路径到List
                     imagePathsList.add(imagePath);
-                    //添加当前图片到List
-                    imageViewsList.add(needImage);
-                    Log.i("paths", imagePathsList.toString());
+                    Log.i(TAG, "paths:" + imagePathsList.toString());
                 }
                 break;
         }
     }
 
-    //初始化类型选择器
+    /**
+     * 初始化类型选择器
+     */
     public void initTypeSpinner() {
         mTypeSpinner = (Spinner) getView().findViewById(R.id.type_spinner);
         List<Map<String, String>> types = new ArrayList<>();
@@ -285,7 +299,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
 
         for (int i = 0; i < typeTexts.length; i++) {
             type = new HashMap<>();
-            type.put("type", typeTexts[i]);
+            type.put(TYPE, typeTexts[i]);
             types.add(type);
         }
 
@@ -293,21 +307,23 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 getActivity(),
                 types,
                 R.layout.publish_spinner_item_layout,
-                new String[]{"type"},
+                new String[]{TYPE},
                 new int[]{R.id.type_item}
         );
         mTypeSpinner.setAdapter(adapter);
     }
 
-    //初始化期限选择器
+    /**
+     * 初始化期限选择器
+     */
     public void initDateSpinner() {
         mDeadlineSpinner = (Spinner) getView().findViewById(R.id.date_spinner);
         List<Map<String, String>> types = new ArrayList<>();
         Map<String, String> type;
 
-        for (int i = 0; i < dateTexts.length; i++) {
+        for (String dateText : dateTexts) {
             type = new HashMap<>();
-            type.put("type", dateTexts[i]);
+            type.put(TYPE, dateText);
             types.add(type);
         }
 
@@ -315,7 +331,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                 getActivity(),
                 types,
                 R.layout.publish_spinner_item_layout,
-                new String[]{"type"},
+                new String[]{TYPE},
                 new int[]{R.id.type_item}
         );
         mDeadlineSpinner.setAdapter(adapter);
@@ -338,7 +354,6 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            //点击返回按钮
             case R.id.upload_image:
                 addImageDialog();
                 break;
@@ -350,25 +365,15 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     sb.setAction("登录", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent login_register = new Intent(mMainActivity, LoginAndRegisterActivity.class);
+                            Intent login_register = new Intent(getActivity(), LoginAndRegisterActivity.class);
                             startActivity(login_register);
                         }
                     }).show();
                 } else {
-                    //选择的项目类型
-                    String type = mTypeSpinner.getSelectedItem().toString();
-                    type = type.substring(6, type.length() - 1);
-                    //选择的项目期限
-                    String deadLine = mDeadlineSpinner.getSelectedItem().toString();
-                    deadLine = deadLine.substring(6, deadLine.length() - 1);
-
-                    //发送发布订单请求
-                    sendPublishOrderRequest(mTitleEdit.getText().toString(),
-                            mDescriptionEdit.getText().toString(),
-                            type,
-                            deadLine,
-                            mTelEdit.getText().toString(),
-                            mRewardEdit.getText().toString());
+                    //显示处理图片对话框
+                    showProgressDialog("正在处理图片");
+                    //压缩图片
+                    compressImage(imagePathsList);
                 }
                 break;
         }
@@ -389,11 +394,11 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                                         String type,
                                         String deadline,
                                         String tel,
-                                        String reward) {
+                                        String reward,
+                                        List<File> imageFiles) {
+        Log.i(TAG, "request" + imageFiles.toString());
 
         if (checkPublishData(title, description, imagePathsList, type, deadline, tel, reward)) {
-            //显示正在发布对话框
-            showProgressDialog();
             //获取请求参数
             Map<String, String> params = ParamsGenerateUtil.generatePublishOrderParams(title,
                     description,
@@ -402,26 +407,29 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                     tel,
                     reward);
 
-            Log.i("publish_params", params.toString());
+            Log.i(TAG, "publish_params:" + params.toString());
 
-            Log.i("publish_cookie", mCustomApplication.getCookie());
             //创建请求
             FileUploadRequest publishOrderRequest = new FileUploadRequest(getContext(),
                     IPConfig.publishOrderAddress,
                     mCustomApplication.generateHeaderMap(),
                     params,
                     "files",
-                    generateUploadFile(),
+                    imageFiles,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String resp) {
-                            Log.i("publish_order_resp", resp);
+                            Log.i(TAG, "publish_order_resp:" + resp);
                             PublishOrderRespBean publishOrderRespBean =
                                     JsonUtil.decodeByGson(resp, PublishOrderRespBean.class);
                             if (publishOrderRespBean.getCode().equals("1")) {
                                 dismissProgressDialog();
                                 clearAll();
-                                UnRepeatToast.showToast(mMainActivity, "发布成功");
+                                //清空图片路径
+                                imagePathsList.clear();
+                                //清空文件
+                                imageFilesList.clear();
+                                UnRepeatToast.showToast(getActivity(), "发布成功");
                             }
                         }
                     },
@@ -429,7 +437,7 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
                             dismissProgressDialog();
-                            UnRepeatToast.showToast(mMainActivity, "服务器不务正业中");
+                            UnRepeatToast.showToast(getActivity(), "服务器不务正业中");
                         }
                     });
             //添加到请求队列
@@ -438,15 +446,16 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
     }
 
     /**
-     * 显示正在发布对话框
+     * 显示对话框
      */
-    public void showProgressDialog() {
+    public void showProgressDialog(String message) {
         if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(mMainActivity);
-            mProgressDialog.setMessage("正在发布");
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(message);
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressDialog.show();
         } else {
+            mProgressDialog.setMessage(message);
             mProgressDialog.show();
         }
     }
@@ -494,42 +503,42 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
                                     String reward) {
 
         if (title.equals("")) {
-            UnRepeatToast.showToast(mMainActivity, "需求标题不能为空");
+            UnRepeatToast.showToast(getActivity(), "需求标题不能为空");
             return false;
         }
 
         if (description.equals("")) {
-            UnRepeatToast.showToast(mMainActivity, "需求内容不能为空");
+            UnRepeatToast.showToast(getActivity(), "需求内容不能为空");
             return false;
         }
 
         if (imagePathsList.size() == 0) {
-            UnRepeatToast.showToast(mMainActivity, "至少需要上传一张图片");
+            UnRepeatToast.showToast(getActivity(), "至少需要上传一张图片");
             return false;
         }
 
         if (type.equals("请选择项目类型")) {
-            UnRepeatToast.showToast(mMainActivity, "请选择项目类型");
+            UnRepeatToast.showToast(getActivity(), "请选择项目类型");
             return false;
         }
 
         if (deadline.equals("请选择预期时长")) {
-            UnRepeatToast.showToast(mMainActivity, "请选择预期时长");
+            UnRepeatToast.showToast(getActivity(), "请选择预期时长");
             return false;
         }
 
         if (tel.equals("")) {
-            UnRepeatToast.showToast(mMainActivity, "联系电话不能为空");
+            UnRepeatToast.showToast(getActivity(), "联系电话不能为空");
             return false;
         }
 
         if (tel.length() != 11) {
-            UnRepeatToast.showToast(mMainActivity, "手机号码长度应为11位");
+            UnRepeatToast.showToast(getActivity(), "手机号码长度应为11位");
             return false;
         }
 
         if (reward.equals("")) {
-            UnRepeatToast.showToast(mMainActivity, "项目金额不能为空");
+            UnRepeatToast.showToast(getActivity(), "项目金额不能为空");
             return false;
         }
 
@@ -538,34 +547,78 @@ public class PublishFragment extends Fragment implements View.OnTouchListener, V
         return true;
     }
 
-    /**
-     * 生成图片文件List
-     *
-     * @return 返回List
-     */
-    public List<File> generateUploadFile() {
-        List<File> filesList = new ArrayList<>();
-        if (imagePathsList.size() == 0) {
-            return null;
-        } else {
-            for (int i = 0; i < imagePathsList.size(); i++) {
-                filesList.add(new File(imagePathsList.get(i)));
-            }
-            return filesList;
-        }
-    }
-
-    //权限许可情况调用
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // NOTE: 将权限处理委托给生成的方法
-        PublishFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+        switch (requestCode) {
+            case CAMERA_REQUEST:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showCamera();
+                } else {
+                    showOnDenienCameraPermission();
+                }
+                break;
+        }
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         Log.i(TAG, "UserVisible:" + isVisibleToUser);
+    }
+
+    /**
+     * 压缩图片
+     */
+    private void compressImage(List<String> imagePathsList) {
+        for (int i = 0; i < imagePathsList.size(); i++) {
+            Luban.get(getContext())
+                    .load(new File(imagePathsList.get(i)))                     //传人要压缩的图片
+                    .putGear(Luban.THIRD_GEAR)      //设定压缩档次，默认三挡
+                    .setCompressListener(new OnCompressListener() { //设置回调
+                        @Override
+                        public void onStart() {
+                            // TODO 压缩开始前调用，可以在方法内启动 loading UI
+                        }
+
+                        @Override
+                        public void onSuccess(File file) {
+                            imageFilesList.add(file);
+                            Log.i(TAG, "compress" + imageFilesList.toString());
+                            canSendRequest();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            // TODO 当压缩过去出现问题时调用
+                        }
+                    }).launch();    //启动压缩
+        }
+    }
+
+    /**
+     * 当选择的图片全部压缩完成后发送请求
+     */
+    private void canSendRequest() {
+        if (imageFilesList.size() == imagePathsList.size()) {
+            //关闭处理图片对话框
+            dismissProgressDialog();
+            //显示正在发布对话框
+            showProgressDialog("正在发布");
+            //选择的项目类型
+            String type = mTypeSpinner.getSelectedItem().toString();
+            type = type.substring(6, type.length() - 1);
+            //选择的项目期限
+            String deadLine = mDeadlineSpinner.getSelectedItem().toString();
+            deadLine = deadLine.substring(6, deadLine.length() - 1);
+            //发送发布订单请求
+            sendPublishOrderRequest(mTitleEdit.getText().toString(),
+                    mDescriptionEdit.getText().toString(),
+                    type,
+                    deadLine,
+                    mTelEdit.getText().toString(),
+                    mRewardEdit.getText().toString(),
+                    imageFilesList);
+        }
     }
 }

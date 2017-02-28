@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             app:contentScrim="@color/colorPrimary"
             app:expandedTitleGravity="center_horizontal"
-            app:expandedTitleMarginTop="150dp"
+            app:expandedTitleMarginTop="160dp"
             app:expandedTitleTextAppearance="@style/CollapsingTitleTextAppearance"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="@android:color/transparent"
@@ -245,7 +245,7 @@
                             android:src="@drawable/money" />
 
                         <TextView
-                            android:id="@+id/tel"
+                            android:id="@+id/status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/tel_icon"
@@ -259,7 +259,7 @@
                             android:id="@+id/tel_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/tel"
+                            android:layout_below="@+id/status"
                             android:layout_marginLeft="20dp"
                             android:layout_marginTop="2dp"
                             android:layout_toRightOf="@+id/tel_icon"

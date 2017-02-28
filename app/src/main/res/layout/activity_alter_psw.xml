@@ -28,7 +28,7 @@
             app:counterMaxLength="16">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/password"
+                android:id="@+id/new_psw"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="请输入原密码"

@@ -70,15 +70,6 @@ public class OrderAcceptedProcessFragment extends Fragment {
     }
 
     private void initData() {
-        list = new ArrayList<>();
-        list.add("订单发布");
-        list.add("等待用户申请接收订单");
-        list.add("同意用户接收订单");
-        list.add("接收方提交作品");
-        list.add("支付订单金额");
-        list.add("双方评价");
-        list.add("订单完成");
-
         if (CustomApplication.isConnect) {
             mOrder = JsonUtil.decodeByGson(getArguments().getString(ORDER), OrderAcceptedDetailBean.class).getDetailedOrder();
             updateData(mOrder);
@@ -88,8 +79,23 @@ public class OrderAcceptedProcessFragment extends Fragment {
     }
 
     private void updateData(OrderAcceptedDetailBean.OrderInfoBean order) {
-        mVerticalStepView
-                .setStepsViewIndicatorComplectingPosition(1)//设置完成的步数
-                .setStepViewTexts(list);//总步骤
+        list = new ArrayList<>();
+        if (mOrder.getStatus().equals("取消发布订单")) {
+            list.add("订单接收成功");
+            list.add("订单已被发布方取消");
+            list.add("订单停止");
+        } else {
+            list.add("订单接收成功");
+            list.add("订单开始");
+            list.add("提交作品");
+            list.add("订单完成");
+        }
+
+        mVerticalStepView.setStepViewTexts(list);//总步骤
+        if (mOrder.getStatus().equals("取消发布订单")) {
+            mVerticalStepView.setStepsViewIndicatorComplectingPosition(2);//设置完成的步数
+        } else {
+            mVerticalStepView.setStepsViewIndicatorComplectingPosition(1);
+        }
     }
 }

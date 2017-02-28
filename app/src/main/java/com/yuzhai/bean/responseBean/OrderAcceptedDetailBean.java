@@ -7,148 +7,159 @@ import java.util.List;
  */
 
 public class OrderAcceptedDetailBean {
-    private OrderAcceptedDetailBean.OrderInfoBean DetailedOrder;
+    private OrderAcceptedDetailBean.OrderInfoBean detailed_order;
 
     public OrderAcceptedDetailBean.OrderInfoBean getDetailedOrder() {
-        return DetailedOrder;
+        return detailed_order;
     }
 
     public void setDetailedOrder(OrderAcceptedDetailBean.OrderInfoBean detailedOrder) {
-        this.DetailedOrder = detailedOrder;
+        this.detailed_order = detailedOrder;
     }
 
     @Override
     public String toString() {
         return "DetailOrderBean{" +
-                "DetailedOrder=" + DetailedOrder +
+                "detailed_order=" + detailed_order +
                 '}';
     }
 
     public class OrderInfoBean {
-        private String Publisher;
-        private String Description;
-        private String Reward;
-        private String Date;
-        private String OrderID;
-        private String PublisherAvatar;
-        private String Deadline;
-        private String Title;
-        private String Status;
-        private String Tel;
-        private List<OrderAcceptedDetailBean.OrderInfoBean.PicturesBean> Pictures;
-        private List<OrderAcceptedDetailBean.OrderInfoBean.ApplicantAvatars> applicantAvatars;
+        private String publisher;
+        private String description;
+        private String reward;
+        private String date;
+        private String order_id;
+        private String publisher_avatar;
+        private String deadline;
+        private String title;
+        private String status;
+        private String tel;
+        private String bidder;
+
+        private List<OrderAcceptedDetailBean.OrderInfoBean.PicturesBean> pictures;
+        private List<OrderAcceptedDetailBean.OrderInfoBean.ApplicantAvatars> applicant_avatars;
 
         public String getPublisher() {
-            return Publisher;
+            return publisher;
         }
 
         public void setPublisher(String publisher) {
-            Publisher = publisher;
+            this.publisher = publisher;
         }
 
         public String getStatus() {
-            return Status;
+            return status;
         }
 
         public void setStatus(String status) {
-            Status = status;
+            this.status = status;
         }
 
         public String getDescription() {
-            return Description;
+            return description;
         }
 
         public void setDescription(String description) {
-            Description = description;
+            this.description = description;
         }
 
         public String getTel() {
-            return Tel;
+            return tel;
         }
 
         public void setTel(String tel) {
-            Tel = tel;
+            this.tel = tel;
         }
 
         public String getReward() {
-            return Reward;
+            return reward;
         }
 
         public void setReward(String reward) {
-            Reward = reward;
+            this.reward = reward;
         }
 
         public String getDate() {
-            return Date;
+            return date;
         }
 
         public void setDate(String date) {
-            Date = date;
+            this.date = date;
         }
 
         public String getOrderID() {
-            return OrderID;
+            return order_id;
         }
 
         public void setOrderID(String orderID) {
-            OrderID = orderID;
+            order_id = orderID;
         }
 
         public String getDeadline() {
-            return Deadline;
+            return deadline;
         }
 
         public void setDeadline(String deadline) {
-            Deadline = deadline;
+            this.deadline = deadline;
         }
 
         public String getTitle() {
-            return Title;
+            return title;
         }
 
         public void setTitle(String title) {
-            Title = title;
+            this.title = title;
         }
 
         public List<OrderAcceptedDetailBean.OrderInfoBean.PicturesBean> getPictures() {
-            return Pictures;
+            return pictures;
         }
 
         public void setPictures(List<OrderAcceptedDetailBean.OrderInfoBean.PicturesBean> pictures) {
-            Pictures = pictures;
+            this.pictures = pictures;
         }
 
         public String getPublisherAvatar() {
-            return PublisherAvatar;
+            return publisher_avatar;
         }
 
         public void setPublisherAvatar(String publisherAvatar) {
-            PublisherAvatar = publisherAvatar;
+            publisher_avatar = publisherAvatar;
         }
 
         public List<OrderAcceptedDetailBean.OrderInfoBean.ApplicantAvatars> getApplicantAvatars() {
-            return applicantAvatars;
+            return applicant_avatars;
         }
 
         public void setApplicantAvatars(List<OrderAcceptedDetailBean.OrderInfoBean.ApplicantAvatars> applicantAvatars) {
-            this.applicantAvatars = applicantAvatars;
+            this.applicant_avatars = applicantAvatars;
+        }
+
+        public String getBidder() {
+            return bidder;
+        }
+
+        public void setBidder(String bidder) {
+            this.bidder = bidder;
         }
 
         @Override
         public String toString() {
             return "OrderInfoBean{" +
-                    "Publisher='" + Publisher + '\'' +
-                    ", Description='" + Description + '\'' +
-                    ", Reward='" + Reward + '\'' +
-                    ", Date='" + Date + '\'' +
-                    ", OrderID='" + OrderID + '\'' +
-                    ", PublisherAvatar='" + PublisherAvatar + '\'' +
-                    ", Deadline='" + Deadline + '\'' +
-                    ", Title='" + Title + '\'' +
-                    ", Status='" + Status + '\'' +
-                    ", Tel='" + Tel + '\'' +
-                    ", Pictures=" + Pictures +
-                    ", applicantAvatars=" + applicantAvatars +
+                    "publisher='" + publisher + '\'' +
+                    ", description='" + description + '\'' +
+                    ", reward='" + reward + '\'' +
+                    ", date='" + date + '\'' +
+                    ", order_id='" + order_id + '\'' +
+                    ", publisher_avatar='" + publisher_avatar + '\'' +
+                    ", deadline='" + deadline + '\'' +
+                    ", title='" + title + '\'' +
+                    ", status='" + status + '\'' +
+                    ", tel='" + tel + '\'' +
+                    ", bidder='" + bidder + '\'' +
+                    ", pictures=" + pictures +
+                    ", applicant_avatars=" + applicant_avatars +
                     '}';
         }
 

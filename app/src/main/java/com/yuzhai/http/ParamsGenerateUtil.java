@@ -15,13 +15,16 @@ public class ParamsGenerateUtil {
      *
      * @param userPhone 登录的用户名
      * @param userPsw   登录的密码
+     * @param regId     手机标识号
      * @return 返回登陆的请求参数集
      */
     public static Map<String, String> generateLoginParams(String userPhone,
-                                                          String userPsw) {
+                                                          String userPsw,
+                                                          String regId) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.LoginParam.USERPHONE, userPhone);
         params.put(RequestParamsNameConfig.LoginParam.USERPSWD, userPsw);
+        params.put(RequestParamsNameConfig.LoginParam.REGID, regId);
         return params;
     }
 
@@ -40,8 +43,8 @@ public class ParamsGenerateUtil {
     /**
      * 生成注册请求的参数集
      *
-     * @param regPhone  注册号码
-     * @param regPsw    注册密码
+     * @param regPhone 注册号码
+     * @param regPsw   注册密码
      * @return 返回注册请求的参数集
      */
     public static Map<String, String> generateRegisterParams(String regPhone,
@@ -67,15 +70,17 @@ public class ParamsGenerateUtil {
     /**
      * 生成忘记密码请求的参数集
      *
-     * @param regPhone  用户手机号码
-     * @param regPsw    新密码
+     * @param regPhone 用户手机号码
+     * @param newPsw   新密码
      * @return 返回忘记密码请求的参数集
      */
     public static Map<String, String> generateForgetPswParams(String regPhone,
-                                                              String regPsw) {
+                                                              String newPsw,
+                                                              String comPsw) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.ForgetPswParam.USERPHONE, regPhone);
-        params.put(RequestParamsNameConfig.ForgetPswParam.USERPSW, regPsw);
+        params.put(RequestParamsNameConfig.ForgetPswParam.NEWPSW, newPsw);
+        params.put(RequestParamsNameConfig.ForgetPswParam.COMPSW, comPsw);
         return params;
     }
 
@@ -99,12 +104,36 @@ public class ParamsGenerateUtil {
     /**
      * 生成取消已发布订单请求的参数集
      *
-     * @param publishId 已发布的订单号
+     * @param publishedId 已发布的订单号
      * @return 返回取消已发布订单请求的参数集
      */
-    public static Map<String, String> generateCancelPublishedOrderParams(String publishId) {
+    public static Map<String, String> generateCancelPublishedOrderParams(String publishedId) {
         Map<String, String> params = new HashMap<>();
-        params.put(RequestParamsNameConfig.CancelPublishedOrderParam.ORDER_ID, publishId);
+        params.put(RequestParamsNameConfig.CancelPublishedOrderParam.ORDER_ID, publishedId);
+        return params;
+    }
+
+    /**
+     * 生成取消已申请订单请求的参数集
+     *
+     * @param appliedId 已申请的订单号
+     * @return 返回取消已申请订单请求的参数集
+     */
+    public static Map<String, String> generateCancelAppliedOrderParams(String appliedId) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.CancelAppliedOrderParam.ORDER_ID, appliedId);
+        return params;
+    }
+
+    /**
+     * 生成取消已接收订单请求的参数集
+     *
+     * @param acceptedId 已接收的订单号
+     * @return 返回取消已接收订单请求的参数集
+     */
+    public static Map<String, String> generateCancelAcceptedOrderParams(String acceptedId) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.CancelAcceptedOrderParam.ORDER_ID, acceptedId);
         return params;
     }
 
@@ -195,14 +224,26 @@ public class ParamsGenerateUtil {
     }
 
     /**
+     * 生成查看个人已申请的订单请求的参数集
+     *
+     * @return
+     */
+    public static Map<String, String> generateAppliedOrderParam(String isFirstTime) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.AppliedOrderParam.FIRST, isFirstTime);
+        return params;
+    }
+
+    /**
      * 生成查看个人已接收的订单请求的参数集
      *
      * @return
      */
-//    public static Map<String, String> generateAcceptedOrderParam() {
-//        Map<String, String> params = new HashMap<>();
-//        return params;
-//    }
+    public static Map<String, String> generateAcceptedOrderParam(String isFirstTime) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.AppliedOrderParam.FIRST, isFirstTime);
+        return params;
+    }
 
     /**
      * 生成投递简历请求的参数
@@ -228,11 +269,13 @@ public class ParamsGenerateUtil {
      * 生成通过类型查询简历请求的参数集
      *
      * @param type
+     * @param isFirstTime
      * @return
      */
-    public static Map<String, String> generateResumesByTypeParams(String type) {
+    public static Map<String, String> generateResumesByTypeParams(String type, String isFirstTime) {
         Map<String, String> params = new HashMap<>();
         params.put(RequestParamsNameConfig.ResumesByTypeParam.TYPE, type);
+        params.put(RequestParamsNameConfig.ResumesByTypeParam.FIRST, isFirstTime);
         return params;
     }
 
@@ -257,4 +300,41 @@ public class ParamsGenerateUtil {
         return params;
     }
 
+    /**
+     * 生成查看申请订单用户的信息的参数集
+     *
+     * @param avatarText
+     * @return
+     */
+    public static Map<String, String> generateApplyUserDataParams(String avatarText) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.ApplyUserDataParam.AVATAR, avatarText);
+        return params;
+    }
+
+    /**
+     * 生成同意用户申请订单的参数集
+     *
+     * @param orderId
+     * @param bidderId
+     * @return
+     */
+    public static Map<String, String> generateAgreeApplyOrderParams(String orderId, String bidderId) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.AgreeApplyOrderParam.ORDERID, orderId);
+        params.put(RequestParamsNameConfig.AgreeApplyOrderParam.BIDDERID, bidderId);
+        return params;
+    }
+
+    /**
+     * 查询聊天用户信息的参数集
+     *
+     * @param userPhone
+     * @return
+     */
+    public static Map<String, String> generateQueryContactUserInfo(String userPhone) {
+        Map<String, String> params = new HashMap<>();
+        params.put(RequestParamsNameConfig.QueryContactUserInfoParam.USERPHONE, userPhone);
+        return params;
+    }
 }

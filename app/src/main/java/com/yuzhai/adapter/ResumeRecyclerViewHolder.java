@@ -27,6 +27,6 @@ public class ResumeRecyclerViewHolder extends RecyclerView.ViewHolder {
         mNameText = (TextView) itemView.findViewById(R.id.name);
         mSexText = (TextView) itemView.findViewById(R.id.sex);
         mEducationText = (TextView) itemView.findViewById(R.id.education);
-        mTelText = (TextView) itemView.findViewById(R.id.tel);
+        mTelText = (TextView) itemView.findViewById(R.id.status);
     }
 }

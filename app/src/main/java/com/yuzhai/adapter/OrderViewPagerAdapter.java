@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class OrderViewPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> mFragmentList;
-    private String[] titles = new String[]{"已发布", "已接收"};
+    private String[] titles = new String[]{"已发布", "已申请", "已接收"};
 
     public OrderViewPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
         super(fm);

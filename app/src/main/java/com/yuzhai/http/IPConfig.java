@@ -14,7 +14,7 @@ public interface IPConfig {
     /**
      * 目标地址和端口
      */
-    String DesAddress = "192.168.31.220:8080";
+    String DesAddress = "172.16.172.20:8080";
 
     /**
      * 主机名称
@@ -49,7 +49,7 @@ public interface IPConfig {
     /**
      * 用户注册地址
      */
-    String registerAddress = addressPrefix + "/login/register";
+    String registerAddress = addressPrefix + "/regisuser";
 
     /**
      * 修改用户密码地址
@@ -59,7 +59,7 @@ public interface IPConfig {
     /**
      * 忘记密码修改地址
      */
-    String forgetPswAddress = addressPrefix + "/login/forget_psw";
+    String forgetPswAddress = addressPrefix + "/resetpsw";
 
     /**
      * 发布需求地址
@@ -92,14 +92,29 @@ public interface IPConfig {
     String orderPublishedAddress = addressPrefix + "/lookuppublished";
 
     /**
-     * 查看以接收订单地址
+     * 查看已接收订单地址
      */
-    String orderAcceptedAddress = addressPrefix + "/lookupreceived";
+    String orderAcceptedAddress = addressPrefix + "/lookupreceive";
+
+    /**
+     * 查看已申请订单地址
+     */
+    String orderAppliedAddress = addressPrefix + "/lookupapply";
 
     /**
      * 取消已发布订单地址
      */
     String cancelPublishedOrderAddress = addressPrefix + "/cancelpublish";
+
+    /**
+     * 取消已申请订单地址
+     */
+    String cancelAppliedOrderAddress = addressPrefix + "/cancelapply";
+
+    /**
+     * 取消已接收订单地址
+     */
+    String cancelAcceptedOrderAddress = addressPrefix + "/cancelreceive";
 
     /**
      * 查看详细订单地址
@@ -114,7 +129,7 @@ public interface IPConfig {
     /**
      * 投递简历地址
      */
-    String sendResumeAddress = addressPrefix + "/launchresume";
+    String sendResumeAddress = addressPrefix + "/sendresume";
 
     /**
      * 通过需求类型查看简历订单地址
@@ -124,10 +139,25 @@ public interface IPConfig {
     /**
      * 查看详细简历地址
      */
-    String resumeDetailAddress = addressPrefix + "/detailedresumes";
+    String resumeDetailAddress = addressPrefix + "/detailedresume";
 
     /**
-     * 查看个人已发布简历
+     * 查看个人已发布简历地址
      */
     String personalResumeAddress = addressPrefix + "/selfdetailedresume";
+
+    /**
+     * 查看申请用户数据地址
+     */
+    String applyUserDataAddress = addressPrefix + "/lookupbyavatar";
+
+    /**
+     * 同意用户申请地址
+     */
+    String decideBidderAddress = addressPrefix + "/decidebidder";
+
+    /**
+     * 获取聊天用户信息地址
+     */
+    String queryContactUserInfoAddress = addressPrefix + "/getidandavatar";
 }

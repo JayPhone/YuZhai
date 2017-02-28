@@ -1,14 +1,10 @@
 package com.yuzhai.fragment;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,11 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.xiaomi.mipush.sdk.MiPushClient;
 import com.yuzhai.bean.innerBean.BaseUserInfoBean;
 import com.yuzhai.bean.requestBean.UserLoginBean;
 import com.yuzhai.bean.responseBean.LoginRespBean;
@@ -37,7 +33,11 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Map;
 
-import cn.bmob.newsmssdk.BmobSMS;
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.core.ConnectionStatus;
+import cn.bmob.newim.listener.ConnectListener;
+import cn.bmob.newim.listener.ConnectStatusChangeListener;
+import cn.bmob.v3.exception.BmobException;
 
 /**
  * Created by 35429 on 2017/2/16.
@@ -101,7 +101,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         userPhoneLayout = (TextInputLayout) getView().findViewById(R.id.user_name_layout);
         userPhoneEdit = (TextInputEditText) getView().findViewById(R.id.user_name);
         pswLayout = (TextInputLayout) getView().findViewById(R.id.psw_layout);
-        pswEdit = (TextInputEditText) getView().findViewById(R.id.password);
+        pswEdit = (TextInputEditText) getView().findViewById(R.id.new_psw);
         loginButton = (Button) getView().findViewById(R.id.login_btn);
         registerButton = (Button) getView().findViewById(R.id.register_nav);
         forgetPswButton = (Button) getView().findViewById(R.id.forget_pswd_nav);
@@ -160,7 +160,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
             case R.id.login_btn:
                 //发送登录请求
                 sendLoginRequest(userPhoneEdit.getText().toString(),
-                        pswEdit.getText().toString());
+                        pswEdit.getText().toString(),
+                        MiPushClient.getRegId(getActivity()));
                 break;
 
             //点击注册导航文字
@@ -185,14 +186,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
      * @param userPhone 用户名
      * @param psw       密码
      */
-    public void sendLoginRequest(String userPhone, String psw) {
+    public void sendLoginRequest(String userPhone, String psw, String regId) {
         if (checkData(userPhone, psw)) {
             //生成登录请求参数
             Map<String, String> params = ParamsGenerateUtil.generateLoginParams(
                     userLoginBean.getUserPhone(),
-                    userLoginBean.getUserPsw());
-            Log.i("login_url", IPConfig.loginAddress);
-            Log.i("param", params.toString());
+                    userLoginBean.getUserPsw(),
+                    regId);
+            Log.i(TAG, "login_url:" + IPConfig.loginAddress);
+            Log.i(TAG, "login_param:" + params.toString());
 
             //创建登录请求
             loginRequest = new CommonRequest(getActivity(),
@@ -245,12 +247,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
      */
     @Override
     public void onResponse(String resp) {
-        Log.i("login_resp", resp);
+        Log.i(TAG, "login_resp:" + resp);
         LoginRespBean loginRespBean = JsonUtil.decodeByGson(resp, LoginRespBean.class);
 
         //返回的响应码
         String respCode = loginRespBean.getCode();
-        Log.i("login_resp_code", loginRespBean.getCode());
+        Log.i(TAG, "login_resp_code:" + loginRespBean.getCode());
 
         if (respCode != null && respCode.equals("-1")) {
             UnRepeatToast.showToast(getActivity(), "密码错误");
@@ -263,18 +265,34 @@ public class LoginFragment extends Fragment implements View.OnClickListener,
         if (respCode != null && respCode.equals("1")) {
             //用户头像路径
             String userHead = loginRespBean.getUser_head_url();
-            Log.i("userHead", loginRespBean.getUser_head_url());
+            Log.i(TAG, "login_resp_userHead:" + loginRespBean.getUser_head_url());
             //用户名
             String userName = loginRespBean.getUser_name();
-            Log.i("userName", loginRespBean.getUser_name());
+            Log.i(TAG, "login_resp_userName:" + loginRespBean.getUser_name());
             //保存登陆成功的手机号和密码
             customApplication.addUserInfo(userLoginBean.getUserPhone(), userLoginBean.getUserPsw());
             //设置为登录状态
             customApplication.setLoginState(true);
+            //即时聊天连接
+            BmobIM.connect(customApplication.getUserPhone(), new ConnectListener() {
+                @Override
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        Log.i(TAG, "连接成功");
+                        //监听连接状态
+                        BmobIM.getInstance().setOnConnectStatusChangeListener(new ConnectStatusChangeListener() {
+                            @Override
+                            public void onChange(ConnectionStatus status) {
+                                Log.i(TAG, "连接状态:" + status.getMsg());
+                            }
+                        });
+                    } else {
+                        Log.e(TAG, e.getErrorCode() + "/" + e.getMessage());
+                    }
+                }
+            });
             //使用EventBus发送替换为登录的界面的消息到MainActivity
             EventBus.getDefault().post(new BaseUserInfoBean(userHead, userName, customApplication.isLogin()));
-//            //刷新个人订单界面
-//            EventBus.getDefault().post(new LoginToOrderBean(customApplication.isLogin()));
             getActivity().finish();
         }
     }

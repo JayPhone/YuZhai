@@ -38,6 +38,7 @@ public class OrderFragment extends Fragment {
     private TabLayout mTabLayout;
 
     private OrderPublishedFragment mPublishedFragment;
+    private OrderAppliedFragment mAppliedFragment;
     private OrderAcceptedFragment mAcceptedFragment;
 
     public static OrderFragment newInstance() {
@@ -79,18 +80,21 @@ public class OrderFragment extends Fragment {
 
         //已发布订单Fragment
         mPublishedFragment = new OrderPublishedFragment();
+        //已申请订单Fragment
+        mAppliedFragment = new OrderAppliedFragment();
         //己接收订单Fragment
         mAcceptedFragment = new OrderAcceptedFragment();
 
         //添加viewPager的页面布局到List<View>里
         List<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(mPublishedFragment);
+        fragmentList.add(mAppliedFragment);
         fragmentList.add(mAcceptedFragment);
 
         //创建viewPager的适配器并设置
         mViewPager = (ViewPager) getView().findViewById(R.id.order_viewPager);
         //加载全部的Fragment布局，实现懒加载
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(3);
         mPagerAdapter = new OrderViewPagerAdapter(getChildFragmentManager(), fragmentList);
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout = (TabLayout) getView().findViewById(R.id.tab_layout);

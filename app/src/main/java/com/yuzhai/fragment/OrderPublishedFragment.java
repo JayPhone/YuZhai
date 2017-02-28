@@ -33,6 +33,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ public class OrderPublishedFragment extends BaseLazyLoadFragment implements
     private CustomApplication mCustomApplication;
     private RequestQueue mRequestQueue;
     private List<OrderPublishedBean.OrderBean> mInitOrders = new ArrayList<>();
+
     public final static String ORDER_ID = "order_id";
     private final static String IS_FIRST_TIME = "yes";
     private final static String NOT_FIRST_TIME = "no";
@@ -110,8 +112,8 @@ public class OrderPublishedFragment extends BaseLazyLoadFragment implements
     protected void lazyLoadData() {
         super.lazyLoadData();
         if (isViewCreated) {
-            setRefreshState(true);
-            sendPublishedOrderRequest(NOT_FIRST_TIME);
+            deleteAll();
+            intData();
         }
     }
 
@@ -121,15 +123,12 @@ public class OrderPublishedFragment extends BaseLazyLoadFragment implements
      * @param newOrders 新获取的订单数据集
      */
     public void updateData(List<OrderPublishedBean.OrderBean> newOrders) {
-        for (OrderPublishedBean.OrderBean order : newOrders) {
-            //将获取的新数据插入到数据集
-            mInitOrders.add(order);
-        }
+        Collections.reverse(newOrders);
+        mInitOrders.addAll(0, newOrders);
         //通知recyclerView插入数据
-        mAdapter.notifyItemRangeInserted(0, newOrders.size());
+        mAdapter.notifyDataSetChanged();
         //recyclerView滚动到顶部
         mPublishedRv.smoothScrollToPosition(0);
-
     }
 
     /**
@@ -196,19 +195,6 @@ public class OrderPublishedFragment extends BaseLazyLoadFragment implements
     public void setRefreshState(Boolean state) {
         mPublishedSrl.setRefreshing(state);
     }
-
-//    /**
-//     * 登录界面或退出登录通过EventBus传递的数据判断消息并作出回应
-//     */
-//    @Subscribe(threadMode = ThreadMode.POSTING)
-//    public void onEventUserLogin(LoginToOrderBean loginToOrderBean) {
-//        if (loginToOrderBean.isLogin()) {
-//            deleteAll();
-//            sendPublishedOrderRequest("yes");
-//        } else if (!loginToOrderBean.isLogin()) {
-//            deleteAll();
-//        }
-//    }
 
     @Override
     public void onPublishedItemClick(int position) {

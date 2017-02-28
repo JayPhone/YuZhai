@@ -220,7 +220,7 @@
                         app:counterMaxLength="11">
 
                         <android.support.design.widget.TextInputEditText
-                            android:id="@+id/tel"
+                            android:id="@+id/status"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="填写您的联系电话"

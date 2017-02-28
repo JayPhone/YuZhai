@@ -2,6 +2,7 @@ package com.yuzhai.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -34,11 +35,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Integer.parseInt;
+
 /**
  * Created by Administrator on 2016/11/14.
  */
 
 public class OrdersPublishedActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "OrdersPublishedActivity";
+
     private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPager mPublishedViewPager;
@@ -126,7 +131,7 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
     private void showCancelPublishedOrderDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("取消发单");
-        builder.setMessage("您确定要取消订单，如果该订单已经被接收，则需要赔付一定的金额，您还要继续吗?");
+        builder.setMessage("您确定要取消订单，如果该订单已经被接收，则需要赔付保证金(订单金额的30%)给接收方,你所缴纳的订单金额将退还到您的账户，您还要继续吗?");
         builder.setPositiveButton("我要退", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -149,10 +154,7 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
             public void onClick(DialogInterface dialog, int which) {
                 //正常代码
                 //发送取消已发布订单请求
-//                sendCancelPublishedRequest(mData.get(mPosition).getPublish().getPublishId());
-//                Intent pay = new Intent(OrdersPublishedActivity.this, PayActivity.class);
-//                startActivity(pay);
-
+//                sendCancelPublishedRequest(mData.get(mPosition).getType().getPublishId());
             }
         });
         builder.setNegativeButton("取消", null);
@@ -174,14 +176,14 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("cancel_publish_resp", resp);
-                        if (JsonUtil.decodeByGson(resp, CancelPublishedRespBean.class).equals("1")) {
+                        Log.i(TAG, "cancel_publish_resp:" + resp);
+                        String respCode = JsonUtil.decodeByGson(resp, CancelPublishedRespBean.class).getCode();
+                        if (respCode.equals("1")) {
                             UnRepeatToast.showToast(OrdersPublishedActivity.this, "取消发布订单成功");
                         }
-
-//                        if (respCode != null && respCode.equals("-1")) {
-//                            UnRepeatToast.showToast(OrdersPublishedActivity.this, "退单失败,请稍后再试");
-//                        }
+                        if (respCode.equals("-1")) {
+                            UnRepeatToast.showToast(OrdersPublishedActivity.this, "退单失败,请稍后再试");
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -211,7 +213,7 @@ public class OrdersPublishedActivity extends AppCompatActivity implements View.O
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("published_detail_resp", resp);
+                        Log.i(TAG, "published_detail_resp:" + resp);
                         //初始化界面引用
                         initViews(resp);
                         //解析数据

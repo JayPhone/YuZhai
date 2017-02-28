@@ -34,6 +34,8 @@ import java.util.Map;
  */
 
 public class ResumeDetailActivity extends AppCompatActivity {
+    private static final String TAG = "ResumeDetailActivity";
+
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private CircleImageView mUserHeader;
@@ -84,7 +86,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
         mName = (TextView) findViewById(R.id.name);
         mSex = (TextView) findViewById(R.id.sex);
         mEducation = (TextView) findViewById(R.id.education);
-        mTel = (TextView) findViewById(R.id.tel);
+        mTel = (TextView) findViewById(R.id.status);
         mEducationalExperience = (TextView) findViewById(R.id.education_experience);
         mSkill = (TextView) findViewById(R.id.skill);
         mWorkExperience = (TextView) findViewById(R.id.work_experience);
@@ -120,7 +122,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
     public void sendDetailResumeRequest(String resumeId) {
         //生成投递简历请求的参数
         Map<String, String> param = ParamsGenerateUtil.generateDetailResumeParams(resumeId);
-        Log.i("param", param.toString());
+        Log.i(TAG, "param:" + param.toString());
 
         //生成查看详细简历请求
         CommonRequest sendDetailResumeRequest = new CommonRequest(this,
@@ -130,7 +132,7 @@ public class ResumeDetailActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String resp) {
-                        Log.i("detail_resume_resp", resp);
+                        Log.i(TAG, "detail_resume_resp:" + resp);
                         updateData(JsonUtil.decodeByGson(resp, DetailResumeBean.class).getDetailResume());
                     }
                 },

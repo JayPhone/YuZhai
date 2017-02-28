@@ -32,10 +32,10 @@ import com.yuzhai.yuzhaiwork.R;
 
 import java.util.Map;
 
-import cn.bmob.newsmssdk.BmobSMS;
-import cn.bmob.newsmssdk.exception.BmobException;
-import cn.bmob.newsmssdk.listener.RequestSMSCodeListener;
-import cn.bmob.newsmssdk.listener.VerifySMSCodeListener;
+import cn.bmob.v3.BmobSMS;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.RequestSMSCodeListener;
+import cn.bmob.v3.listener.VerifySMSCodeListener;
 
 /**
  * Created by 35429 on 2017/2/16.
@@ -82,8 +82,7 @@ public class ForgetPswFragment extends Fragment implements View.OnClickListener 
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
         } else {
-            //初始化短信接口
-            initBmobSMS();
+            Log.i(TAG, "已开启读取手机状态权限");
         }
 
         //获取请求队列
@@ -92,19 +91,12 @@ public class ForgetPswFragment extends Fragment implements View.OnClickListener 
         initViews();
     }
 
-    /**
-     * //初始化短信接口
-     */
-    private void initBmobSMS() {
-        BmobSMS.initialize(getActivity(), CustomApplication.BOMB_APP_ID);
-    }
-
     public void initViews() {
         mUserPhoneEdit = (EditText) getView().findViewById(R.id.user_name);
         mCheckCodeEdit = (EditText) getView().findViewById(R.id.verify_code);
         mCheckCodeButton = (Button) getView().findViewById(R.id.verify_button);
-        mPswEdit = (EditText) getView().findViewById(R.id.password);
-        mCfmPswEdit = (EditText) getView().findViewById(R.id.confirm_password);
+        mPswEdit = (EditText) getView().findViewById(R.id.new_psw);
+        mCfmPswEdit = (EditText) getView().findViewById(R.id.confirm_psw);
         mAlterBtn = (Button) getView().findViewById(R.id.change_button);
         mLoginTextView = (Button) getView().findViewById(R.id.login_nav);
 
@@ -152,6 +144,7 @@ public class ForgetPswFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void done(Integer smsId, BmobException e) {
                     if (e == null) {//验证码发送成功
+                        UnRepeatToast.showToast(getActivity(), "验证码已发送，请注意查收");
                         Log.i(TAG, "短信id：" + smsId);//用于查询本次短信发送详情
                     }
                 }
@@ -202,8 +195,9 @@ public class ForgetPswFragment extends Fragment implements View.OnClickListener 
                 cfmPsw)) {
 
             //生成忘记密码请求参数
-            Map<String, String> params = ParamsGenerateUtil.generateForgetPswParams(mUserBean.getUserPhone(),
-                    mUserBean.getUserPsw());
+            Map<String, String> params = ParamsGenerateUtil.generateForgetPswParams(userPhone,
+                    psw,
+                    cfmPsw);
 
             //创建忘记密码请求
             CommonRequest forgetPswRequest = new CommonRequest(getActivity(),
@@ -213,13 +207,13 @@ public class ForgetPswFragment extends Fragment implements View.OnClickListener 
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String resp) {
-                            Log.i("forget_resp", resp);
+                            Log.i(TAG, "forget_resp:" + resp);
                             ForgetPswRespBean forgetPswRespBean = JsonUtil.decodeByGson(resp, ForgetPswRespBean.class);
                             String respCode = forgetPswRespBean.getCode();
-                            Log.i("forget_resp_code", respCode);
+                            Log.i(TAG, "forget_resp_code:" + respCode);
 
                             if (respCode != null && respCode.equals("1")) {
-                                UnRepeatToast.showToast(getActivity(), "修改成功");
+                                UnRepeatToast.showToast(getActivity(), "密码重置成功，请重新登陆");
                                 getActivity().finish();
                             }
                         }
@@ -323,8 +317,7 @@ public class ForgetPswFragment extends Fragment implements View.OnClickListener 
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //初始化短信接口
-                    initBmobSMS();
+                    Log.i(TAG, "开启读取手机状态权限");
                 } else {
                     UnRepeatToast.showToast(getActivity(), "需要开启权限才能获取验证码");
                 }
